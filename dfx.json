@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "trackingApp_backend": {
+      "main": "src/trackingApp_backend/main.mo",
+      "type": "motoko"
+    },
+    "trackingApp_frontend": {
+      "dependencies": [
+        "trackingApp_backend"
+      ],
+      "source": [
+        "src/trackingApp_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "trackingApp_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
