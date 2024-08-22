@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'url';
+import path from "path"
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import environment from 'vite-plugin-environment';
@@ -31,12 +32,14 @@ export default defineConfig({
     environment("all", { prefix: "DFX_" }),
   ],
   resolve: {
-    alias: [
+    alias:  [
+      {
+        find: "@",
+        replacement: path.resolve(__dirname, "./src"), // Update the replacement value
+      },
       {
         find: "declarations",
-        replacement: fileURLToPath(
-          new URL("../declarations", import.meta.url)
-        ),
+        replacement: fileURLToPath(new URL("../declarations", import.meta.url)),
       },
     ],
   },
