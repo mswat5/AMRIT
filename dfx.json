@@ -1,16 +1,50 @@
 {
   "canisters": {
-    "trackingApp_backend": {
-      "main": "src/trackingApp_backend/main.mo",
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "adminCanister": {
+      "main": "src/trackingApp_backend/AdminCanister.mo",
+      "type": "motoko"
+    },
+    "ambulanceCanister": {
+      "main": "src/trackingApp_backend/AmbulanceCanister.mo",
+      "type": "motoko"
+    },
+    "facilityCanister": {
+      "main": "src/trackingApp_backend/FacilityCanister.mo",
+      "type": "motoko"
+    },
+    "patientCanister": {
+      "main": "src/trackingApp_backend/PatientCanister.mo",
+      "type": "motoko"
+    },
+    "reportCanister": {
+      "main": "src/trackingApp_backend/ReportCanister.mo",
+      "type": "motoko"
+    },
+    "accidentCanister": {
+      "main": "src/trackingApp_backend/AccidentCanister.mo",
       "type": "motoko"
     },
     "trackingApp_frontend": {
       "dependencies": [
-        "trackingApp_backend"
+        "adminCanister",
+        "ambulanceCanister",
+        "facilityCanister",
+        "patientCanister",
+        "reportCanister",
+        "accidentCanister"
       ],
-      "source": [
-        "src/trackingApp_frontend/dist"
-      ],
+      "source": ["src/trackingApp_frontend/dist"],
       "type": "assets",
       "workspace": "trackingApp_frontend"
     }
@@ -18,7 +52,7 @@
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",
