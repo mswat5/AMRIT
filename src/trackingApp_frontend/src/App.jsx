@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
 import {
   BrowserRouter as Router,
   Routes,
@@ -24,54 +24,223 @@ import AmbulanceApproval from "./layout/Admin/AmbulanceApproval";
 import InchargeApproval from "./layout/Admin/InchargeApproval";
 import Inchargeform from "./layout/incharge/inchargeform";
 
+import { createActor as createAdminActor } from "../../declarations/adminCanister";
+import { createActor as createAccidentActor } from "../../declarations/accidentCanister";
+import { createActor as createFacilityActor } from "../../declarations/facilityCanister";
+import { createActor as createPatientActor } from "../../declarations/patientCanister";
+import { createActor as createAmbulanceActor } from "../../declarations/ambulanceCanister";
+import { createActor as createReportActor } from "../../declarations/reportCanister";
+
+import ActorContext from "./ActorContext";
+import { AuthClient } from "@dfinity/auth-client";
+import { HttpAgent } from "@dfinity/agent";
+import { useEffect, useState } from "react";
+
 const App = () => {
+  const [actors, setActors] = useState({
+    admin: null,
+    report: null,
+    facility: null,
+    ambulance: null,
+    accident: null,
+    patient: null,
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authClient, setAuthClient] = useState(null);
+
+  useEffect(() => {
+    initAuthClient();
+  }, []);
+
+  async function initAuthClient() {
+    const client = await AuthClient.create();
+    setAuthClient(client);
+    if (await client.isAuthenticated()) {
+      setIsAuthenticated(true);
+      await initializeActors(client);
+    }
+  }
+
+  async function initializeActors(client) {
+    const identity = client.getIdentity();
+    const agent = new HttpAgent({ identity });
+
+    if (process.env.DFX_NETWORK !== "ic") {
+      await agent.fetchRootKey().catch(console.error);
+    }
+
+    try {
+      const adminActor = createAdminActor(
+        process.env.CANISTER_ID_ADMIN_CANISTER,
+        {
+          agent,
+        }
+      );
+      const accidentActor = createAccidentActor(
+        process.env.CANISTER_ID_ACCIDENT_CANISTER,
+        { agent }
+      );
+      const facilityActor = createFacilityActor(
+        process.env.CANISTER_ID_FACILITY_CANISTER,
+        { agent }
+      );
+      const patientActor = createPatientActor(
+        process.env.CANISTER_ID_PATIENT_CANISTER,
+        { agent }
+      );
+      const ambulanceActor = createAmbulanceActor(
+        process.env.CANISTER_ID_AMBULANCE_CANISTER,
+        { agent }
+      );
+      const reportActor = createReportActor(
+        process.env.CANISTER_ID_REPORT_CANISTER,
+        {
+          agent,
+        }
+      );
+
+      setActors({
+        admin: adminActor,
+        report: reportActor,
+        facility: facilityActor,
+        ambulance: ambulanceActor,
+        accident: accidentActor,
+        patient: patientActor,
+      });
+    } catch (error) {
+      console.error("Error initializing actors:", error);
+    }
+  }
+
+  async function login() {
+    if (authClient) {
+      await new Promise((resolve) => {
+        authClient.login({
+          identityProvider: process.env.II_URL,
+          onSuccess: resolve,
+        });
+      });
+      setIsAuthenticated(true);
+      await initializeActors(authClient);
+    }
+  }
+
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/Register" />} />
-          <Route path="/Register" element={<FirstPageContent />} />
-          <Route path="/Register">
-            <Route path="Ambulance" element={<RegisterAmbulance />} />
-            <Route path="Facility" element={<RegisterFacility />} />
-          </Route>
-          <Route path="/Admin/*" 
-            element={
-              <SharedLayout><AppRoute /></SharedLayout>
-            }>
-            <Route path="User-management" element={<UserManagement />} />
-            <Route path="Facility-approval" element={<FacilityApproval />} />
-            <Route path="Ambulance-approval" element={<AmbulanceApproval />} />
-            <Route path="InchargeApproval" element={<InchargeApproval />} />
-            <Route path="*" element={<Navigate to="facility-approval" />} />
-          </Route>
-          <Route path="/incharge/*" 
-            element={
-              <SharedLayout><AppRoute /></SharedLayout>
-            }>
-           <Route path="*" element={<Inchargeform />} />
-         
-          </Route>
-          <Route path="/Ambulance/*" 
-            element={
-              <SharedLayout><AppRoute2 /></SharedLayout>
-            }/>
-          <Route path="/Facility/*" 
-            element={
-              <SharedLayout><AppRoute3 /></SharedLayout>
-            }>
-            <Route path="item1/*" element={<FacilityItem1 />} />
-            <Route path="item2/*" element={<FacilityItem2 />} />
-            <Route path="item3/*" element={<FacilityItem3 />} />
-            <Route path="item4/*" element={<FacilityItem4 />} />
-            <Route path="item5/*" element={<FacilityItem5 />} />
-            {/* <Route path="*" element={<FacilityItem1 />} /> */}
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <ActorContext.Provider value={{ actors, isAuthenticated, login }}>
+      <ThemeProvider
+        defaultTheme="dark"
+        storageKey="vite-ui-theme"
+      >
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to="/Register" />}
+            />
+            <Route
+              path="/Register"
+              element={<FirstPageContent />}
+            />
+            <Route path="/Register">
+              <Route
+                path="Ambulance"
+                element={<RegisterAmbulance />}
+              />
+              <Route
+                path="Facility"
+                element={<RegisterFacility />}
+              />
+            </Route>
+            <Route
+              path="/Admin/*"
+              element={
+                <SharedLayout>
+                  <AppRoute />
+                </SharedLayout>
+              }
+            >
+              <Route
+                path="User-management"
+                element={<UserManagement />}
+              />
+              <Route
+                path="Facility-approval"
+                element={<FacilityApproval />}
+              />
+              <Route
+                path="Ambulance-approval"
+                element={<AmbulanceApproval />}
+              />
+              <Route
+                path="InchargeApproval"
+                element={<InchargeApproval />}
+              />
+              <Route
+                path="*"
+                element={<Navigate to="facility-approval" />}
+              />
+            </Route>
+            <Route
+              path="/incharge/*"
+              element={
+                <SharedLayout>
+                  <AppRoute />
+                </SharedLayout>
+              }
+            >
+              <Route
+                path="*"
+                element={<Inchargeform />}
+              />
+            </Route>
+            <Route
+              path="/Ambulance/*"
+              element={
+                <SharedLayout>
+                  <AppRoute2 />
+                </SharedLayout>
+              }
+            />
+            <Route
+              path="/Facility/*"
+              element={
+                <SharedLayout>
+                  <AppRoute3 />
+                </SharedLayout>
+              }
+            >
+              <Route
+                path="item1/*"
+                element={<FacilityItem1 />}
+              />
+              <Route
+                path="item2/*"
+                element={<FacilityItem2 />}
+              />
+              <Route
+                path="item3/*"
+                element={<FacilityItem3 />}
+              />
+              <Route
+                path="item4/*"
+                element={<FacilityItem4 />}
+              />
+              <Route
+                path="item5/*"
+                element={<FacilityItem5 />}
+              />
+              {/* <Route path="*" element={<FacilityItem1 />} /> */}
+            </Route>
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </ActorContext.Provider>
   );
-}
+};
 
 export default App;
