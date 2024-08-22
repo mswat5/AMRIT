@@ -4,21 +4,21 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // Define the validation schema using Zod
-const reportAccidentSchema = z.object({
+const reportIncidentSchema = z.object({
   location: z.string().min(1, 'Location is required'),
   description: z.string().min(1, 'Description is required'),
   severity: z.enum(['low', 'medium', 'high'], 'Select a severity level'),
   inchargeIds: z.array(z.string().min(1, 'ID cannot be empty')).min(1, 'At least one in-charge ID is required')
 });
 
-const ReportAccident = () => {
+const ReportIncident = () => {
   const {
     register,
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(reportAccidentSchema),
+    resolver: zodResolver(reportIncidentSchema),
     defaultValues: {
       location: '',
       description: '',
@@ -38,7 +38,7 @@ const ReportAccident = () => {
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white  rounded-lg">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Accident</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Incident</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         
         <div>
@@ -137,7 +137,7 @@ const ReportAccident = () => {
 
         <button
           type="submit"
-          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
+          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium"
         >
           Submit Report
         </button>
@@ -146,4 +146,4 @@ const ReportAccident = () => {
   );
 };
 
-export default ReportAccident;
+export default ReportIncident;

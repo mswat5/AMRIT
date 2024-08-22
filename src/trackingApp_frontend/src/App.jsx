@@ -21,6 +21,8 @@ import FacilityItem5 from "./layout/Facility/items/FacilityItem5";
 import UserManagement from "./layout/Admin/UserManagement";
 import FacilityApproval from "./layout/Admin/FacilityApproval";
 import AmbulanceApproval from "./layout/Admin/AmbulanceApproval";
+import InchargeApproval from "./layout/Admin/InchargeApproval";
+import Inchargeform from "./layout/incharge/inchargeform";
 
 const App = () => {
   return (
@@ -40,7 +42,15 @@ const App = () => {
             <Route path="User-management" element={<UserManagement />} />
             <Route path="Facility-approval" element={<FacilityApproval />} />
             <Route path="Ambulance-approval" element={<AmbulanceApproval />} />
+            <Route path="InchargeApproval" element={<InchargeApproval />} />
             <Route path="*" element={<Navigate to="facility-approval" />} />
+          </Route>
+          <Route path="/incharge/*" 
+            element={
+              <SharedLayout><AppRoute /></SharedLayout>
+            }>
+           <Route path="*" element={<Inchargeform />} />
+         
           </Route>
           <Route path="/Ambulance/*" 
             element={

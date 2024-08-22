@@ -1,10 +1,10 @@
 import React from "react";
 import Nav from "./Nav";
 
-interface Props {
-  children: React.ReactNode;
-}
-const SharedLayout = ({ children }: Props) => {
+// interface Props {
+//   children: React.ReactNode;
+// }
+const SharedLayout = ({ children }) => {
   return (
     <div >
     <Nav />

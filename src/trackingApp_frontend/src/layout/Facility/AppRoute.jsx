@@ -1,11 +1,8 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
-interface Props {
-  children: React.ReactNode;
-}
 
-const AppRoute = ({ children }: Props) => {
+const AppRoute = ({ children }) => {
   return (
     <div className="">
       <div className="min-h-screen md:grid md:grid-cols-12">

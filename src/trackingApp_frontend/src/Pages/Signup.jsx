@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom";
 import { useState } from "react"
-import { ChevronRight, User, BriefcaseMedical, Building } from "lucide-react";
+import { ChevronRight, User, BriefcaseMedical, Building, User2, UserRoundCheckIcon } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import Quote from "../components/Quote"
 
@@ -48,6 +48,17 @@ const Signup = () => {
                   <div className="flex items-center">
                     <User className="text-primary" />
                     <span className="ml-2 font-bold">Admin</span>
+                  </div>
+                  <ChevronRight />
+                </Button>
+                <Button
+                  className="flex justify-between items-center w-full border border-gray-300 p-3 rounded-md mb-2"
+                  variant="secondary"
+                  onClick={() => navigate('/incharge/home')}
+                >
+                  <div className="flex items-center">
+                    <UserRoundCheckIcon className="text-primary" />
+                    <span className="ml-2 font-bold">Incharge</span>
                   </div>
                   <ChevronRight />
                 </Button>

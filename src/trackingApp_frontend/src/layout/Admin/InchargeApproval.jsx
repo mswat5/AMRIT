@@ -22,29 +22,31 @@ import {
 // Sample data for demonstration
 const data = Array.from({ length: 50 }, (_, i) => ({
   id: (i + 1).toString(),
-  name: `Ambulance ${String.fromCharCode(65 + (i % 26))}`,
+  name: `incharge ${String.fromCharCode(65 + (i % 26))}`,
   location: `Location ${String.fromCharCode(65 + (i % 26))}`,
-  status: i % 2 === 0 ? 'Pending' : 'Approved',
+ // status: i % 2 === 0 ? 'Pending' : 'Approved',
+ designation: `incharge ${String.fromCharCode(65 + (i % 26))}`,
   contactInfo: `123-456-78${i.toString().padStart(2, '0')}`,
   certificationId: `Cert${String.fromCharCode(65 + (i % 26))}${i}`,
 }));
 
 // Function to handle approval
-const handleApprove = (id) => {
+const handleEdit = (id) => {
   // Handle approve logic
-  console.log(`Approved ambulance with ID: ${id}`);
+  console.log(`Edit patient with ID: ${id}`);
 };
 
 // Function to handle rejection
-const handleReject = (id) => {
+const handleDelete = (id) => {
   // Handle reject logic
-  console.log(`Rejected ambulance with ID: ${id}`);
+  console.log(`Delete Patient with ID: ${id}`);
 };
 
 const columns = [
-  { accessorKey: 'name', header: 'Ambulance Name' },
+  { accessorKey: 'name', header: 'Incharge Name' },
   { accessorKey: 'location', header: 'Location' },
-  { accessorKey: 'status', header: 'Status' },
+  // { accessorKey: 'status', header: 'Status' },
+  { accessorKey: 'designation', header: 'Designation' },
   { accessorKey: 'contactInfo', header: 'Contact Info' },
   { accessorKey: 'certificationId', header: 'Certification ID' },
   {
@@ -52,15 +54,15 @@ const columns = [
     header: 'Actions',
     cell: ({ row }) => (
       <div className="flex justify-center space-x-2">
-        <Button onClick={() => handleApprove(row.original.id)} variant="success" className="bg-green-600 font-bold">Approve</Button>
-        <Button onClick={() => handleReject(row.original.id)} 
-        className="font-bold" variant="">Reject</Button>
+        <Button onClick={() => handleEdit(row.original.id)} variant="success" className="bg-green-600 font-bold">Edit</Button>
+        <Button onClick={() => handleDelete(row.original.id)} 
+        className="font-bold" variant="">Delete</Button>
       </div>
     ),
   },
 ];
 
-const AmbulanceApprovalTable = () => {
+const InchargeApproval = () => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState('');
 
@@ -80,6 +82,9 @@ const AmbulanceApprovalTable = () => {
   });
 
   return (
+   
+      <div className="p-4 min-h-screen dark:bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-blue-700 via-blue-800 to-gray-900 flex flex-col items-center">
+    <h1 className="text-2xl font-bold mb-4">Incharge Approval</h1>
     <div className="p-4 flex flex-col items-center overflow-x-auto w-full">
       <input
         type="text"
@@ -89,7 +94,7 @@ const AmbulanceApprovalTable = () => {
         className="mb-4 p-2 border border-gray-300 text-black rounded"
       />
       <Table className="min-w-full border-separate border-spacing-0">
-        <TableCaption>A list of ambulances awaiting approval</TableCaption>
+        <TableCaption>A list of patients awaiting approval</TableCaption>
         <TableHeader className="">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="bg-gray-900 text-white ">
@@ -160,7 +165,8 @@ const AmbulanceApprovalTable = () => {
         </div>
       </div>
     </div>
+    </div>
   );
 };
 
-export default AmbulanceApprovalTable;
+export default InchargeApproval;

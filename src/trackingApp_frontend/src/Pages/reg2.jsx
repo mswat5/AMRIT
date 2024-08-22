@@ -3,9 +3,8 @@ import { motion } from 'framer-motion'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
-type Inputs = z.infer<typeof FormDataSchema>
 
 const steps = [
   {
@@ -46,16 +45,15 @@ export default function Form() {
     resolver: zodResolver(FormDataSchema)
   })
 
-  const processForm: SubmitHandler<Inputs> = data => {
+  const processForm = data => {
     console.log(data)
     reset()
   }
 
-  type FieldName = keyof Inputs
 
   const next = async () => {
     const fields = steps[currentStep].fields
-    const output = await trigger(fields as FieldName[], { shouldFocus: true })
+    const output = await trigger(fields , { shouldFocus: true })
 
     if (!output) return
 

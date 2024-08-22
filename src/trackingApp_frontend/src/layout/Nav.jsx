@@ -2,7 +2,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { AlertCircle, Building, FileText, Package, User, Menu, X, Shield, Car, Users } from "lucide-react";
+import { AlertCircle, Building, FileText, Package, User, Menu, X, Shield, Car, Users, User2 } from "lucide-react";
 import { useState } from "react";
 
 const Nav = () => {
@@ -26,6 +26,7 @@ const Nav = () => {
 
   const isFacilityRoute = location.pathname.startsWith('/facility');
   const isAdminRoute = location.pathname.startsWith('/admin');
+  
 
   return (
     <div className="flex justify-between p-2 items-center dark:bg-slate-900 border-b">
@@ -82,6 +83,7 @@ const Nav = () => {
               { to: "/admin/facility-approval", icon: <Shield />, text: "Facility Approval" },
               { to: "/admin/ambulance-approval", icon: <Car />, text: "Ambulance Approval" },
               { to: "/admin/user-management", icon: <Users />, text: "User Management" },
+              {to:"/admin/InchargeApproval",icon:<User2/>,text:"Incharge Approval"},
             ].map((link, index) => (
               <NavLink
                 key={index}
@@ -109,12 +111,13 @@ const Nav = () => {
             </button>
           </div>
 
-          <div className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${isAdminMenuOpen ? "block" : "hidden"}`}>
-            <div className="flex flex-col justify-center items-center h-full">
+          <div className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm  ${isAdminMenuOpen ? "block" : "hidden"}`}>
+            <div className="flex flex-col justify-center items-center h-full z-50">
               {[
                 { to: "/admin/facility-approval", icon: <Shield />, text: "Facility Approval" },
                 { to: "/admin/ambulance-approval", icon: <Car />, text: "Ambulance Approval" },
                 { to: "/admin/user-management", icon: <Users />, text: "User Management" },
+                {to:"/admin/InchargeApproval",icon:<User2/>,text:"Incharge Approval"},
               ].map((link, index) => (
                 <NavLink
                   key={index}

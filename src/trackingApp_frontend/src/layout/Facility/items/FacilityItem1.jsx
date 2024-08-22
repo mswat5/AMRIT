@@ -5,7 +5,6 @@ import AdmitPatient from '../patientManagement/admit';
 import Discharge from '../patientManagement/discharge';
 import Transfer from '../patientManagement/transfer';
 import GetPatientDetails from '../patientManagement/details';
-import UpdatePatientDetails from '../patientManagement/updateDetails';
 import UpdatePatientStatus from '../patientManagement/updateStatus';
 
 const FacilityItem1 = () => {
@@ -33,7 +32,7 @@ const FacilityItem1 = () => {
             <div onClick={() => handleCardClick('discharge')} className="block p-4 bg-gray-200 rounded-md cursor-pointer">Discharge</div>
             <div onClick={() => handleCardClick('transfer')} className="block p-4 bg-gray-200 rounded-md cursor-pointer">Transfer to Another Facility</div>
             <div onClick={() => handleCardClick('details')} className="block p-4 bg-gray-200 rounded-md cursor-pointer">Get Patient Details</div>
-            <div onClick={() => handleCardClick('update-details')} className="block p-4 bg-gray-200 rounded-md cursor-pointer">Update Patient Details</div>
+           
             <div onClick={() => handleCardClick('update-status')} className="block p-4 bg-gray-200 rounded-md cursor-pointer">Update Patient Status</div>
           </div>
         </div>
@@ -63,8 +62,6 @@ const FormSwitcher = () => {
       return <Transfer />;
     case 'details':
       return <GetPatientDetails />;
-    case 'update-details':
-      return <UpdatePatientDetails />;
     case 'update-status':
       return <UpdatePatientStatus />;
     default:
