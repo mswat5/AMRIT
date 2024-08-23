@@ -28,6 +28,7 @@ actor class AmbulanceCanister() {
             currentLocation = registration.location;
             assignedAccidentId = null;
             registrationStatus = #Approved;
+            certificationID = registration.certificationID;
         };
 
         Map.set(ambulances, thash, id, newAmbulance);
