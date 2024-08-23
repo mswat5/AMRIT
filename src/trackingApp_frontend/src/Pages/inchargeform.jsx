@@ -9,8 +9,12 @@ const inchargeFormSchema = z.object({
   inchargeName: z.string().min(1, 'Incharge Name is required'),
   location: z.string().min(1, 'Location is required'),
   designation: z.string().min(1, 'Designation is required'),
-  contactInfo: z.string().min(1, 'Contact Info is required').regex(/^\+?\d+$/, 'Invalid contact number'),
-  certificationId: z.string().min(1, 'Certification ID is required')
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  contactInfo: z
+    .string()
+    .min(1, 'Contact Info is required')
+    .regex(/^\+?\d+$/, 'Invalid contact number'),
+  certificationId: z.string().min(1, 'Certification ID is required'),
 });
 
 const InchargeForm = () => {
@@ -26,14 +30,19 @@ const InchargeForm = () => {
       inchargeName: '',
       location: '',
       designation: '',
+      email: '',
       contactInfo: '',
       certificationId: '',
     },
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-    reset()
+     // Convert form data to JSON format
+     const jsonData = JSON.stringify(data, null, 2);
+    
+     // Log the JSON data to the console
+     console.log(jsonData);
+    reset();
     navigate('/Incharge/IDashboard');
   };
 
@@ -89,6 +98,23 @@ const InchargeForm = () => {
           {errors.designation && (
             <p className="mt-2 text-sm text-red-400">
               {errors.designation.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+            Email*
+          </label>
+          <input
+            type="email"
+            id="email"
+            {...register('email')}
+            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+          />
+          {errors.email && (
+            <p className="mt-2 text-sm text-red-400">
+              {errors.email.message}
             </p>
           )}
         </div>
