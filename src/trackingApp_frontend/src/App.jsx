@@ -6,8 +6,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import FirstPageContent from "./Pages/Signup";
-import RegisterAmbulance from "./Pages/reg2";
-import RegisterFacility from "./Pages/reg3";
+import RegisterAmbulance from "./Pages/regAmbulance";
+import RegisterFacility from "./Pages/regFacility";
 import NotFound from "./NotFound";
 import AppRoute from "./layout/Admin/AppRoute";
 import AppRoute2 from "./layout/Ambulance/AppRoute";
@@ -22,7 +22,7 @@ import UserManagement from "./layout/Admin/UserManagement";
 import FacilityApproval from "./layout/Admin/FacilityApproval";
 import AmbulanceApproval from "./layout/Admin/AmbulanceApproval";
 import InchargeApproval from "./layout/Admin/InchargeApproval";
-import Inchargeform from "./layout/incharge/inchargeform";
+import Inchargeform from "./Pages/inchargeform";
 
 import { createActor as createAdminActor } from "../../declarations/adminCanister";
 import { createActor as createAccidentActor } from "../../declarations/accidentCanister";
@@ -35,6 +35,7 @@ import ActorContext from "./ActorContext";
 import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent } from "@dfinity/agent";
 import { useEffect, useState } from "react";
+import Idashboard from "./layout/incharge/Idashboard";
 
 const App = () => {
   const [actors, setActors] = useState({
@@ -147,6 +148,12 @@ const App = () => {
                 path="Ambulance"
                 element={<RegisterAmbulance />}
               />
+             
+              <Route
+                path="Incharge"
+                element={<Inchargeform />}
+              />
+          
               <Route
                 path="Facility"
                 element={<RegisterFacility />}
@@ -181,19 +188,7 @@ const App = () => {
                 element={<Navigate to="facility-approval" />}
               />
             </Route>
-            <Route
-              path="/Incharge/*"
-              element={
-                <SharedLayout>
-                  <AppRoute />
-                </SharedLayout>
-              }
-            >
-              <Route
-                path="*"
-                element={<Inchargeform />}
-              />
-            </Route>
+           
             <Route
               path="/Ambulance/*"
               element={
@@ -202,6 +197,16 @@ const App = () => {
                 </SharedLayout>
               }
             />
+             <Route
+              path="/Incharge/*"
+              element={
+                <SharedLayout>
+                  <AppRoute />
+                </SharedLayout>
+              }
+            >
+           <Route path="IDashboard"  element={<Idashboard/>} />
+            </Route>
             <Route
               path="/Facility/*"
               element={

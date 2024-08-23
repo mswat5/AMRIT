@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // Define the validation schema using Zod
@@ -13,8 +14,10 @@ const inchargeFormSchema = z.object({
 });
 
 const InchargeForm = () => {
+  const navigate = useNavigate();
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -30,6 +33,8 @@ const InchargeForm = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    reset()
+    navigate('/Incharge/IDashboard');
   };
 
   return (
