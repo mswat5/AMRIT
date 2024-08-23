@@ -16,6 +16,8 @@ module {
         contactInfo : ContactInfo;
         inchargeType : InchargeType;
         registrationStatus : RegistrationStatus;
+        certificationID : Text;
+        location : Text;
     };
 
     public type ReportNotification = {
@@ -32,6 +34,7 @@ module {
         services : [Text];
         capacity : Nat;
         contactInfo : ContactInfo;
+        certificationID : Text;
     };
 
     public type Facility = {
@@ -44,6 +47,7 @@ module {
         availableBeds : Nat;
         contactInfo : ContactInfo;
         registrationStatus : RegistrationStatus;
+        certificationID : Text;
     };
 
     public type Location = {
@@ -116,6 +120,7 @@ module {
         currentLocation : Location;
         assignedAccidentId : ?Text;
         registrationStatus : RegistrationStatus;
+        certificationID : Text;
     };
 
     public type AmbulanceStatus = {
@@ -154,6 +159,7 @@ module {
         userType : { #Admin; #Facility; #Ambulance; #Incharge };
         name : Text;
         registrationStatus : RegistrationStatus;
+        certificationID : Text;
     };
 
     public type AmbulanceRegistration = {
@@ -161,6 +167,7 @@ module {
         name : Text;
         location : Location;
         contactInfo : ContactInfo;
+        certificationID : Text;
     };
 
     public type SystemOverview = {

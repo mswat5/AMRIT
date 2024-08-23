@@ -50,6 +50,7 @@ actor class FacilityCanister() {
             availableBeds = registration.capacity;
             contactInfo = registration.contactInfo;
             registrationStatus = #Approved;
+            certificationID = registration.certificationID;
         };
 
         Map.set(facilities, thash, id, newFacility);

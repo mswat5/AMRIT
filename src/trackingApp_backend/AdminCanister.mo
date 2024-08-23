@@ -50,6 +50,7 @@ actor class AdminCanister() {
       userType = #Facility;
       name = registration.name;
       registrationStatus = #Pending;
+      certificationID = registration.certificationID;
     };
 
     Map.set(users, thash, userId, userDetails);
@@ -127,6 +128,7 @@ actor class AdminCanister() {
       userType = #Ambulance;
       name = registration.name;
       registrationStatus = #Pending;
+      certificationID = registration.certificationID;
     };
 
     Map.set(users, thash, userId, userDetails);
@@ -269,6 +271,7 @@ actor class AdminCanister() {
       userType = #Incharge;
       name = details.name;
       registrationStatus = #Pending;
+      certificationID = details.certificationID;
     };
 
     let inchargeDetails : InchargeDetails = {
@@ -278,6 +281,8 @@ actor class AdminCanister() {
       contactInfo = details.contactInfo;
       inchargeType = details.inchargeType;
       registrationStatus = #Pending;
+      certificationID = details.certificationID;
+      location = details.location;
     };
 
     Map.set(pendingIncharges, thash, inchargeId, inchargeDetails);
