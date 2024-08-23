@@ -6,7 +6,7 @@ import {
   User,
   BriefcaseMedical,
   Building,
-  User,
+  User2,
   UserRoundCheckIcon,
 } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
