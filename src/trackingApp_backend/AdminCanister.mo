@@ -11,6 +11,7 @@ import Time "mo:base/Time";
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
 
+import AmbulanceCanister "AmbulanceCanister";
 import Types "Types";
 
 actor class AdminCanister() {
@@ -46,15 +47,19 @@ actor class AdminCanister() {
 
     let userDetails : UserDetails = {
       id = userId;
-      principal = registration.principal;
+      principal = caller;
       userType = #Facility;
       name = registration.name;
       registrationStatus = #Pending;
       certificationID = registration.certificationID;
     };
 
+    let registrationFill : FacilityRegistration = {
+      registration with principal = caller;
+    };
+
     Map.set(users, thash, userId, userDetails);
-    Map.set(pendingFacilities, thash, userId, registration);
+    Map.set(pendingFacilities, thash, userId, registrationFill);
     #ok("Facility registration submitted with ID: " # userId);
   };
 
@@ -124,15 +129,19 @@ actor class AdminCanister() {
 
     let userDetails : UserDetails = {
       id = userId;
-      principal = registration.principal;
+      principal = caller;
       userType = #Ambulance;
       name = registration.name;
       registrationStatus = #Pending;
       certificationID = registration.certificationID;
     };
 
+    let registrationFill : AmbulanceRegistration = {
+      registration with principal = caller;
+    };
+
     Map.set(users, thash, userId, userDetails);
-    Map.set(pendingAmbulances, thash, userId, registration);
+    Map.set(pendingAmbulances, thash, userId, registrationFill);
     #ok("Ambulance registration submitted with ID: " # userId);
   };
 
@@ -267,7 +276,7 @@ actor class AdminCanister() {
 
     let userDetails : UserDetails = {
       id = userId;
-      principal = details.principal;
+      principal = caller;
       userType = #Incharge;
       name = details.name;
       registrationStatus = #Pending;
@@ -276,7 +285,7 @@ actor class AdminCanister() {
 
     let inchargeDetails : InchargeDetails = {
       id = inchargeId;
-      principal = details.principal;
+      principal = caller;
       name = details.name;
       contactInfo = details.contactInfo;
       inchargeType = details.inchargeType;
