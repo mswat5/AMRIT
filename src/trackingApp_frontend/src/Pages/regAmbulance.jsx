@@ -47,7 +47,11 @@ export default function Form() {
   })
 
   const processForm = data => {
-    console.log(data)
+   // Convert form data to JSON format
+   const jsonData = JSON.stringify(data, null, 2);
+    
+   // Log the JSON data to the console
+   console.log(jsonData);
     reset()
     navigate('/ambulance/home');
   }
