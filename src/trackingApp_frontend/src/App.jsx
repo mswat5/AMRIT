@@ -182,7 +182,7 @@ const App = () => {
               />
             </Route>
             <Route
-              path="/incharge/*"
+              path="/Incharge/*"
               element={
                 <SharedLayout>
                   <AppRoute />

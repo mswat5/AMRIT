@@ -151,7 +151,7 @@ module {
     public type UserDetails = {
         id : Text;
         principal : Principal;
-        userType : { #Admin; #Facility; #Ambulance };
+        userType : { #Admin; #Facility; #Ambulance; #Incharge };
         name : Text;
         registrationStatus : RegistrationStatus;
     };

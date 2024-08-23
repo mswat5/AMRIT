@@ -24,19 +24,20 @@ const Signup = () => {
     if (isAuthenticated) {
       let resultRole = await actors.admin.getUserRole();
       console.log(resultRole);
-      // checkRegistration(resultRole.ok);
-      return setc(!c);
+      checkRegistration(resultRole.ok);
     }
   }
   const checkRegistration = (type) => {
     if (type === "admin") {
-      navigate("/Health-User/Home");
-    } else if (type === "Professional") {
-      navigate("/Health-Professional/Home");
+      navigate("/Admin/");
     } else if (type === "facility") {
-      navigate("/Health-Service/Home");
+      navigate("/Facility/");
+    } else if (type === "ambulance") {
+      navigate("/Ambulance/");
+    } else if (type === "incharge") {
+      navigate("/Incharge/");
     } else {
-      navigate(`/Register/${type}`);
+      setc(!c);
     }
   };
   return (

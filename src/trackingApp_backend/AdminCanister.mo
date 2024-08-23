@@ -209,8 +209,19 @@ actor class AdminCanister() {
       return #err("Anonymous principals are not allowed to register incharges");
     };
 
+    let userId = Nat.toText(nextUserId);
+    nextUserId += 1;
+
     let inchargeId = Nat.toText(nextInchargeId);
     nextInchargeId += 1;
+
+    let userDetails : UserDetails = {
+      id = userId;
+      principal = details.principal;
+      userType = #Incharge;
+      name = details.name;
+      registrationStatus = #Pending;
+    };
 
     let inchargeDetails : InchargeDetails = {
       id = inchargeId;
@@ -222,6 +233,8 @@ actor class AdminCanister() {
     };
 
     Map.set(pendingIncharges, thash, inchargeId, inchargeDetails);
+    Map.set(users, thash, userId, userDetails);
+
     #ok("Incharge registration submitted with ID: " # inchargeId);
   };
 
@@ -232,16 +245,30 @@ actor class AdminCanister() {
     };
 
     switch (Map.get(pendingIncharges, thash, inchargeId)) {
-      case null { #err("No pending incharge found with ID: " # inchargeId) };
+      case null {
+        return #err("No pending incharge found with ID: " # inchargeId);
+      };
       case (?incharge) {
+        Map.delete(pendingIncharges, thash, inchargeId);
+
+        // Update user status
+        switch (Map.get(users, thash, incharge.id)) {
+          case null {
+            return #err("User not found for incharge ID: " # inchargeId);
+          };
+          case (?user) {
+            let updatedUser = { user with registrationStatus = #Approved };
+            Map.set(users, thash, incharge.id, updatedUser);
+          };
+        };
+
         let approvedIncharge = { incharge with registrationStatus = #Approved };
         Map.set(approvedIncharges, thash, inchargeId, approvedIncharge);
-        Map.delete(pendingIncharges, thash, inchargeId);
+
         #ok("Incharge approved successfully with ID: " # inchargeId);
       };
     };
   };
-
   public query func getInchargeReports(inchargeId : Text) : async Result<[Text], Text> {
     switch (Map.get(inchargeReports, thash, inchargeId)) {
       case null { #err("No reports found for this incharge") };
@@ -350,12 +377,12 @@ actor class AdminCanister() {
           Debug.print("Incharge not found with ID: " # inchargeId);
         };
         case (?incharge) {
-          let notification : ReportNotification = {
-            reportId = reportId;
-            inchargeId = incharge.id;
-            timestamp = Time.now();
-            details = details;
-          };
+          // let notification : ReportNotification = {
+          //   reportId = reportId;
+          //   inchargeId = incharge.id;
+          //   timestamp = Time.now();
+          //   details = details;
+          // };
 
           // Grant report access to the incharge
           ignore await reportCaseToIncharge(inchargeId, reportId, report.patientId, report.accidentId);
@@ -417,12 +444,13 @@ actor class AdminCanister() {
           case (#Admin) { return #ok("admin") };
           case (#Facility) { return #ok("facility") };
           case (#Ambulance) { return #ok("ambulance") };
+          case (#Incharge) { return #ok("incharge") };
         };
       };
     };
 
-    // #err("User not found");
-    #ok("admin");
+    #ok("User not found");
+
   };
 
   private func checkPermitted(caller : Principal) : async Bool {
