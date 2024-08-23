@@ -61,7 +61,7 @@ actor class AdminCanister() {
     if (Principal.isAnonymous(caller)) {
       return #err("Anonymous principals are not allowed to approve facilities");
     };
-
+    //Admin Check
     switch (Map.get(pendingFacilities, thash, facilityId)) {
       case null { #err("No pending registration found with ID: " # facilityId) };
       case (?registration) {
@@ -95,6 +95,24 @@ actor class AdminCanister() {
     };
   };
 
+  public shared ({ caller }) func rejectFacility(facilityId : Text) : async Result<Text, Text> {
+    if (Principal.isAnonymous(caller)) {
+      return #err("Anonymous principals are not allowed to reject facilities");
+    };
+
+    // Admin Check
+
+    switch (Map.get(pendingFacilities, thash, facilityId)) {
+      case null {
+        return #err("No pending facility found with ID: " # facilityId);
+      };
+      case (?registration) {
+        Map.delete(pendingFacilities, thash, facilityId);
+        Map.delete(users, thash, facilityId);
+        #ok("Facility rejected successfully with ID: " # facilityId);
+      };
+    };
+  };
   public shared ({ caller }) func registerAmbulance(registration : AmbulanceRegistration) : async Result<Text, Text> {
     if (Principal.isAnonymous(caller)) {
       return #err("Anonymous principals are not allowed to register ambulances");
@@ -120,6 +138,7 @@ actor class AdminCanister() {
     if (Principal.isAnonymous(caller)) {
       return #err("Anonymous principals are not allowed to approve ambulances");
     };
+    //Admin Check
 
     switch (Map.get(pendingAmbulances, thash, ambulanceId)) {
       case null { #err("No pending ambulance found with ID: " # ambulanceId) };
@@ -154,15 +173,40 @@ actor class AdminCanister() {
     };
   };
 
+  public shared ({ caller }) func rejectAmbulance(ambulanceId : Text) : async Result<Text, Text> {
+    if (Principal.isAnonymous(caller)) {
+      return #err("Anonymous principals are not allowed to reject ambulances");
+    };
+
+    // Admin Check
+
+    switch (Map.get(pendingAmbulances, thash, ambulanceId)) {
+      case null {
+        return #err("No pending ambulance found with ID: " # ambulanceId);
+      };
+      case (?registration) {
+        Map.delete(pendingAmbulances, thash, ambulanceId);
+        Map.delete(users, thash, ambulanceId);
+        #ok("Ambulance rejected successfully with ID: " # ambulanceId);
+      };
+    };
+  };
+
   public query func listPendingRegistrations() : async [(Text, FacilityRegistration)] {
+    //Admin Check
+
     Map.toArray(pendingFacilities);
   };
 
   public query func listPendingAmbulances() : async [(Text, AmbulanceRegistration)] {
+    //Admin Check
+
     Map.toArray(pendingAmbulances);
   };
 
   public query func listUsers() : async Result.Result<[(Text, UserDetails)], Text> {
+    //Admin Check
+
     switch (Map.toArray(users)) {
       case (value) { #ok(value) };
       case (error) { #err("Failed to get the Users ") };
@@ -170,6 +214,8 @@ actor class AdminCanister() {
   };
 
   public query func getUserDetails(userId : Text) : async Result<UserDetails, Text> {
+    //Admin Check
+
     switch (Map.get(users, thash, userId)) {
       case null { #err("User not found") };
       case (?user) { #ok(user) };
@@ -177,6 +223,8 @@ actor class AdminCanister() {
   };
 
   public func getSystemOverview() : async Result<SystemOverview, Text> {
+    //Admin Check
+
     let facilityCanister = actor ("br5f7-7uaaa-aaaaa-qaaca-cai") : actor {
       getTotalFacilities : () -> async Nat;
     };
@@ -240,9 +288,12 @@ actor class AdminCanister() {
 
   // Approve Incharge
   public shared ({ caller }) func approveIncharge(inchargeId : Text) : async Result<Text, Text> {
+
     if (Principal.isAnonymous(caller)) {
       return #err("Anonymous principals are not allowed to approve incharges");
     };
+
+    //Admin Check
 
     switch (Map.get(pendingIncharges, thash, inchargeId)) {
       case null {
@@ -455,5 +506,13 @@ actor class AdminCanister() {
 
   private func checkPermitted(caller : Principal) : async Bool {
     return true;
+  };
+
+  private func checkAdmin(caller : Principal) : async Bool {
+    let admin = "";
+    if (admin == Principal.toText(caller)) {
+      return true;
+    };
+    return false;
   };
 };
