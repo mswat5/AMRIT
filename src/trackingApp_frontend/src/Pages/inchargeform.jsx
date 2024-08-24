@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import ActorContext from "../ActorContext";
 import { Principal } from "@dfinity/principal";
-// Define the validation schema using Zod
+
 const inchargeFormSchema = z.object({
   inchargeName: z.string().min(1, "Incharge Name is required"),
   location: z.string().min(1, "Location is required"),
@@ -15,10 +15,10 @@ const inchargeFormSchema = z.object({
     "Designation is required"
   ),
   email: z.string().min(1, "Email is required").email("Invalid email address"),
-  contactInfo: z
+  phoneNumber: z
     .string()
-    .min(1, "Contact Info is required")
-    .regex(/^\+?\d+$/, "Invalid contact number"),
+    .min(1, "Phone Number is required")
+    .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number"),
   certificationId: z
     .string()
     .min(1, "Certification ID is required")
@@ -43,7 +43,7 @@ const InchargeForm = () => {
       location: "",
       designation: "",
       email: "",
-      contactInfo: "",
+      phoneNumber: "",
       certificationId: "",
     },
   });
@@ -54,7 +54,7 @@ const InchargeForm = () => {
     const result = await actors.admin.registerIncharge({
       certificationID: data.certificationId,
       contactInfo: {
-        phoneNumber: data.contactInfo,
+        phoneNumber: data.phoneNumber,
         email: data.email,
       },
       id: "0",
@@ -200,21 +200,21 @@ const InchargeForm = () => {
 
         <div>
           <label
-            htmlFor="contactInfo"
+            htmlFor="phoneNumber"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            Mobile No.
+            Phone Number*
           </label>
           <input
             type="text"
-            id="contactInfo"
-            {...register("contactInfo")}
+            id="phoneNumber"
+            {...register("phoneNumber")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
             placeholder="+1234567890"
           />
-          {errors.contactInfo && (
+          {errors.phoneNumber && (
             <p className="mt-2 text-sm text-red-400">
-              {errors.contactInfo.message}
+              {errors.phoneNumber.message}
             </p>
           )}
         </div>
