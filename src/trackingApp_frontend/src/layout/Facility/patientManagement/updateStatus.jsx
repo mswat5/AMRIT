@@ -3,16 +3,28 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// Zod Schema Definition
+// Update the validation schema with patientStatus options
 const updateStatusSchema = z.object({
-  patientId: z.string().min(1, "Patient ID is required"),
-  patientStatus: z.string().min(1, "Patient status is required"),
+  patientId: z
+    .string()
+    .min(1, "Patient ID is required")
+    .regex(/^\+?\d+$/, "Invalid input (should be a number)"),
+  patientStatus: z.enum(
+    [
+      "Admitted",
+      "UnderTreatment",
+      "Stable",
+      "Critical",
+      "InTransit",
+      "Discharged",
+    ],
+    "Patient status is required"
+  ),
   file: z.instanceof(FileList).refine((files) => files.length > 0, {
     message: "File upload is required",
   }),
 });
 
-// UpdateStatus Component
 const UpdateStatus = () => {
   const {
     register,
@@ -29,14 +41,12 @@ const UpdateStatus = () => {
 
   const onSubmit = (data) => {
     console.log(data);
-    // Handle form submission logic here
   };
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Update Status</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
-        {/* Patient ID */}
         <div>
           <label
             htmlFor="patientId"
@@ -57,7 +67,6 @@ const UpdateStatus = () => {
           )}
         </div>
 
-        {/* Patient Status */}
         <div>
           <label
             htmlFor="patientStatus"
@@ -65,12 +74,19 @@ const UpdateStatus = () => {
           >
             Patient Status*
           </label>
-          <input
-            type="text"
+          <select
             id="patientStatus"
             {...register("patientStatus")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-          />
+          >
+            <option value="">Select Status</option>
+            <option value="Admitted">Admitted</option>
+            <option value="UnderTreatment">Under Treatment</option>
+            <option value="Stable">Stable</option>
+            <option value="Critical">Critical</option>
+            <option value="InTransit">In Transit</option>
+            <option value="Discharged">Discharged</option>
+          </select>
           {errors.patientStatus && (
             <p className="mt-2 text-sm text-red-400">
               {errors.patientStatus.message}
@@ -78,7 +94,6 @@ const UpdateStatus = () => {
           )}
         </div>
 
-        {/* File Upload */}
         <div>
           <label
             htmlFor="file"
