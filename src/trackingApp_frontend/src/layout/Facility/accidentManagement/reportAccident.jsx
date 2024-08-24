@@ -1,17 +1,20 @@
-import React from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
+import React, { useContext } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ActorContext from "../../../ActorContext";
 // Define the validation schema using Zod
 const reportIncidentSchema = z.object({
-  location: z.string().min(1, 'Location is required'),
-  description: z.string().min(1, 'Description is required'),
-  severity: z.enum(['low', 'medium', 'high'], 'Select a severity level'),
-  inchargeIds: z.array(z.string().min(1, 'ID cannot be empty')).min(1, 'At least one in-charge ID is required')
+  location: z.string().min(1, "Location is required"),
+  description: z.string().min(1, "Description is required"),
+  severity: z.enum(["low", "medium", "high"], "Select a severity level"),
+  inchargeIds: z
+    .array(z.string().min(1, "ID cannot be empty"))
+    .min(1, "At least one in-charge ID is required"),
 });
 
 const ReportIncident = () => {
+  const { actors } = useContext(ActorContext);
   const {
     register,
     control,
@@ -20,35 +23,56 @@ const ReportIncident = () => {
   } = useForm({
     resolver: zodResolver(reportIncidentSchema),
     defaultValues: {
-      location: '',
-      description: '',
-      severity: '',
-      inchargeIds: [''],
+      location: "",
+      description: "",
+      severity: "",
+      inchargeIds: [""],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'inchargeIds',
+    name: "inchargeIds",
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
+    const result = await actors.accident.createAccidentReport(
+      (details = {
+        currentFacilityId: "0",
+        description: data.description,
+        location: {
+          latitude: latitude,
+          longitude: longitude,
+          address: data.facilityLocation,
+        },
+        m,
+        reportingFacilityId: "Text",
+        severity: "AccidentSeverity;",
+      }),
+      [],
+      data.inchargeIds
+    );
   };
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white  rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Incident</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
-        
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-y-6"
+      >
         <div>
-          <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="location"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Location*
           </label>
           <input
             type="text"
             id="location"
-            {...register('location')}
+            {...register("location")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           />
           {errors.location && (
@@ -59,12 +83,15 @@ const ReportIncident = () => {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Description*
           </label>
           <textarea
             id="description"
-            {...register('description')}
+            {...register("description")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
             rows="4"
           ></textarea>
@@ -76,12 +103,15 @@ const ReportIncident = () => {
         </div>
 
         <div>
-          <label htmlFor="severity" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="severity"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Severity*
           </label>
           <select
             id="severity"
-            {...register('severity')}
+            {...register("severity")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           >
             <option value="">Select Severity</option>
@@ -97,9 +127,14 @@ const ReportIncident = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium leading-6 text-gray-900">In-Charge IDs*</label>
+          <label className="block text-sm font-medium leading-6 text-gray-900">
+            In-Charge IDs*
+          </label>
           {fields.map((field, index) => (
-            <div key={field.id} className="flex gap-x-2 mb-4">
+            <div
+              key={field.id}
+              className="flex gap-x-2 mb-4"
+            >
               <input
                 type="text"
                 {...register(`inchargeIds.${index}`)}
@@ -123,7 +158,7 @@ const ReportIncident = () => {
           ))}
           <button
             type="button"
-            onClick={() => append('')}
+            onClick={() => append("")}
             className="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 text-sm font-medium"
           >
             Add ID

@@ -522,6 +522,18 @@ actor class AdminCanister() {
     return true;
   };
 
+  public shared ({ caller }) func registerAdmin() : async Bool {
+    let userDetails : UserDetails = {
+      id = Nat.toText(9999);
+      principal = caller;
+      userType = #Admin;
+      name = "Admin";
+      registrationStatus = #Approved;
+      certificationID = "details.certificationID";
+    };
+    Map.set(users, thash, "9999", userDetails);
+    return true;
+  };
   private func checkAdmin(caller : Principal) : async Bool {
     let admin = "";
     if (admin == Principal.toText(caller)) {

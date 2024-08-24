@@ -178,8 +178,6 @@ actor class AccidentCanister() {
                     case (#ok(callerFacilityId)) {
                         // Get the patient's current facility
 
-                        // Assuming there's a patient associated with this accident
-                        // You might need to modify this part based on how patients are associated with accidents in your system
                         let patientResult = await patientCanister.getPatientCurrentFacility(patientID);
                         switch (patientResult) {
                             case (#err(error)) {

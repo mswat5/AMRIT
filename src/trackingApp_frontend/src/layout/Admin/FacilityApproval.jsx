@@ -96,27 +96,60 @@ const FacilityApprovalTable = () => {
 
   const columns = [
     { accessorKey: "name", header: "Facility Name" },
-    { accessorKey: "location", header: "Location" },
-    { accessorKey: "status", header: "Status" },
-    { accessorKey: "services", header: "Services" },
+    {
+      accessorKey: "location",
+      header: "Location",
+      cell: ({ row }) => {
+        const { latitude, longitude, location } = row.original.location;
+        return (
+          <div>
+            <div>{location}</div>
+            <div>
+              Lat: {latitude}, Long: {longitude}
+            </div>
+          </div>
+        );
+      },
+    },
+
+    {
+      accessorKey: "services",
+      header: "Services",
+      cell: ({ row }) => {
+        const services = row.original.services;
+        return services.join(", ");
+      },
+    },
     { accessorKey: "capacity", header: "Capacity" },
-    { accessorKey: "availableBeds", header: "Available Beds" },
-    { accessorKey: "contactInfo", header: "Contact Info" },
-    { accessorKey: "certificationId", header: "Certification ID" },
+
+    {
+      accessorKey: "contactInfo",
+      header: "Contact Info",
+      cell: ({ row }) => {
+        const { phoneNumber, email } = row.original.contactInfo;
+        return (
+          <div>
+            <div>Phone: {phoneNumber}</div>
+            <div>Email: {email}</div>
+          </div>
+        );
+      },
+    },
+    { accessorKey: "certificationID", header: "Certification ID" },
     {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
         <div className="flex justify-center space-x-2">
           <Button
-            onClick={() => handleApprove(row.original[0])}
+            onClick={() => handleApprove(row.original.id)}
             variant="success"
             className="bg-green-600 font-bold"
           >
             Approve
           </Button>
           <Button
-            onClick={() => handleReject(row.original[0])}
+            onClick={() => handleReject(row.original.id)}
             className="font-bold"
             variant=""
           >
