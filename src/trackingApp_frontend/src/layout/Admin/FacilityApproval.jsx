@@ -20,19 +20,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-// Sample data for demonstration
-// const data = Array.from({ length: 50 }, (_, i) => ({
-//   id: (i + 1).toString(),
-//   name: `Facility ${String.fromCharCode(65 + (i % 26))}`,
-//   location: `Location ${String.fromCharCode(65 + (i % 26))}`,
-//   status: i % 2 === 0 ? "Pending" : "Approved",
-//   services: `Service ${String.fromCharCode(65 + (i % 26))}`,
-//   capacity: (i * 10).toString(),
-//   availableBeds: (i * 2).toString(),
-//   contactInfo: `123-456-78${i.toString().padStart(2, "0")}`,
-//   certificationId: `Cert${String.fromCharCode(65 + (i % 26))}${i}`,
-// }));
-
 const FacilityApprovalTable = () => {
   const { actors } = useContext(ActorContext);
   const [data, setData] = useState([]);
@@ -100,10 +87,10 @@ const FacilityApprovalTable = () => {
       accessorKey: "location",
       header: "Location",
       cell: ({ row }) => {
-        const { latitude, longitude, location } = row.original.location;
+        const { latitude, longitude, address } = row.original.location;
         return (
           <div>
-            <div>{location}</div>
+            <div>{address}</div>
             <div>
               Lat: {latitude}, Long: {longitude}
             </div>
