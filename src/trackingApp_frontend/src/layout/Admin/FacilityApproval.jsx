@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button"; // Adjust the import path based on your project structure
 import {
   Table,
@@ -43,9 +43,15 @@ const FacilityApprovalTable = () => {
     const fetchPendingFacilities = async () => {
       try {
         const result = await actors.admin.listPendingRegistrations();
+        console.log(result.ok);
+        console.log(result);
+
         if (result.ok) {
           setData(
-            result.ok.map(([id, registration]) => ({ id, ...registration }))
+            result.ok.map(([id, registration]) => {
+              console.log({ id, ...registration });
+              return { id, ...registration };
+            })
           );
         } else {
           console.error("Failed to fetch pending facilities:", result.err);
