@@ -9,7 +9,10 @@ import { useToast } from "@/components/ui/use-toast";
 const reportIncidentSchema = z.object({
   location: z.string().min(1, "Location is required"),
   description: z.string().min(1, "Description is required"),
-  severity: z.enum(["low", "medium", "high"], "Select a severity level"),
+  severity: z.enum(
+    ["Minor", "Moderate", "Severe", "Critical"],
+    "Select a severity level"
+  ),
   inchargeIds: z
     .array(
       z
@@ -98,10 +101,7 @@ const ReportIncident = () => {
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Incident</h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="location"
@@ -155,9 +155,10 @@ const ReportIncident = () => {
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           >
             <option value="">Select Severity</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="Minor">Minor</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Severe">Severe</option>
+            <option value="Critical">Critical</option>
           </select>
           {errors.severity && (
             <p className="mt-2 text-sm text-red-400">
@@ -171,10 +172,7 @@ const ReportIncident = () => {
             In-Charge IDs*
           </label>
           {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="mb-4"
-            >
+            <div key={field.id} className="mb-4">
               <div className="flex gap-x-2">
                 <input
                   type="text"
