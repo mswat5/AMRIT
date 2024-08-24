@@ -163,10 +163,7 @@ export default function Form() {
             className="space-y-4 md:flex md:space-x-8 md:space-y-0"
           >
             {steps.map((step, index) => (
-              <li
-                key={step.name}
-                className="md:flex-1"
-              >
+              <li key={step.name} className="md:flex-1">
                 {currentStep > index ? (
                   <div className="group flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                     <span className="text-sm font-medium text-red-600 transition-colors ">
@@ -198,10 +195,7 @@ export default function Form() {
         </nav>
 
         {/* Form */}
-        <form
-          className="mt-12 py-12"
-          onSubmit={handleSubmit(processForm)}
-        >
+        <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -302,15 +296,12 @@ export default function Form() {
                     )}
                   </div>
                 </div>
-                <div>
+                <div className="sm:col-span-3">
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     Services
                   </label>
                   {fields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="flex gap-x-2 mb-4"
-                    >
+                    <div key={field.id} className="flex gap-x-2 mb-4">
                       <input
                         type="text"
                         {...register(`services.${index}`)}
@@ -337,7 +328,7 @@ export default function Form() {
                     onClick={() => append("")}
                     className="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 text-sm font-medium"
                   >
-                    Add ID
+                    Add Services
                   </button>
                   {errors.services?.message && (
                     <p className="mt-2 text-sm text-red-400">

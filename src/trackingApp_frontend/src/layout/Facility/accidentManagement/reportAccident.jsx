@@ -3,13 +3,19 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ActorContext from "../../../ActorContext";
+
 // Define the validation schema using Zod
 const reportIncidentSchema = z.object({
   location: z.string().min(1, "Location is required"),
   description: z.string().min(1, "Description is required"),
   severity: z.enum(["low", "medium", "high"], "Select a severity level"),
   inchargeIds: z
-    .array(z.string().min(1, "ID cannot be empty"))
+    .array(
+      z
+        .string()
+        .min(1, "ID cannot be empty")
+        .regex(/^\+?\d+$/, "Invalid input (should be a number)")
+    )
     .min(1, "At least one in-charge ID is required"),
 });
 
@@ -38,7 +44,7 @@ const ReportIncident = () => {
   const onSubmit = async (data) => {
     console.log(data);
     const result = await actors.accident.createAccidentReport(
-      (details = {
+      {
         currentFacilityId: "0",
         description: data.description,
         location: {
@@ -46,22 +52,18 @@ const ReportIncident = () => {
           longitude: longitude,
           address: data.facilityLocation,
         },
-        m,
         reportingFacilityId: "Text",
         severity: "AccidentSeverity;",
-      }),
+      },
       [],
       data.inchargeIds
     );
   };
 
   return (
-    <div className="mt-5 max-w-xl mx-auto p-6 bg-white  rounded-lg">
+    <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Incident</h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="location"
@@ -131,26 +133,25 @@ const ReportIncident = () => {
             In-Charge IDs*
           </label>
           {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="flex gap-x-2 mb-4"
-            >
-              <input
-                type="text"
-                {...register(`inchargeIds.${index}`)}
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                placeholder={`In-Charge ID #${index + 1}`}
-              />
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="px-3 py-1 text-sm font-medium text-red-600 hover:underline"
-                disabled={fields.length === 1}
-              >
-                Delete
-              </button>
+            <div key={field.id} className="mb-4">
+              <div className="flex gap-x-2">
+                <input
+                  type="text"
+                  {...register(`inchargeIds.${index}`)}
+                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                  placeholder={`In-Charge ID #${index + 1}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="px-3 py-1 text-sm font-medium text-red-600 hover:underline"
+                  disabled={fields.length === 1}
+                >
+                  Delete
+                </button>
+              </div>
               {errors.inchargeIds && errors.inchargeIds[index] && (
-                <p className="text-sm text-red-400">
+                <p className="mt-1 text-sm text-red-400">
                   {errors.inchargeIds[index]?.message}
                 </p>
               )}
