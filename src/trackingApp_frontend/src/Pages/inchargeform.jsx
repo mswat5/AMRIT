@@ -10,13 +10,19 @@ import { Principal } from "@dfinity/principal";
 const inchargeFormSchema = z.object({
   inchargeName: z.string().min(1, "Incharge Name is required"),
   location: z.string().min(1, "Location is required"),
-  designation: z.string().min(1, "Designation is required"),
+  designation: z.enum(
+    ["DistrictHubCoordinator", "HubIncharge", "ClusterManager"],
+    "Designation is required"
+  ),
   email: z.string().min(1, "Email is required").email("Invalid email address"),
   contactInfo: z
     .string()
     .min(1, "Contact Info is required")
     .regex(/^\+?\d+$/, "Invalid contact number"),
-  certificationId: z.string().min(1, "Certification ID is required"),
+  certificationId: z
+    .string()
+    .min(1, "Certification ID is required")
+    .regex(/^\d+$/, "Certification ID must be a number"),
 });
 
 const InchargeForm = () => {
@@ -99,10 +105,7 @@ const InchargeForm = () => {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Incharge Information
       </h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="inchargeName"
@@ -150,12 +153,20 @@ const InchargeForm = () => {
           >
             Designation*
           </label>
-          <input
-            type="text"
+          <select
             id="designation"
             {...register("designation")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-          />
+          >
+            <option value="" disabled>
+              Select a designation
+            </option>
+            <option value="DistrictHubCoordinator">
+              District Hub Coordinator
+            </option>
+            <option value="HubIncharge">Hub Incharge</option>
+            <option value="ClusterManager">Cluster Manager</option>
+          </select>
           {errors.designation && (
             <p className="mt-2 text-sm text-red-400">
               {errors.designation.message}
@@ -186,7 +197,7 @@ const InchargeForm = () => {
             htmlFor="contactInfo"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            Contact Info*
+            Mobile No.
           </label>
           <input
             type="text"
