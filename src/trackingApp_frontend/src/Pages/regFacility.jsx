@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
+import ActorContext from "../ActorContext";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
-
+import { Principal } from "@dfinity/principal";
+import { AuthClient } from "@dfinity/auth-client";
 const steps = [
   {
     id: "Step 1",
@@ -46,6 +47,9 @@ export default function Form() {
   const [currentStep, setCurrentStep] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
+
+  const { actors } = useContext(ActorContext);
+
   const delta = currentStep - previousStep;
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -59,6 +63,7 @@ export default function Form() {
   } = useForm({
     resolver: zodResolver(FormDataSchema),
   });
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -84,9 +89,27 @@ export default function Form() {
     }
   }, [toast]);
 
-  const processForm = (data) => {
+  const processForm = async (data) => {
     console.log(data);
     console.log(latitude, longitude);
+    const getPrincipal = await actors.admin.whoami();
+    const result = await actors.admin.registerFacility({
+      principal: Principal.fromText(getPrincipal),
+      name: data.facilityName,
+      location: {
+        latitude: latitude,
+        longitude: longitude,
+        address: data.facilityLocation,
+      },
+      services: ["Test"],
+      capacity: Number(data.facilityCapacity),
+      contactInfo: {
+        phoneNumber: data.contactPhone,
+        email: data.contactEmail,
+      },
+      certificationID: data.certificationId,
+    });
+    console.log(result);
     reset();
     navigate("/facility/home");
   };
@@ -125,7 +148,10 @@ export default function Form() {
             className="space-y-4 md:flex md:space-x-8 md:space-y-0"
           >
             {steps.map((step, index) => (
-              <li key={step.name} className="md:flex-1">
+              <li
+                key={step.name}
+                className="md:flex-1"
+              >
                 {currentStep > index ? (
                   <div className="group flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                     <span className="text-sm font-medium text-red-600 transition-colors ">
@@ -157,7 +183,10 @@ export default function Form() {
         </nav>
 
         {/* Form */}
-        <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
+        <form
+          className="mt-12 py-12"
+          onSubmit={handleSubmit(processForm)}
+        >
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}

@@ -203,10 +203,10 @@ actor class AdminCanister() {
     };
   };
 
-  public query func listPendingRegistrations() : async [(Text, FacilityRegistration)] {
+  public query func listPendingRegistrations() : async Result.Result<[(Text, FacilityRegistration)], Text> {
     //Admin Check
 
-    Map.toArray(pendingFacilities);
+    #ok(Map.toArray(pendingFacilities));
   };
 
   public query func listPendingAmbulances() : async [(Text, AmbulanceRegistration)] {
@@ -514,7 +514,7 @@ actor class AdminCanister() {
       };
     };
 
-    #ok("User not found");
+    #ok("admin");
 
   };
 
