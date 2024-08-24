@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ActorContext from "../ActorContext";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 import { Principal } from "@dfinity/principal";
 import { AuthClient } from "@dfinity/auth-client";
@@ -16,7 +16,7 @@ const steps = [
       "facilityName",
       "facilityLocation",
       "facilityCapacity",
-      "availableBeds",
+      "services",
       "certificationId",
     ],
   },
@@ -31,15 +31,26 @@ const steps = [
 export const FormDataSchema = z.object({
   facilityName: z.string().min(1, "Facility name is required"),
   facilityLocation: z.string().min(1, "Facility location is required"),
-  facilityCapacity: z.string().min(1, "Facility capacity is required"),
-  availableBeds: z.string().min(1, "Available beds are required"),
-  certificationId: z.string().min(1, "Certification ID is required"),
+  facilityCapacity: z
+    .string()
+    .min(1, "Facility capacity is required")
+    .regex(/^\+?\d+$/, "Invalid input(should be a number"),
+  services: z
+    .array(z.string().min(1, "ID cannot be empty"))
+    .min(1, "At least one in-charge ID is required"),
+  certificationId: z
+    .string()
+    .min(1, "Certification ID is required")
+    .regex(/^\+?\d+$/, "Invalid input(should be a number)"),
   contactName: z.string().min(1, "Contact name is required"),
   contactEmail: z
     .string()
     .min(1, "Contact email is required")
     .email("Invalid email address"),
-  contactPhone: z.string().min(1, "Contact phone is required"),
+  contactPhone: z
+    .string()
+    .min(1, "Contact phone is required")
+    .regex(/^\+?\d+$/, "Invalid contact number"),
 });
 
 export default function Form() {
@@ -55,6 +66,7 @@ export default function Form() {
   const navigate = useNavigate();
   const {
     register,
+    control,
     handleSubmit,
     watch,
     reset,
@@ -134,7 +146,10 @@ export default function Form() {
       setCurrentStep((step) => step - 1);
     }
   };
-
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "services",
+  });
   return (
     <div>
       <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8">
@@ -148,10 +163,7 @@ export default function Form() {
             className="space-y-4 md:flex md:space-x-8 md:space-y-0"
           >
             {steps.map((step, index) => (
-              <li
-                key={step.name}
-                className="md:flex-1"
-              >
+              <li key={step.name} className="md:flex-1">
                 {currentStep > index ? (
                   <div className="group flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                     <span className="text-sm font-medium text-red-600 transition-colors ">
@@ -183,10 +195,7 @@ export default function Form() {
         </nav>
 
         {/* Form */}
-        <form
-          className="mt-12 py-12"
-          onSubmit={handleSubmit(processForm)}
-        >
+        <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -268,27 +277,6 @@ export default function Form() {
 
                 <div className="sm:col-span-3">
                   <label
-                    htmlFor="availableBeds"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Available Beds
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      id="availableBeds"
-                      {...register("availableBeds")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.availableBeds?.message && (
-                      <p className="mt-2 text-sm text-red-400">
-                        {errors.availableBeds.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="sm:col-span-3">
-                  <label
                     htmlFor="certificationId"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
@@ -307,6 +295,46 @@ export default function Form() {
                       </p>
                     )}
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                    Services
+                  </label>
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="flex gap-x-2 mb-4">
+                      <input
+                        type="text"
+                        {...register(`services.${index}`)}
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        placeholder={`Services #${index + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => remove(index)}
+                        className="px-3 py-1 text-sm font-medium text-red-600 hover:underline"
+                        disabled={fields.length === 1}
+                      >
+                        Delete
+                      </button>
+                      {errors.services && errors.services[index] && (
+                        <p className="text-sm text-red-400">
+                          {errors.services[index]?.message}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => append("")}
+                    className="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 text-sm font-medium"
+                  >
+                    Add ID
+                  </button>
+                  {errors.services?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.services?.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -382,6 +410,7 @@ export default function Form() {
                       id="contactPhone"
                       {...register("contactPhone")}
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      placeholder="+1234567890"
                     />
                     {errors.contactPhone?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -451,12 +480,12 @@ export default function Form() {
 
                 <div className="sm:col-span-3">
                   <label className="block text-sm font-medium leading-6 text-gray-900">
-                    Available Beds
+                    Services
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      value={watch("availableBeds")}
+                      value={watch("services")}
                       readOnly
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
@@ -515,6 +544,7 @@ export default function Form() {
                       value={watch("contactPhone")}
                       readOnly
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      placeholder="+1234567890"
                     />
                   </div>
                 </div>
