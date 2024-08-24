@@ -59,7 +59,7 @@ const InchargeForm = () => {
       },
       id: "0",
       inchargeType: {
-        DistrictHubCoordinator: null,
+        [data.designation]: null,
       },
       location: {
         latitude: latitude,
@@ -105,7 +105,10 @@ const InchargeForm = () => {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Incharge Information
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-y-6"
+      >
         <div>
           <label
             htmlFor="inchargeName"
@@ -158,7 +161,10 @@ const InchargeForm = () => {
             {...register("designation")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           >
-            <option value="" disabled>
+            <option
+              value=""
+              disabled
+            >
               Select a designation
             </option>
             <option value="DistrictHubCoordinator">

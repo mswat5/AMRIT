@@ -17,7 +17,7 @@ module {
         inchargeType : InchargeType;
         registrationStatus : RegistrationStatus;
         certificationID : Text;
-        location : Text;
+        location : Location;
     };
 
     public type ReportNotification = {
