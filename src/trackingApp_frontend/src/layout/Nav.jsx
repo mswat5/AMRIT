@@ -2,12 +2,32 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { AlertCircle, Building, FileText, Package, User, Menu, X, Shield, Car, Users, User2 } from "lucide-react";
+import {
+  AlertCircle,
+  Building,
+  FileText,
+  Package,
+  User,
+  Menu,
+  X,
+  Shield,
+  Car,
+  Users,
+  User2,
+  Briefcase,
+  ClipboardList,
+  Phone,
+  UserCheck, // New icon for Patient Management
+  AlertOctagon, // New icon for Accident Management
+  File, // New icon for Reports
+} from "lucide-react"; // Add relevant icons
 import { useState } from "react";
 
 const Nav = () => {
   const [isFacilityMenuOpen, setIsFacilityMenuOpen] = useState(false);
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
+  const [isInchargeMenuOpen, setIsInchargeMenuOpen] = useState(false); // New state for Incharge menu
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,18 +39,23 @@ const Nav = () => {
     setIsAdminMenuOpen(!isAdminMenuOpen);
   };
 
+  const handleInchargeMenuClick = () => {
+    setIsInchargeMenuOpen(!isInchargeMenuOpen); // Toggle Incharge menu
+  };
+
   const handleLinkClick = () => {
     setIsFacilityMenuOpen(false);
     setIsAdminMenuOpen(false);
+    setIsInchargeMenuOpen(false); // Close Incharge menu on link click
   };
 
-  const isFacilityRoute = location.pathname.startsWith('/facility');
-  const isAdminRoute = location.pathname.startsWith('/admin');
-  
+  const isFacilityRoute = location.pathname.startsWith("/facility");
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isInchargeRoute = location.pathname.startsWith("/incharge"); // Check if current route is for Incharge
 
   return (
     <div className="flex justify-between p-2 items-center dark:bg-slate-900 border-b">
-      {!isFacilityRoute && !isAdminRoute ? (
+      {!isFacilityRoute && !isAdminRoute && !isInchargeRoute ? (
         <div className={"text-3xl font-bold"}>AMRIT</div>
       ) : (
         <div className={"text-3xl font-bold md:block hidden"}>AMRIT</div>
@@ -43,17 +68,41 @@ const Nav = () => {
               className="p-2 border rounded-lg"
               onClick={handleFacilityMenuClick}
             >
-              {isFacilityMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isFacilityMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
 
-          <div className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${isFacilityMenuOpen ? "block" : "hidden"}`}>
+          <div
+            className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${
+              isFacilityMenuOpen ? "block" : "hidden"
+            }`}
+          >
             <div className="flex flex-col justify-center items-center h-full">
               {[
-                { to: "/facility/item1", icon: <User />, text: "Patient Management" },
-                { to: "/facility/item2", icon: <AlertCircle />, text: "Accident Management" },
-                { to: "/facility/item3", icon: <Package />, text: "Resource Management" },
-                { to: "/facility/item4", icon: <Building />, text: "Facility Details" },
+                {
+                  to: "/facility/item1",
+                  icon: <User />,
+                  text: "Patient Management",
+                },
+                {
+                  to: "/facility/item2",
+                  icon: <AlertCircle />,
+                  text: "Accident Management",
+                },
+                {
+                  to: "/facility/item3",
+                  icon: <Package />,
+                  text: "Resource Management",
+                },
+                {
+                  to: "/facility/item4",
+                  icon: <Building />,
+                  text: "Facility Details",
+                },
                 { to: "/facility/item5", icon: <FileText />, text: "Reports" },
               ].map((link, index) => (
                 <NavLink
@@ -80,10 +129,26 @@ const Nav = () => {
         <>
           <div className="hidden md:flex space-x-4">
             {[
-              { to: "/admin/facility-approval", icon: <Shield />, text: "Facility Approval" },
-              { to: "/admin/ambulance-approval", icon: <Car />, text: "Ambulance Approval" },
-              { to: "/admin/user-management", icon: <Users />, text: "User Management" },
-              {to:"/admin/InchargeApproval",icon:<User2/>,text:"Incharge Approval"},
+              {
+                to: "/admin/facility-approval",
+                icon: <Shield />,
+                text: "Facility Approval",
+              },
+              {
+                to: "/admin/ambulance-approval",
+                icon: <Car />,
+                text: "Ambulance Approval",
+              },
+              {
+                to: "/admin/user-management",
+                icon: <Users />,
+                text: "User Management",
+              },
+              {
+                to: "/admin/incharge-approval",
+                icon: <User2 />,
+                text: "Incharge Approval",
+              }, // Renamed to match route convention
             ].map((link, index) => (
               <NavLink
                 key={index}
@@ -107,17 +172,41 @@ const Nav = () => {
               className="p-2 border rounded-lg"
               onClick={handleAdminMenuClick}
             >
-              {isAdminMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isAdminMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
 
-          <div className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm  ${isAdminMenuOpen ? "block" : "hidden"}`}>
+          <div
+            className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${
+              isAdminMenuOpen ? "block" : "hidden"
+            }`}
+          >
             <div className="flex flex-col justify-center items-center h-full z-50">
               {[
-                { to: "/admin/facility-approval", icon: <Shield />, text: "Facility Approval" },
-                { to: "/admin/ambulance-approval", icon: <Car />, text: "Ambulance Approval" },
-                { to: "/admin/user-management", icon: <Users />, text: "User Management" },
-                {to:"/admin/InchargeApproval",icon:<User2/>,text:"Incharge Approval"},
+                {
+                  to: "/admin/facility-approval",
+                  icon: <Shield />,
+                  text: "Facility Approval",
+                },
+                {
+                  to: "/admin/ambulance-approval",
+                  icon: <Car />,
+                  text: "Ambulance Approval",
+                },
+                {
+                  to: "/admin/user-management",
+                  icon: <Users />,
+                  text: "User Management",
+                },
+                {
+                  to: "/admin/incharge-approval",
+                  icon: <User2 />,
+                  text: "Incharge Approval",
+                }, // Renamed to match route convention
               ].map((link, index) => (
                 <NavLink
                   key={index}
@@ -139,17 +228,105 @@ const Nav = () => {
         </>
       )}
 
-      <div className="flex space-x-4">
+      {isInchargeRoute && (
+        <>
+          <div className="hidden md:flex space-x-4">
+            {[
+              {
+                to: "/incharge/patient-management",
+                icon: <UserCheck />, // Patient Management
+                text: "Patient Management",
+              },
+              {
+                to: "/incharge/accident-management",
+                icon: <AlertOctagon />, // Accident Management
+                text: "Accident Management",
+              },
+              {
+                to: "/incharge/reports",
+                icon: <File />, // Reports
+                text: "Reports",
+              },
+            ].map((link, index) => (
+              <NavLink
+                key={index}
+                onClick={handleLinkClick}
+                to={link.to}
+                className={({ isActive }) =>
+                  cn(
+                    "text-foreground hover:text-primary mx-2 font-semibold flex items-center gap-x-2",
+                    isActive ? "text-primary" : ""
+                  )
+                }
+              >
+                {link.icon}
+                {link.text}
+              </NavLink>
+            ))}
+          </div>
+
+          <div className="md:hidden">
+            <button
+              className="p-2 border rounded-lg"
+              onClick={handleInchargeMenuClick} // Toggle Incharge menu
+            >
+              {isInchargeMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+
+          <div
+            className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${
+              isInchargeMenuOpen ? "block" : "hidden"
+            }`}
+          >
+            <div className="flex flex-col justify-center items-center h-full z-50">
+              {[
+                {
+                  to: "/incharge/patient-management",
+                  icon: <UserCheck />, // Patient Management
+                  text: "Patient Management",
+                },
+                {
+                  to: "/incharge/accident-management",
+                  icon: <AlertOctagon />, // Accident Management
+                  text: "Accident Management",
+                },
+                {
+                  to: "/incharge/reports",
+                  icon: <File />,
+                  text: "Reports",
+                },
+              ].map((link, index) => (
+                <NavLink
+                  key={index}
+                  onClick={handleLinkClick}
+                  to={link.to}
+                  className={({ isActive }) =>
+                    cn(
+                      "text-foreground hover:text-primary my-2 font-semibold flex items-center gap-x-2",
+                      isActive ? "text-primary" : ""
+                    )
+                  }
+                >
+                  {link.icon}
+                  {link.text}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+      <div className=" flex items-center">
         <ModeToggle />
-        <Button
-          onClick={() => navigate("/Register")}
-          className="w-full text-white hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-        >
-          Disconnect
+        <Button className="ml-4" onClick={() => navigate("/auth")}>
+          Logout
         </Button>
       </div>
     </div>
   );
 };
-
 export default Nav;

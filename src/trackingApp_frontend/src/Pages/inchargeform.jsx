@@ -1,20 +1,20 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useNavigate } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 // Define the validation schema using Zod
 const inchargeFormSchema = z.object({
-  inchargeName: z.string().min(1, 'Incharge Name is required'),
-  location: z.string().min(1, 'Location is required'),
-  designation: z.string().min(1, 'Designation is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  inchargeName: z.string().min(1, "Incharge Name is required"),
+  location: z.string().min(1, "Location is required"),
+  designation: z.string().min(1, "Designation is required"),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
   contactInfo: z
     .string()
-    .min(1, 'Contact Info is required')
-    .regex(/^\+?\d+$/, 'Invalid contact number'),
-  certificationId: z.string().min(1, 'Certification ID is required'),
+    .min(1, "Contact Info is required")
+    .regex(/^\+?\d+$/, "Invalid contact number"),
+  certificationId: z.string().min(1, "Certification ID is required"),
 });
 
 const InchargeForm = () => {
@@ -27,38 +27,42 @@ const InchargeForm = () => {
   } = useForm({
     resolver: zodResolver(inchargeFormSchema),
     defaultValues: {
-      inchargeName: '',
-      location: '',
-      designation: '',
-      email: '',
-      contactInfo: '',
-      certificationId: '',
+      inchargeName: "",
+      location: "",
+      designation: "",
+      email: "",
+      contactInfo: "",
+      certificationId: "",
     },
   });
 
   const onSubmit = (data) => {
-     // Convert form data to JSON format
-     const jsonData = JSON.stringify(data, null, 2);
-    
-     // Log the JSON data to the console
-     console.log(jsonData);
+    // Convert form data to JSON format
+    const jsonData = JSON.stringify(data, null, 2);
+
+    // Log the JSON data to the console
+    console.log(jsonData);
     reset();
-    navigate('/Incharge/IDashboard');
+    navigate("/Incharge/dashboard");
   };
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Incharge Information</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        Incharge Information
+      </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
-        
         <div>
-          <label htmlFor="inchargeName" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="inchargeName"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Incharge Name*
           </label>
           <input
             type="text"
             id="inchargeName"
-            {...register('inchargeName')}
+            {...register("inchargeName")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           />
           {errors.inchargeName && (
@@ -69,13 +73,16 @@ const InchargeForm = () => {
         </div>
 
         <div>
-          <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="location"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Location*
           </label>
           <input
             type="text"
             id="location"
-            {...register('location')}
+            {...register("location")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           />
           {errors.location && (
@@ -86,13 +93,16 @@ const InchargeForm = () => {
         </div>
 
         <div>
-          <label htmlFor="designation" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="designation"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Designation*
           </label>
           <input
             type="text"
             id="designation"
-            {...register('designation')}
+            {...register("designation")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           />
           {errors.designation && (
@@ -103,30 +113,34 @@ const InchargeForm = () => {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Email*
           </label>
           <input
             type="email"
             id="email"
-            {...register('email')}
+            {...register("email")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           />
           {errors.email && (
-            <p className="mt-2 text-sm text-red-400">
-              {errors.email.message}
-            </p>
+            <p className="mt-2 text-sm text-red-400">{errors.email.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="contactInfo" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="contactInfo"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Contact Info*
           </label>
           <input
             type="text"
             id="contactInfo"
-            {...register('contactInfo')}
+            {...register("contactInfo")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
             placeholder="+1234567890"
           />
@@ -138,13 +152,16 @@ const InchargeForm = () => {
         </div>
 
         <div>
-          <label htmlFor="certificationId" className="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            htmlFor="certificationId"
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
             Certification ID*
           </label>
           <input
             type="text"
             id="certificationId"
-            {...register('certificationId')}
+            {...register("certificationId")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           />
           {errors.certificationId && (
