@@ -4,8 +4,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const dischargeSchema = z.object({
-  accidentId: z.string().min(1, "Accident ID is required"),
-  patientId: z.string().min(1, "Patient ID is required"),
+  accidentId: z
+    .string()
+    .min(1, "Accident ID is required")
+    .regex(/^\+?\d+$/, "Invalid input (should be a number)"),
+  patientId: z
+    .string()
+    .min(1, "Patient ID is required")
+    .regex(/^\+?\d+$/, "Invalid input (should be a number)"),
   file: z
     .instanceof(FileList)
     .refine((files) => files.length > 0, "File is required"),
