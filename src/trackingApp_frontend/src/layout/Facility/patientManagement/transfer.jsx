@@ -4,8 +4,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const transferSchema = z.object({
-  patientId: z.string().min(1, "Patient ID is required"),
-  newFacilityId: z.string().min(1, "New Facility ID is required"),
+  patientId: z
+    .string()
+    .min(1, "Patient ID is required")
+    .regex(/^\+?\d+$/, "Invalid input (should be a number)"),
+  newFacilityId: z
+    .string()
+    .min(1, "New Facility ID is required")
+    .regex(/^\+?\d+$/, "Invalid input (should be a number)"),
   file: z.instanceof(FileList).optional(),
 });
 
