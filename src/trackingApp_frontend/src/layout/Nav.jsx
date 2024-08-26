@@ -51,7 +51,7 @@ const Nav = () => {
 
   const isFacilityRoute = location.pathname.startsWith("/facility");
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const isInchargeRoute = location.pathname.startsWith("/incharge"); // Check if current route is for Incharge
+  const isInchargeRoute = location.pathname.startsWith("/incharge");
 
   return (
     <div className="flex justify-between p-2 items-center dark:bg-slate-900 border-b">
@@ -268,7 +268,7 @@ const Nav = () => {
           <div className="md:hidden">
             <button
               className="p-2 border rounded-lg"
-              onClick={handleInchargeMenuClick} // Toggle Incharge menu
+              onClick={handleInchargeMenuClick}
             >
               {isInchargeMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -322,7 +322,7 @@ const Nav = () => {
       )}
       <div className=" flex items-center">
         <ModeToggle />
-        <Button className="ml-4" onClick={() => navigate("/auth")}>
+        <Button className="ml-4" onClick={() => navigate("/register")}>
           Logout
         </Button>
       </div>

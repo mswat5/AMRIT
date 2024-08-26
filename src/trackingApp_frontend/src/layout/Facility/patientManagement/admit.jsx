@@ -21,13 +21,7 @@ const steps = [
   {
     id: "Step 2",
     name: "Demographics Details",
-    fields: [
-      "residence",
-      "postalCode",
-      "monthlyIncome",
-      "inclusionCriteria",
-      "exclusionCriteria",
-    ],
+    fields: ["residence", "postalCode", "monthlyIncome", "inclusionCriteria"],
   },
   {
     id: "step 3",
@@ -81,6 +75,7 @@ const steps = [
       "echo",
       "angiography",
       "ptca2",
+      "cabg",
       "preHubManagement",
       "duringAdmission",
       "prescribedAtDischarge",
@@ -98,18 +93,18 @@ export const FormDataSchema = z.object({
     .object({
       initial1: z
         .string()
-        .length(1, "Must be a single character")
-        .transform((val) => val.toUpperCase())
+        // .length(1, "Must be a single character")
+        // .transform((val) => val.toUpperCase())
         .optional(),
       initial2: z
         .string()
-        .length(1, "Must be a single character")
-        .transform((val) => val.toUpperCase())
+        // .length(1, "Must be a single character")
+        // .transform((val) => val.toUpperCase())
         .optional(),
       initial3: z
         .string()
-        .length(1, "Must be a single character")
-        .transform((val) => val.toUpperCase())
+        // .length(1, "Must be a single character")
+        // .transform((val) => val.toUpperCase())
         .optional(),
     })
     .optional(),
@@ -118,14 +113,14 @@ export const FormDataSchema = z.object({
   gender: z.string().optional(),
   dobKnownAge: z.string().optional(),
   registrationDate: z.string().optional(),
-  inchargeIds: z
-    .array(z.string().min(1, "ID cannot be empty"))
-    .min(1, "At least one in-charge ID is required"),
+  inchargeIds: z.string().optional(),
+  // .array(z.string().min(1, "ID cannot be empty"))
+  // .min(1, "At least one in-charge ID is required"),
   incidentid: z.string().optional(),
   residence: z.string().optional(),
   postalCode: z.string().optional(),
   monthlyIncome: z.string().optional(),
-  inclusionCriteria: z.string().optional(),
+  inclusionCriteria: z.string().nullable().optional(),
   stableAngina: z.boolean().optional(),
   priorMI: z.boolean().optional(),
   ptca: z.boolean().optional(),
@@ -139,8 +134,8 @@ export const FormDataSchema = z.object({
   smokelessTobaccoStatus: z.boolean().optional(),
   symptomOnset: z.string().optional(),
   firstContact: z.string().optional(),
-  transportToFirstContact: z.string().optional(),
-  transportToHubHospital: z.string().optional(),
+  transportToFirstContact: z.string().nullable().optional(),
+  transportToHubHospital: z.string().nullable().optional(),
   transportOtherSpecify: z.string().optional(),
   presentationToER: z.string().optional(),
   heartRate: z.string().optional(),
@@ -150,7 +145,7 @@ export const FormDataSchema = z.object({
       diastolic: z.string().optional(),
     })
     .optional(),
-  kilipClass: z.string().optional(),
+  kilipClass: z.string().nullable().optional(),
   indexECG: z.string().optional(),
   ecgFindings: z.string().optional(),
   stemiFindings: z
@@ -169,11 +164,11 @@ export const FormDataSchema = z.object({
       None: z.boolean().optional(),
     })
     .optional(),
-  lbbb: z.string().optional(),
+  lbbb: z.string().nullable().optional(),
   lbbbType: z.string().optional().nullable(),
-  rbbb: z.string().optional(),
+  rbbb: z.string().nullable().optional(),
   rbbbType: z.string().optional().nullable(),
-  otherAbnormalities: z.string().optional(),
+  otherAbnormalities: z.string().nullable().optional(),
   otherAbnormalityDetails: z
     .object({
       atrialFibFlutter: z.boolean().optional(),
@@ -204,9 +199,9 @@ export const FormDataSchema = z.object({
   echo: z.string().optional(),
   angiography: z.string().optional(),
   ptca2: z.string().optional(),
-  preHubManagement: z.array(z.string()).optional(),
-  duringAdmission: z.array(z.string()).optional(),
-  prescribedAtDischarge: z.array(z.string()).optional(),
+  preHubManagement: z.array(z.string()).nullable().optional(),
+  duringAdmission: z.array(z.string()).nullable().optional(),
+  prescribedAtDischarge: z.array(z.string()).nullable().optional(),
   initialCreatinine: z.string().optional(),
   randomGlucose: z.string().optional(),
   fastingGlucose: z.string().optional(),
@@ -324,10 +319,7 @@ export default function Form() {
             className="space-y-4 md:flex md:space-x-8 md:space-y-0"
           >
             {steps.map((step, index) => (
-              <li
-                key={step.name}
-                className="md:flex-1"
-              >
+              <li key={step.name} className="md:flex-1">
                 {currentStep > index ? (
                   <div className="group flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                     <span className="text-sm font-medium text-red-600 transition-colors">
@@ -359,10 +351,7 @@ export default function Form() {
         </nav>
 
         {/* Form */}
-        <form
-          className="mt-12 py-12"
-          onSubmit={handleSubmit(processForm)}
-        >
+        <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -706,7 +695,8 @@ export default function Form() {
               <p className="mt-1 text-3xl text-center font-bold leading-6 text-gray-600">
                 D. Medical History & Risk Factors
               </p>
-              <div className="mt-10 flex flex-col gap-x-6 gap-y-8 ">
+              <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
+                {/* Stable Angina */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="stableAngina"
@@ -714,13 +704,43 @@ export default function Form() {
                   >
                     Stable Angina*
                   </label>
-                  <input
-                    type="checkbox"
-                    id="stableAngina"
-                    {...register("stableAngina")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="stableAnginaYes"
+                      value="yes"
+                      {...register("stableAngina")}
+                    />
+                    <label htmlFor="stableAnginaYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="stableAnginaNo"
+                      value="no"
+                      {...register("stableAngina")}
+                    />
+                    <label htmlFor="stableAnginaNo" className="text-gray-900">
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="stableAnginaNotKnown"
+                      value="not known"
+                      {...register("stableAngina")}
+                    />
+                    <label
+                      htmlFor="stableAnginaNotKnown"
+                      className="text-gray-900"
+                    >
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
+                {/* Prior MI */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="priorMI"
@@ -728,41 +748,141 @@ export default function Form() {
                   >
                     Prior MI*
                   </label>
-                  <input
-                    type="checkbox"
-                    id="priorMI"
-                    {...register("priorMI")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="priorMIYes"
+                      value="yes"
+                      {...register("priorMI")}
+                    />
+                    <label htmlFor="priorMIYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="priorMINo"
+                      value="no"
+                      {...register("priorMI")}
+                    />
+                    <label htmlFor="priorMINo" className="text-gray-900">
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="priorMINotKnown"
+                      value="not known"
+                      {...register("priorMI")}
+                    />
+                    <label htmlFor="priorMINotKnown" className="text-gray-900">
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
+                {/* Additional Input for Prior MI if "Yes" is selected */}
+                {watch("priorMI") === "yes" && (
+                  <div className="flex gap-x-4">
+                    <label
+                      htmlFor="priorMIDetails"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      (If &gt; 1 Episode, Give Year of the most recent one)
+                    </label>
+                    <input
+                      type="text"
+                      id="priorMIDetails"
+                      placeholder="Year"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                      {...register("priorMIDetails")}
+                    />
+                  </div>
+                )}
+
+                {/* PTCA */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="ptca"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    PTCA
+                    PTCA*
                   </label>
-                  <input
-                    type="checkbox"
-                    id="ptca"
-                    {...register("ptca")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="ptcaYes"
+                      value="yes"
+                      {...register("ptca")}
+                    />
+                    <label htmlFor="ptcaYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="ptcaNo"
+                      value="no"
+                      {...register("ptca")}
+                    />
+                    <label htmlFor="ptcaNo" className="text-gray-900">
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="ptcaNotKnown"
+                      value="not known"
+                      {...register("ptca")}
+                    />
+                    <label htmlFor="ptcaNotKnown" className="text-gray-900">
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
+                {/* CABG */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="cabg"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    CABG
+                    CABG*
                   </label>
-                  <input
-                    type="checkbox"
-                    id="cabg"
-                    {...register("cabg")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="cabgYes"
+                      value="yes"
+                      {...register("cabg")}
+                    />
+                    <label htmlFor="cabgYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="cabgNo"
+                      value="no"
+                      {...register("cabg")}
+                    />
+                    <label htmlFor="cabgNo" className="text-gray-900">
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="cabgNotKnown"
+                      value="not known"
+                      {...register("cabg")}
+                    />
+                    <label htmlFor="cabgNotKnown" className="text-gray-900">
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
+                {/* Other Cardiovascular Events */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="otherCardiovascularEvents"
@@ -770,101 +890,560 @@ export default function Form() {
                   >
                     Other Cardiovascular Events*
                   </label>
-                  <input
-                    type="text"
-                    id="otherCardiovascularEvents"
-                    {...register("otherCardiovascularEvents")}
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.otherCardiovascularEvents?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.otherCardiovascularEvents.message}
-                    </p>
-                  )}
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="otherCardiovascularEventsYes"
+                      value="yes"
+                      {...register("otherCardiovascularEvents")}
+                    />
+                    <label
+                      htmlFor="otherCardiovascularEventsYes"
+                      className="text-gray-900"
+                    >
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="otherCardiovascularEventsNo"
+                      value="no"
+                      {...register("otherCardiovascularEvents")}
+                    />
+                    <label
+                      htmlFor="otherCardiovascularEventsNo"
+                      className="text-gray-900"
+                    >
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="otherCardiovascularEventsNotKnown"
+                      value="not known"
+                      {...register("otherCardiovascularEvents")}
+                    />
+                    <label
+                      htmlFor="otherCardiovascularEventsNotKnown"
+                      className="text-gray-900"
+                    >
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
+                {/* Conditional Checkboxes */}
+                {watch("otherCardiovascularEvents") === "yes" && (
+                  <div className="flex flex-col gap-y-4 ml-8">
+                    <label className="block text-sm font-medium leading-6 text-gray-900">
+                      Select any that apply:
+                    </label>
+
+                    <div className="flex gap-x-4">
+                      <input
+                        type="checkbox"
+                        id="tiaOrStroke"
+                        {...register("tiaOrStroke")}
+                      />
+                      <label htmlFor="tiaOrStroke" className="text-gray-900">
+                        TIA OR Stroke
+                      </label>
+                    </div>
+
+                    <div className="flex gap-x-4">
+                      <input type="checkbox" id="pad" {...register("pad")} />
+                      <label htmlFor="pad" className="text-gray-900">
+                        PAD
+                      </label>
+                    </div>
+
+                    <div className="flex gap-x-4">
+                      <input
+                        type="checkbox"
+                        id="renovascularDisease"
+                        {...register("renovascularDisease")}
+                      />
+                      <label
+                        htmlFor="renovascularDisease"
+                        className="text-gray-900"
+                      >
+                        Renovascular Disease
+                      </label>
+                    </div>
+
+                    <div className="flex gap-x-4">
+                      <input type="checkbox" id="chf" {...register("chf")} />
+                      <label htmlFor="chf" className="text-gray-900">
+                        CHF
+                      </label>
+                    </div>
+
+                    <div className="flex gap-x-4">
+                      <input
+                        type="checkbox"
+                        id="otherVascularDisease"
+                        {...register("otherVascularDisease")}
+                      />
+                      <label
+                        htmlFor="otherVascularDisease"
+                        className="text-gray-900"
+                      >
+                        Any Other Vascular Disease
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {/* Premature Family History of CHD / Stroke */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="prematureFamilyHistory"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Premature Family History of CHD / Stroke*
+                    Premature Family History of CHD / Stroke
                   </label>
-                  <input
-                    type="checkbox"
-                    id="prematureFamilyHistory"
-                    {...register("prematureFamilyHistory")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="prematureFamilyHistoryYes"
+                      value="yes"
+                      {...register("prematureFamilyHistory")}
+                    />
+                    <label
+                      htmlFor="prematureFamilyHistoryYes"
+                      className="text-gray-900"
+                    >
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="prematureFamilyHistoryNo"
+                      value="no"
+                      {...register("prematureFamilyHistory")}
+                    />
+                    <label
+                      htmlFor="prematureFamilyHistoryNo"
+                      className="text-gray-900"
+                    >
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="prematureFamilyHistoryNotKnown"
+                      value="not known"
+                      {...register("prematureFamilyHistory")}
+                    />
+                    <label
+                      htmlFor="prematureFamilyHistoryNotKnown"
+                      className="text-gray-900"
+                    >
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
+                {/* Dyslipidemia / On Statin Therapy */}
                 <div className="flex gap-x-4">
                   <label
                     htmlFor="dyslipidemiaOnStatin"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Dyslipidemia / On Statin Therapy*
+                    Dyslipidemia / On Statin Therapy
                   </label>
-                  <input
-                    type="checkbox"
-                    id="dyslipidemiaOnStatin"
-                    {...register("dyslipidemiaOnStatin")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="dyslipidemiaOnStatinYes"
+                      value="yes"
+                      {...register("dyslipidemiaOnStatin")}
+                    />
+                    <label
+                      htmlFor="dyslipidemiaOnStatinYes"
+                      className="text-gray-900"
+                    >
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="dyslipidemiaOnStatinNo"
+                      value="no"
+                      {...register("dyslipidemiaOnStatin")}
+                    />
+                    <label
+                      htmlFor="dyslipidemiaOnStatinNo"
+                      className="text-gray-900"
+                    >
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="dyslipidemiaOnStatinNotKnown"
+                      value="not known"
+                      {...register("dyslipidemiaOnStatin")}
+                    />
+                    <label
+                      htmlFor="dyslipidemiaOnStatinNotKnown"
+                      className="text-gray-900"
+                    >
+                      Not Known
+                    </label>
+                  </div>
                 </div>
 
-                <div className="flex gap-x-4">
+                {/* Hypertension */}
+                <div className="flex flex-col gap-y-4">
                   <label
                     htmlFor="hypertension"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Hypertension
                   </label>
-                  <input
-                    type="checkbox"
-                    id="hypertension"
-                    {...register("hypertension")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="hypertensionYes"
+                      value="yes"
+                      {...register("hypertension")}
+                    />
+                    <label htmlFor="hypertensionYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="hypertensionNo"
+                      value="no"
+                      {...register("hypertension")}
+                    />
+                    <label htmlFor="hypertensionNo" className="text-gray-900">
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="hypertensionNotKnown"
+                      value="not known"
+                      {...register("hypertension")}
+                    />
+                    <label
+                      htmlFor="hypertensionNotKnown"
+                      className="text-gray-900"
+                    >
+                      Not Known
+                    </label>
+                  </div>
+
+                  {watch("hypertension") === "yes" && (
+                    <div className="ml-6 flex flex-col gap-y-4">
+                      <div className="flex gap-x-4">
+                        <input
+                          type="radio"
+                          id="hypertensionLessThan1Yr"
+                          value="less than 1 yr"
+                          {...register("hypertensionDuration")}
+                        />
+                        <label
+                          htmlFor="hypertensionLessThan1Yr"
+                          className="text-gray-900"
+                        >
+                          Less than 1 Yr
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="hypertension1OrMoreYrs"
+                          value="1 or more yrs"
+                          {...register("hypertensionDuration")}
+                        />
+                        <label
+                          htmlFor="hypertension1OrMoreYrs"
+                          className="text-gray-900"
+                        >
+                          1 or more Yrs
+                        </label>
+                      </div>
+
+                      {watch("hypertensionDuration") === "1 or more yrs" && (
+                        <div className="ml-6 flex flex-col gap-y-2">
+                          <label
+                            htmlFor="hypertensionDurationYears"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Duration (Yrs):
+                          </label>
+                          <input
+                            type="number"
+                            id="hypertensionDurationYears"
+                            {...register("hypertensionDurationYears")}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex gap-x-4">
+                {/* Diabetes */}
+                <div className="flex flex-col gap-y-4">
                   <label
                     htmlFor="diabetes"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Diabetes
                   </label>
-                  <input
-                    type="checkbox"
-                    id="diabetes"
-                    {...register("diabetes")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="diabetesYes"
+                      value="yes"
+                      {...register("diabetes")}
+                    />
+                    <label htmlFor="diabetesYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="diabetesNo"
+                      value="no"
+                      {...register("diabetes")}
+                    />
+                    <label htmlFor="diabetesNo" className="text-gray-900">
+                      No
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="diabetesNotKnown"
+                      value="not known"
+                      {...register("diabetes")}
+                    />
+                    <label htmlFor="diabetesNotKnown" className="text-gray-900">
+                      Not Known
+                    </label>
+                  </div>
+
+                  {watch("diabetes") === "yes" && (
+                    <div className="ml-6 flex flex-col gap-y-4">
+                      <div className="flex gap-x-4">
+                        <label className="block text-sm leading-6 text-gray-900">
+                          Duration (Yrs):
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="4"
+                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                          {...register("diabetesDuration")}
+                        />
+                      </div>
+                      <div className="flex gap-x-4">
+                        <label className="block text-sm leading-6 text-gray-900">
+                          Insulin:
+                        </label>
+                        <input
+                          type="checkbox"
+                          {...register("diabetesInsulin")}
+                        />
+                        <label className="block text-sm leading-6 text-gray-900">
+                          Only OHA:
+                        </label>
+                        <input type="checkbox" {...register("diabetesOHA")} />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex gap-x-4">
+                {/* Smoking Status */}
+                <div className="flex flex-col gap-y-4">
                   <label
                     htmlFor="smokingStatus"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Smoking Status*
                   </label>
-                  <input
-                    type="checkbox"
-                    id="smokingStatus"
-                    {...register("smokingStatus")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="smokingStatusYes"
+                      value="yes"
+                      {...register("smokingStatus")}
+                    />
+                    <label htmlFor="smokingStatusYes" className="text-gray-900">
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="smokingStatusNo"
+                      value="no"
+                      {...register("smokingStatus")}
+                    />
+                    <label htmlFor="smokingStatusNo" className="text-gray-900">
+                      Never
+                    </label>
+                  </div>
+
+                  {watch("smokingStatus") === "yes" && (
+                    <div className="ml-6 flex flex-col gap-y-4">
+                      <label
+                        htmlFor="smokingType"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Smoking Type
+                      </label>
+                      <div className="flex gap-x-4">
+                        <input
+                          type="radio"
+                          id="currentSmoker"
+                          value="current"
+                          {...register("smokingType")}
+                        />
+                        <label
+                          htmlFor="currentSmoker"
+                          className="text-gray-900"
+                        >
+                          Current Smoker
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="pastSmoker"
+                          value="past"
+                          {...register("smokingType")}
+                        />
+                        <label htmlFor="pastSmoker" className="text-gray-900">
+                          Past Smoker
+                        </label>
+                      </div>
+
+                      {watch("smokingType") === "current" && (
+                        <div className="flex gap-x-4">
+                          <label className="block text-sm leading-6 text-gray-900">
+                            Smoking Since (Years):
+                          </label>
+                          <input
+                            type="number"
+                            placeholder="5"
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                            {...register("smokingSince")}
+                          />
+                        </div>
+                      )}
+
+                      {watch("smokingType") === "past" && (
+                        <div className="flex gap-x-4">
+                          <label className="block text-sm leading-6 text-gray-900">
+                            Left (Years):
+                          </label>
+                          <input
+                            type="number"
+                            placeholder="1 to 41"
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                            {...register("smokingLeftYears")}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex gap-x-4">
+                {/* Smokeless Tobacco Status */}
+                <div className="flex flex-col gap-y-4">
                   <label
                     htmlFor="smokelessTobaccoStatus"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     Smokeless Tobacco Status [Paan with tobacco, Gutka Etc.]*
                   </label>
-                  <input
-                    type="checkbox"
-                    id="smokelessTobaccoStatus"
-                    {...register("smokelessTobaccoStatus")}
-                  />
+                  <div className="flex gap-x-4">
+                    <input
+                      type="radio"
+                      id="smokelessTobaccoStatusYes"
+                      value="yes"
+                      {...register("smokelessTobaccoStatus")}
+                    />
+                    <label
+                      htmlFor="smokelessTobaccoStatusYes"
+                      className="text-gray-900"
+                    >
+                      Yes
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="smokelessTobaccoStatusNo"
+                      value="no"
+                      {...register("smokelessTobaccoStatus")}
+                    />
+                    <label
+                      htmlFor="smokelessTobaccoStatusNo"
+                      className="text-gray-900"
+                    >
+                      No
+                    </label>
+                  </div>
+
+                  {watch("smokelessTobaccoStatus") === "yes" && (
+                    <div className="ml-6 flex flex-col gap-y-4">
+                      <label
+                        htmlFor="tobaccoUsageType"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Tobacco Usage Type
+                      </label>
+                      <div className="flex gap-x-4">
+                        <input
+                          type="radio"
+                          id="currentUser"
+                          value="current"
+                          {...register("tobaccoUsageType")}
+                        />
+                        <label htmlFor="currentUser" className="text-gray-900">
+                          Current
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="pastUser"
+                          value="past"
+                          {...register("tobaccoUsageType")}
+                        />
+                        <label htmlFor="pastUser" className="text-gray-900">
+                          Past
+                        </label>
+                      </div>
+
+                      {watch("tobaccoUsageType") === "current" && (
+                        <div className="flex gap-x-4">
+                          <label className="block text-sm leading-6 text-gray-900">
+                            Taking Since (Years):
+                          </label>
+                          <input
+                            type="number"
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                            {...register("tobaccoTakingSince")}
+                          />
+                        </div>
+                      )}
+
+                      {watch("tobaccoUsageType") === "past" && (
+                        <div className="flex gap-x-4">
+                          <label className="block text-sm leading-6 text-gray-900">
+                            Left (Years):
+                          </label>
+                          <input
+                            type="number"
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+                            {...register("tobaccoLeftYears")}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <p className="mt-8 text-3xl text-center font-bold leading-6 text-gray-600">
@@ -1781,327 +2360,641 @@ export default function Form() {
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 I. Laboratory
               </p>
-              <div className="mt-10 flex flex-col gap-x-6 gap-y-8 ">
-                <div>
+              <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
+                {/* Initial Creatinine */}
+                <div className="flex items-center gap-x-4">
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     Initial Creatinine*
                   </label>
-                  <input
-                    type="text"
-                    id="initialCreatinine"
-                    {...register("initialCreatinine")}
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.initialCreatinine?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.initialCreatinine.message}
-                    </p>
+                  <div className="flex items-center gap-x-2">
+                    <input
+                      type="radio"
+                      id="initialCreatinineNo"
+                      value="No"
+                      {...register("initialCreatinine")}
+                    />
+                    <label htmlFor="initialCreatinineNo">No</label>
+                    <input
+                      type="radio"
+                      id="initialCreatinineYes"
+                      value="Yes"
+                      {...register("initialCreatinine")}
+                    />
+                    <label htmlFor="initialCreatinineYes">Yes</label>
+                  </div>
+                  {watch("initialCreatinine") === "Yes" && (
+                    <>
+                      <div className="ml-4">
+                        <input
+                          type="radio"
+                          id="initialCreatinineUnit1"
+                          value="μmol per liter"
+                          {...register("initialCreatinineUnit")}
+                        />
+                        <label htmlFor="initialCreatinineUnit1">
+                          μmol per liter
+                        </label>
+                        <input
+                          type="radio"
+                          id="initialCreatinineUnit2"
+                          value="mg per dl"
+                          {...register("initialCreatinineUnit")}
+                        />
+                        <label htmlFor="initialCreatinineUnit2">
+                          mg per dl
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        id="initialCreatinineValue"
+                        placeholder="Value"
+                        {...register("initialCreatinineValue")}
+                        className="ml-auto block w-1/4 rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                    </>
                   )}
                 </div>
 
-                <div>
+                {/* Random Glucose */}
+                <div className="flex items-center gap-x-4">
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     Random Glucose*
                   </label>
-                  <input
-                    type="text"
-                    id="randomGlucose"
-                    {...register("randomGlucose")}
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.randomGlucose?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.randomGlucose.message}
-                    </p>
+                  <div className="flex items-center gap-x-2">
+                    <input
+                      type="radio"
+                      id="randomGlucoseNo"
+                      value="No"
+                      {...register("randomGlucose")}
+                    />
+                    <label htmlFor="randomGlucoseNo">No</label>
+                    <input
+                      type="radio"
+                      id="randomGlucoseYes"
+                      value="Yes"
+                      {...register("randomGlucose")}
+                    />
+                    <label htmlFor="randomGlucoseYes">Yes</label>
+                  </div>
+                  {watch("randomGlucose") === "Yes" && (
+                    <>
+                      <div className="ml-4">
+                        <input
+                          type="radio"
+                          id="randomGlucoseUnit1"
+                          value="μmol per liter"
+                          {...register("randomGlucoseUnit")}
+                        />
+                        <label htmlFor="randomGlucoseUnit1">
+                          μmol per liter
+                        </label>
+                        <input
+                          type="radio"
+                          id="randomGlucoseUnit2"
+                          value="mg per dl"
+                          {...register("randomGlucoseUnit")}
+                        />
+                        <label htmlFor="randomGlucoseUnit2">mg per dl</label>
+                      </div>
+                      <input
+                        type="text"
+                        id="randomGlucoseValue"
+                        placeholder="Value"
+                        {...register("randomGlucoseValue")}
+                        className="ml-auto block w-1/4 rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                    </>
                   )}
                 </div>
 
-                <div>
+                {/* Fasting Glucose */}
+                <div className="flex items-center gap-x-4">
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     Fasting Glucose*
                   </label>
-                  <input
-                    type="text"
-                    id="fastingGlucose"
-                    {...register("fastingGlucose")}
-                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.fastingGlucose?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.fastingGlucose.message}
-                    </p>
+                  <div className="flex items-center gap-x-2">
+                    <input
+                      type="radio"
+                      id="fastingGlucoseNo"
+                      value="No"
+                      {...register("fastingGlucose")}
+                    />
+                    <label htmlFor="fastingGlucoseNo">No</label>
+                    <input
+                      type="radio"
+                      id="fastingGlucoseYes"
+                      value="Yes"
+                      {...register("fastingGlucose")}
+                    />
+                    <label htmlFor="fastingGlucoseYes">Yes</label>
+                  </div>
+                  {watch("fastingGlucose") === "Yes" && (
+                    <>
+                      <div className="ml-4">
+                        <input
+                          type="radio"
+                          id="fastingGlucoseUnit1"
+                          value="μmol per liter"
+                          {...register("fastingGlucoseUnit")}
+                        />
+                        <label htmlFor="fastingGlucoseUnit1">
+                          μmol per liter
+                        </label>
+                        <input
+                          type="radio"
+                          id="fastingGlucoseUnit2"
+                          value="mg per dl"
+                          {...register("fastingGlucoseUnit")}
+                        />
+                        <label htmlFor="fastingGlucoseUnit2">mg per dl</label>
+                      </div>
+                      <input
+                        type="text"
+                        id="fastingGlucoseValue"
+                        placeholder="Value"
+                        {...register("fastingGlucoseValue")}
+                        className="ml-auto block w-1/4 rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                    </>
                   )}
                 </div>
-
-                <h2>Cardiac Marker - Maximum Values in 1st 24 hrs</h2>
-                <table className="mt-4 w-full border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="border p-2">Not Done / Done</th>
-                      <th className="border p-2">Qualitative</th>
-                      <th className="border p-2">Quantitative</th>
-                      <th className="border p-2">Value</th>
-                      <th className="border p-2">ULN</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* CPK Row */}
-                    <tr>
-                      <td className="border p-2">
-                        <input
-                          type="checkbox"
-                          id="cpkDone"
-                          {...register("cardiacMarker.cpk.done")}
-                        />
-                        <label htmlFor="cpkDone">Done</label>
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="cpkQualitative"
-                          {...register("cardiacMarker.cpk.qualitative")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="cpkQuantitative"
-                          {...register("cardiacMarker.cpk.quantitative")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="cpkValue"
-                          {...register("cardiacMarker.cpk.value")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="cpkULN"
-                          {...register("cardiacMarker.cpk.uln")}
-                        />
-                      </td>
-                    </tr>
-                    {/* CK-MB Row */}
-                    <tr>
-                      <td className="border p-2">
-                        <input
-                          type="checkbox"
-                          id="ckMbDone"
-                          {...register("cardiacMarker.ckMb.done")}
-                        />
-                        <label htmlFor="ckMbDone">Done</label>
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="ckMbQualitative"
-                          {...register("cardiacMarker.ckMb.qualitative")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="ckMbQuantitative"
-                          {...register("cardiacMarker.ckMb.quantitative")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="ckMbValue"
-                          {...register("cardiacMarker.ckMb.value")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="ckMbULN"
-                          {...register("cardiacMarker.ckMb.uln")}
-                        />
-                      </td>
-                    </tr>
-                    {/* Troponin Row */}
-                    <tr>
-                      <td className="border p-2">
-                        <input
-                          type="checkbox"
-                          id="troponinDone"
-                          {...register("cardiacMarker.troponin.done")}
-                        />
-                        <label htmlFor="troponinDone">Done</label>
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="troponinQualitative"
-                          {...register("cardiacMarker.troponin.qualitative")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="troponinQuantitative"
-                          {...register("cardiacMarker.troponin.quantitative")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="troponinValue"
-                          {...register("cardiacMarker.troponin.value")}
-                        />
-                      </td>
-                      <td className="border p-2">
-                        <input
-                          type="text"
-                          id="troponinULN"
-                          {...register("cardiacMarker.troponin.uln")}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 J. Hospital Treatment &Counselling (Fill in all that apply for
                 each medication)
               </p>
-              <div className="mt-10 flex flex-col gap-x-6 gap-y-8 ">
+              <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
+                {/* Pre-Hub/Spoke Hospital Management */}
                 <div>
                   <label className="block text-sm font-medium leading-6 text-gray-900">
-                    Pre-Hub Management*
+                    Pre-Hub/Spoke Hospital Management*
                   </label>
-                  <div className="flex gap-x-4">
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
                     <div>
-                      <div>
-                        <input
-                          type="checkbox"
-                          id="preHubManagement1"
-                          {...register("preHubManagement")}
-                          value="Choice 1"
-                        />
-                        <label htmlFor="preHubManagement1">Choice 1</label>
-                      </div>
-                      <div>
-                        <input
-                          type="checkbox"
-                          id="preHubManagement2"
-                          {...register("preHubManagement")}
-                          value="Choice 2"
-                        />
-                        <label htmlFor="preHubManagement2">Choice 2</label>
-                      </div>
-                      <div>
-                        <input
-                          type="checkbox"
-                          id="preHubManagement3"
-                          {...register("preHubManagement")}
-                          value="Choice 3"
-                        />
-                        <label htmlFor="preHubManagement3">Choice 3</label>
-                      </div>
+                      <input
+                        type="checkbox"
+                        id="aspirin"
+                        {...register("preHubManagement")}
+                        value="Aspirin"
+                      />
+                      <label htmlFor="aspirin" className="ml-2">
+                        Aspirin
+                      </label>
                     </div>
                     <div>
-                      <div>
-                        <input
-                          type="checkbox"
-                          id="preHubManagement3"
-                          {...register("preHubManagement")}
-                          value="Choice 3"
-                        />
-                        <label htmlFor="preHubManagement3">Choice 3</label>
-                      </div>
-                      <div>
-                        <input
-                          type="checkbox"
-                          id="preHubManagement3"
-                          {...register("preHubManagement")}
-                          value="Choice 3"
-                        />
-                        <label htmlFor="preHubManagement3">Choice 3</label>
-                      </div>
-                      <div>
-                        <input
-                          type="checkbox"
-                          id="preHubManagement3"
-                          {...register("preHubManagement")}
-                          value="Choice 3"
-                        />
-                        <label htmlFor="preHubManagement3">Choice 3</label>
-                      </div>
+                      <input
+                        type="checkbox"
+                        id="statins"
+                        {...register("preHubManagement")}
+                        value="Statins"
+                      />
+                      <label htmlFor="statins" className="ml-2">
+                        Statins
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="clopidogrel"
+                        {...register("preHubManagement")}
+                        value="Clopidogrel / Prasugrel / Ticagretor"
+                      />
+                      <label htmlFor="clopidogrel" className="ml-2">
+                        Clopidogrel / Prasugrel / Ticagretor
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="others"
+                        {...register("preHubManagement")}
+                        value="Others"
+                      />
+                      <label htmlFor="others" className="ml-2">
+                        Others
+                      </label>
                     </div>
                   </div>
+                  {watch("preHubManagement") && (
+                    <div>
+                      <label>
+                        If 'Other Pre-Hospital Management' selected (Please
+                        select one of the below)
+                      </label>
+                      <div className="flex flex-wrap gap-x-4 gap-y-2">
+                        <div>
+                          <input
+                            type="checkbox"
+                            id="heparin"
+                            {...register("preHubManagement")}
+                            value="Heparin"
+                          />
+                          <label htmlFor="heparin" className="ml-2">
+                            Heparin
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="checkbox"
+                            id="nitrates"
+                            {...register("preHubManagement")}
+                            value="Nitrates"
+                          />
+                          <label htmlFor="nitrates" className="ml-2">
+                            Nitrates
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="checkbox"
+                            id="beta-blockers"
+                            {...register("preHubManagement")}
+                            value="Beta-Blockers"
+                          />
+                          <label htmlFor="beta-blockers" className="ml-2">
+                            Beta-Blockers
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="checkbox"
+                            id="ace-inhibitors"
+                            {...register("preHubManagement")}
+                            value="ACE Inhibitors"
+                          />
+                          <label htmlFor="ace-inhibitors" className="ml-2">
+                            ACE Inhibitors
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            type="checkbox"
+                            id="none"
+                            {...register("preHubManagement")}
+                            value="None"
+                          />
+                          <label htmlFor="none" className="ml-2">
+                            None of These
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
+                {/* During Admission */}
                 <div>
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     During Admission*
                   </label>
-                  <div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
                     <div>
                       <input
                         type="checkbox"
-                        id="duringAdmission1"
+                        id="aspirinAdmission"
                         {...register("duringAdmission")}
-                        value="Choice 1"
+                        value="Aspirin"
                       />
-                      <label htmlFor="duringAdmission1">Choice 1</label>
+                      <label htmlFor="aspirinAdmission" className="ml-2">
+                        Aspirin
+                      </label>
                     </div>
                     <div>
                       <input
                         type="checkbox"
-                        id="duringAdmission2"
+                        id="lmwh"
                         {...register("duringAdmission")}
-                        value="Choice 2"
+                        value="LMWH & Fondaparinux"
                       />
-                      <label htmlFor="duringAdmission2">Choice 2</label>
+                      <label htmlFor="lmwh" className="ml-2">
+                        LMWH & Fondaparinux
+                      </label>
                     </div>
                     <div>
                       <input
                         type="checkbox"
-                        id="duringAdmission3"
+                        id="beta-blockers-admission"
                         {...register("duringAdmission")}
-                        value="Choice 3"
+                        value="Beta-Blockers"
                       />
-                      <label htmlFor="duringAdmission3">Choice 3</label>
+                      <label htmlFor="beta-blockers-admission" className="ml-2">
+                        Beta-Blockers
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="sglt2"
+                        {...register("duringAdmission")}
+                        value="SGLT2 Inhibitors"
+                      />
+                      <label htmlFor="sglt2" className="ml-2">
+                        SGLT2 Inhibitors
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="glycoprotein"
+                        {...register("duringAdmission")}
+                        value="Glycoprotein II B/III A Inhibitors"
+                      />
+                      <label htmlFor="glycoprotein" className="ml-2">
+                        Glycoprotein II B/III A Inhibitors
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="heparin"
+                        {...register("duringAdmission")}
+                        value="Unfractionated Heparin"
+                      />
+                      <label htmlFor="heparin" className="ml-2">
+                        Unfractionated Heparin
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="nitrates"
+                        {...register("duringAdmission")}
+                        value="Nitrates"
+                      />
+                      <label htmlFor="nitrates" className="ml-2">
+                        Nitrates
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="arni"
+                        {...register("duringAdmission")}
+                        value="ARNI"
+                      />
+                      <label htmlFor="arni" className="ml-2">
+                        ARNI
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="arbs"
+                        {...register("duringAdmission")}
+                        value="ARBs"
+                      />
+                      <label htmlFor="arbs" className="ml-2">
+                        ARBs
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="other-antidiabetics"
+                        {...register("duringAdmission")}
+                        value="Other Antidiabetics"
+                      />
+                      <label htmlFor="other-antidiabetics" className="ml-2">
+                        Other Antidiabetics
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="statins-admission"
+                        {...register("duringAdmission")}
+                        value="Statins"
+                      />
+                      <label htmlFor="statins-admission" className="ml-2">
+                        Statins
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="ace-inhibitors-admission"
+                        {...register("duringAdmission")}
+                        value="ACE Inhibitors"
+                      />
+                      <label
+                        htmlFor="ace-inhibitors-admission"
+                        className="ml-2"
+                      >
+                        ACE Inhibitors
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="mra-admission"
+                        {...register("duringAdmission")}
+                        value="MRA"
+                      />
+                      <label htmlFor="mra-admission" className="ml-2">
+                        MRA
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="insulin-admission"
+                        {...register("duringAdmission")}
+                        value="Insulin"
+                      />
+                      <label htmlFor="insulin-admission" className="ml-2">
+                        Insulin
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="clopidogrel-admission"
+                        {...register("duringAdmission")}
+                        value="Clopidogrel / Prasugrel / Ticagretor"
+                      />
+                      <label htmlFor="clopidogrel-admission" className="ml-2">
+                        Clopidogrel / Prasugrel / Ticagretor
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="others-admission"
+                        {...register("duringAdmission")}
+                        value="Others"
+                      />
+                      <label htmlFor="others-admission" className="ml-2">
+                        Others
+                      </label>
                     </div>
                   </div>
                 </div>
 
+                {/* Prescribed at Discharge */}
                 <div>
                   <label className="block text-sm font-medium leading-6 text-gray-900">
                     Prescribed at Discharge*
                   </label>
-                  <div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2">
                     <div>
                       <input
                         type="checkbox"
-                        id="prescribedAtDischarge1"
+                        id="aspirin-discharge"
                         {...register("prescribedAtDischarge")}
-                        value="Choice 1"
+                        value="Aspirin"
                       />
-                      <label htmlFor="prescribedAtDischarge1">Choice 1</label>
+                      <label htmlFor="aspirin-discharge" className="ml-2">
+                        Aspirin
+                      </label>
                     </div>
                     <div>
                       <input
                         type="checkbox"
-                        id="prescribedAtDischarge2"
+                        id="clopidogrel-discharge"
                         {...register("prescribedAtDischarge")}
-                        value="Choice 2"
+                        value="Clopidogrel / Prasugrel / Ticagretor"
                       />
-                      <label htmlFor="prescribedAtDischarge2">Choice 2</label>
+                      <label htmlFor="clopidogrel-discharge" className="ml-2">
+                        Clopidogrel / Prasugrel / Ticagretor
+                      </label>
                     </div>
                     <div>
                       <input
                         type="checkbox"
-                        id="prescribedAtDischarge3"
+                        id="oral-anticoagulants"
                         {...register("prescribedAtDischarge")}
-                        value="Choice 3"
+                        value="Oral Anticoagulants"
                       />
-                      <label htmlFor="prescribedAtDischarge3">Choice 3</label>
+                      <label htmlFor="oral-anticoagulants" className="ml-2">
+                        Oral Anticoagulants
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="beta-blockers-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="Beta-Blockers"
+                      />
+                      <label htmlFor="beta-blockers-discharge" className="ml-2">
+                        Beta-Blockers
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="statins-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="Statins"
+                      />
+                      <label htmlFor="statins-discharge" className="ml-2">
+                        Statins
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="mra-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="MRA"
+                      />
+                      <label htmlFor="mra-discharge" className="ml-2">
+                        MRA
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="arni-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="ARNI"
+                      />
+                      <label htmlFor="arni-discharge" className="ml-2">
+                        ARNI
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="ace-inhibitors-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="ACE Inhibitors"
+                      />
+                      <label
+                        htmlFor="ace-inhibitors-discharge"
+                        className="ml-2"
+                      >
+                        ACE Inhibitors
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="insulin-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="Insulin"
+                      />
+                      <label htmlFor="insulin-discharge" className="ml-2">
+                        Insulin
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="nitrates-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="Nitrates"
+                      />
+                      <label htmlFor="nitrates-discharge" className="ml-2">
+                        Nitrates
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="arbs-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="ARBs"
+                      />
+                      <label htmlFor="arbs-discharge" className="ml-2">
+                        ARBs
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="sglt2-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="SGLT2 Inhibitors"
+                      />
+                      <label htmlFor="sglt2-discharge" className="ml-2">
+                        SGLT2 Inhibitors
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="other-antidiabetics-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="Other Antidiabetics"
+                      />
+                      <label
+                        htmlFor="other-antidiabetics-discharge"
+                        className="ml-2"
+                      >
+                        Other Antidiabetics
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="others-discharge"
+                        {...register("prescribedAtDischarge")}
+                        value="Others"
+                      />
+                      <label htmlFor="others-discharge" className="ml-2">
+                        Others
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -2109,7 +3002,7 @@ export default function Form() {
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 K. Revascularization Therapy
               </p>
-              <div className="mt-10 flex flex-col gap-x-6 gap-y-8 ">
+              <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
@@ -2118,20 +3011,159 @@ export default function Form() {
                     >
                       Thrombolysis*
                     </label>
-                    <select
-                      id="thrombolysis"
-                      {...register("thrombolysis")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="">Select</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
+                    <div className="flex items-center gap-x-4">
+                      <input
+                        type="radio"
+                        id="thrombolysis-yes"
+                        value="yes"
+                        {...register("thrombolysis")}
+                      />
+                      <label htmlFor="thrombolysis-yes">Yes</label>
+                      <input
+                        type="radio"
+                        id="thrombolysis-no"
+                        value="no"
+                        {...register("thrombolysis")}
+                      />
+                      <label htmlFor="thrombolysis-no">No</label>
+                    </div>
                   </div>
-                  {errors.thrombolysis?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.thrombolysis.message}
-                    </p>
+
+                  {/* Conditional rendering based on the selection */}
+                  {watch("thrombolysis") === "yes" && (
+                    <div className="mt-4">
+                      {/* Input Box */}
+                      <input
+                        type="text"
+                        placeholder="Input for Thrombolysis"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                        {...register("thrombolysisInput")}
+                      />
+
+                      {/* Thrombolytic Agents */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                          Thrombolytic Agents:
+                        </label>
+                        <div className="flex gap-x-4">
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="tenecteplase"
+                              {...register("thrombolyticAgents.tenecteplase")}
+                            />
+                            <label htmlFor="tenecteplase">Tenecteplase</label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="streptokinase"
+                              {...register("thrombolyticAgents.streptokinase")}
+                            />
+                            <label htmlFor="streptokinase">Streptokinase</label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="rtpa"
+                              {...register("thrombolyticAgents.rtpa")}
+                            />
+                            <label htmlFor="rtpa">r-TPA</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Thrombolysis at */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                          Thrombolysis at:
+                        </label>
+                        <div className="flex gap-x-4">
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="spokeCenter"
+                              {...register("thrombolysisAt.spokeCenter")}
+                            />
+                            <label htmlFor="spokeCenter">Spoke Center</label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="urokinase"
+                              {...register("thrombolysisAt.urokinase")}
+                            />
+                            <label htmlFor="urokinase">Urokinase</label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="hubCenter"
+                              {...register("thrombolysisAt.hubCenter")}
+                            />
+                            <label htmlFor="hubCenter">HUB Center</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Chest Pain Resolution */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                          Chest Pain Resolution:
+                        </label>
+                        <div className="flex gap-x-4">
+                          <div>
+                            <input
+                              type="radio"
+                              id="none"
+                              value="none"
+                              {...register("chestPainResolution")}
+                            />
+                            <label htmlFor="none">None</label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              id="complete"
+                              value="complete"
+                              {...register("chestPainResolution")}
+                            />
+                            <label htmlFor="complete">Complete</label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              id="partial"
+                              value="partial"
+                              {...register("chestPainResolution")}
+                            />
+                            <label htmlFor="partial">Partial</label>
+                            {watch("chestPainResolution") === "partial" && (
+                              <input
+                                type="number"
+                                placeholder="Enter percentage"
+                                className="ml-2 block rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                                {...register("partialPercent")}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {watch("thrombolysis") === "no" && (
+                    <div className="mt-4">
+                      <select
+                        id="thrombolysisInput"
+                        {...register("thrombolysisInput")}
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      >
+                        <option value="">Select</option>
+                        <option value="yes">partial ncl</option>
+                        <option value="no">None</option>
+                      </select>
+                    </div>
                   )}
                 </div>
 
@@ -2143,16 +3175,74 @@ export default function Form() {
                     >
                       ECHO*
                     </label>
-                    <select
-                      id="echo"
-                      {...register("echo")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="">Select</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
+                    <div className="flex items-center gap-x-4">
+                      <input
+                        type="radio"
+                        id="echo-yes"
+                        value="yes"
+                        {...register("echo")}
+                      />
+                      <label htmlFor="echo-yes">Yes</label>
+                      <input
+                        type="radio"
+                        id="echo-no"
+                        value="no"
+                        {...register("echo")}
+                      />
+                      <label htmlFor="echo-no">No</label>
+                    </div>
                   </div>
+
+                  {/* Conditional rendering based on the selection */}
+                  {watch("echo") === "yes" && (
+                    <div className="mt-4">
+                      {/* LVEF Ejection Fraction %Value */}
+                      <div className="flex gap-x-4 items-center">
+                        <label
+                          htmlFor="lvef_ejection_fraction"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          LVEF Ejection Fraction %Value
+                        </label>
+                        <input
+                          type="number"
+                          id="lvef_ejection_fraction"
+                          placeholder="Enter percentage"
+                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                          {...register("lvefEjectionFraction")}
+                        />
+                      </div>
+
+                      {/* RWMA */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                          RWMA
+                        </label>
+                        <div className="flex gap-x-4">
+                          <div>
+                            <input
+                              type="radio"
+                              id="rwma-yes"
+                              value="yes"
+                              {...register("rwma")}
+                            />
+                            <label htmlFor="rwma-yes">Yes</label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              id="rwma-no"
+                              value="no"
+                              {...register("rwma")}
+                            />
+                            <label htmlFor="rwma-no">No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error message */}
                   {errors.echo?.message && (
                     <p className="mt-2 text-sm text-red-400">
                       {errors.echo.message}
@@ -2168,16 +3258,166 @@ export default function Form() {
                     >
                       Angiography*
                     </label>
-                    <select
-                      id="angiography"
-                      {...register("angiography")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="">Select</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
+                    <div className="flex items-center gap-x-4">
+                      <input
+                        type="radio"
+                        id="angiography-yes"
+                        value="yes"
+                        {...register("angiography")}
+                      />
+                      <label htmlFor="angiography-yes">Yes</label>
+                      <input
+                        type="radio"
+                        id="angiography-no"
+                        value="no"
+                        {...register("angiography")}
+                      />
+                      <label htmlFor="angiography-no">No</label>
+                    </div>
                   </div>
+
+                  {/* Conditional rendering based on the selection */}
+                  {watch("angiography") === "yes" && (
+                    <div className="mt-4">
+                      {/* Date and Time Input */}
+                      <div className="flex gap-x-4 items-center">
+                        <label
+                          htmlFor="angiography_time"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Date & Time
+                        </label>
+                        <input
+                          type="datetime-local"
+                          id="angiography_time"
+                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                          {...register("angiographyTime")}
+                        />
+                      </div>
+
+                      {/* Left Main Disease */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                          Left Main Disease &gt;=50%
+                        </label>
+                        <div className="flex gap-x-4">
+                          <div>
+                            <input
+                              type="radio"
+                              id="leftMainDisease-yes"
+                              value="yes"
+                              {...register("leftMainDisease")}
+                            />
+                            <label htmlFor="leftMainDisease-yes">Yes</label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              id="leftMainDisease-no"
+                              value="no"
+                              {...register("leftMainDisease")}
+                            />
+                            <label htmlFor="leftMainDisease-no">No</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Number Diseased Vessels - Conditionally Rendered */}
+                      {watch("leftMainDisease") === "yes" && (
+                        <div className="mt-4">
+                          <label
+                            htmlFor="number_diseased_vessels"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Number Diseased Vessels with ≥50% Stenosis
+                          </label>
+                          <input
+                            type="number"
+                            id="number_diseased_vessels"
+                            placeholder="Enter number"
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                            {...register("numberDiseasedVessels")}
+                          />
+                        </div>
+                      )}
+
+                      {/* Culprit Vessels */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                          Culprit Vessels
+                        </label>
+                        <div className="flex gap-x-4">
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="culprit_lad"
+                              {...register("culpritVessels.lad")}
+                            />
+                            <label htmlFor="culprit_lad">LAD</label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="culprit_right_coronary"
+                              {...register("culpritVessels.rightCoronary")}
+                            />
+                            <label htmlFor="culprit_right_coronary">
+                              Right Coronary
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="culprit_left_circumflex"
+                              {...register("culpritVessels.leftCircumflex")}
+                            />
+                            <label htmlFor="culprit_left_circumflex">
+                              Left Circumflex
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="culprit_left_main"
+                              {...register("culpritVessels.leftMain")}
+                            />
+                            <label htmlFor="culprit_left_main">Left Main</label>
+                          </div>
+                          <div>
+                            <input
+                              type="checkbox"
+                              id="culprit_others"
+                              {...register("culpritVessels.others")}
+                            />
+                            <label htmlFor="culprit_others">Others</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {watch("angiography") === "no" && (
+                    <div className="mt-4">
+                      <label
+                        htmlFor="angiography_reason"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Choose Reason
+                      </label>
+                      <select
+                        id="angiography_reason"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                        {...register("angiographyReason")}
+                      >
+                        <option value="">Select</option>
+                        <option value="reason1">Reason 1</option>
+                        <option value="reason2">Reason 2</option>
+                        <option value="reason3">Reason 3</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Error message */}
                   {errors.angiography?.message && (
                     <p className="mt-2 text-sm text-red-400">
                       {errors.angiography.message}
@@ -2193,19 +3433,143 @@ export default function Form() {
                     >
                       PTCA*
                     </label>
-                    <select
-                      id="ptca2"
-                      {...register("ptca2")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="">Select</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
+                    <div className="flex items-center gap-x-4">
+                      <input
+                        type="radio"
+                        id="ptca-yes"
+                        value="yes"
+                        {...register("ptca2")}
+                      />
+                      <label htmlFor="ptca-yes">Yes</label>
+                      <input
+                        type="radio"
+                        id="ptca-no"
+                        value="no"
+                        {...register("ptca2")}
+                      />
+                      <label htmlFor="ptca-no">No</label>
+                    </div>
                   </div>
+
+                  {/* Conditional rendering based on the selection */}
+                  {watch("ptca2") === "yes" && (
+                    <div className="mt-4">
+                      {/* Date and Time Input */}
+                      <div className="flex gap-x-4 items-center">
+                        <label
+                          htmlFor="ptca_time"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Date & Time
+                        </label>
+                        <input
+                          type="datetime-local"
+                          id="ptca_time"
+                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                          {...register("ptcaTime")}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {watch("ptca2") === "no" && (
+                    <div className="mt-4">
+                      <label
+                        htmlFor="ptca_reason"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Choose Reason
+                      </label>
+                      <select
+                        id="ptca_reason"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                        {...register("ptcaReason")}
+                      >
+                        <option value="">Select</option>
+                        <option value="reason1">Reason 1</option>
+                        <option value="reason2">Reason 2</option>
+                        <option value="reason3">Reason 3</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Error message */}
                   {errors.ptca?.message && (
                     <p className="mt-2 text-sm text-red-400">
                       {errors.ptca.message}
+                    </p>
+                  )}
+                </div>
+                <div className="">
+                  <div className="flex gap-x-4">
+                    <label
+                      htmlFor="cabg"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      CABG*
+                    </label>
+                    <div className="flex items-center gap-x-4">
+                      <input
+                        type="radio"
+                        id="cabg-yes"
+                        value="yes"
+                        {...register("cabg")}
+                      />
+                      <label htmlFor="cabg-yes">Yes</label>
+                      <input
+                        type="radio"
+                        id="cabg-no"
+                        value="no"
+                        {...register("cabg")}
+                      />
+                      <label htmlFor="cabg-no">No</label>
+                    </div>
+                  </div>
+
+                  {/* Conditional rendering based on CABG selection */}
+                  {watch("cabg") === "yes" && (
+                    <div className="mt-4">
+                      <div className="flex gap-x-4 items-center">
+                        <label
+                          htmlFor="cabg_time"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Date & Time
+                        </label>
+                        <input
+                          type="datetime-local"
+                          id="cabg_time"
+                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                          {...register("cabgTime")}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {watch("cabg") === "no" && (
+                    <div className="mt-4">
+                      <label
+                        htmlFor="cabg_reason"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Choose Reason
+                      </label>
+                      <select
+                        id="cabg_reason"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
+                        {...register("cabgReason")}
+                      >
+                        <option value="">Select</option>
+                        <option value="reason1">Reason 1</option>
+                        <option value="reason2">Reason 2</option>
+                        <option value="reason3">Reason 3</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {errors.cabg?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.cabg.message}
                     </p>
                   )}
                 </div>
@@ -2213,7 +3577,8 @@ export default function Form() {
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 L. EventsandOutcomeinTheHospital
               </p>
-              <div className="mt-10 flex flex-col gap-x-6 gap-y-8 ">
+              <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
+                {/* Reinfarction */}
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
@@ -2222,15 +3587,36 @@ export default function Form() {
                     >
                       Reinfarction*
                     </label>
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="radio"
+                        id="reinfarctionNo"
+                        value="No"
+                        {...register("reinfarction")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="reinfarctionNo">No</label>
+                      <input
+                        type="radio"
+                        id="reinfarctionYes"
+                        value="Yes"
+                        {...register("reinfarction")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="reinfarctionYes">Yes</label>
+                    </div>
+                  </div>
+                  {watch("reinfarction") === "Yes" && (
                     <input
                       type="text"
-                      id="reinfarction"
-                      {...register("reinfarction")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      id="reinfarctionDetails"
+                      placeholder="Details"
+                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                  </div>
+                  )}
                 </div>
 
+                {/* Stroke */}
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
@@ -2239,32 +3625,77 @@ export default function Form() {
                     >
                       Stroke*
                     </label>
-                    <input
-                      type="text"
-                      id="stroke"
-                      {...register("stroke")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="radio"
+                        id="strokeNo"
+                        value="No"
+                        {...register("stroke")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="strokeNo">No</label>
+                      <input
+                        type="radio"
+                        id="strokeYes"
+                        value="Yes"
+                        {...register("stroke")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="strokeYes">Yes</label>
+                    </div>
                   </div>
+                  {watch("stroke") === "Yes" && (
+                    <select
+                      id="strokeType"
+                      {...register("strokeType")}
+                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                    >
+                      <option value="">--- Choose Type ---</option>
+                      <option value="Ischemic">Ischemic</option>
+                      <option value="Hemorrhagic">Hemorrhagic</option>
+                    </select>
+                  )}
                 </div>
 
+                {/* LV Failure */}
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
-                      htmlFor="vlFailure"
+                      htmlFor="lvFailure"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      VL Failure*
+                      LV Failure*
                     </label>
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="radio"
+                        id="lvFailureNo"
+                        value="No"
+                        {...register("lvFailure")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="lvFailureNo">No</label>
+                      <input
+                        type="radio"
+                        id="lvFailureYes"
+                        value="Yes"
+                        {...register("lvFailure")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="lvFailureYes">Yes</label>
+                    </div>
+                  </div>
+                  {watch("lvFailure") === "Yes" && (
                     <input
                       type="text"
-                      id="vlFailure"
-                      {...register("vlFailure")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      id="lvFailureDetails"
+                      placeholder="Details"
+                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                  </div>
+                  )}
                 </div>
 
+                {/* Recurrent Ischemia/Angina */}
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
@@ -2273,15 +3704,36 @@ export default function Form() {
                     >
                       Recurrent Ischemia/Angina*
                     </label>
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="radio"
+                        id="recurrentIschemiaNo"
+                        value="No"
+                        {...register("recurrentIschemia")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="recurrentIschemiaNo">No</label>
+                      <input
+                        type="radio"
+                        id="recurrentIschemiaYes"
+                        value="Yes"
+                        {...register("recurrentIschemia")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="recurrentIschemiaYes">Yes</label>
+                    </div>
+                  </div>
+                  {watch("recurrentIschemia") === "Yes" && (
                     <input
                       type="text"
-                      id="recurrentIschemia"
-                      {...register("recurrentIschemia")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      id="recurrentIschemiaDetails"
+                      placeholder="Details"
+                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                  </div>
+                  )}
                 </div>
 
+                {/* Cardiac Arrest */}
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
@@ -2290,15 +3742,44 @@ export default function Form() {
                     >
                       Cardiac Arrest*
                     </label>
-                    <input
-                      type="text"
-                      id="cardiacArrest"
-                      {...register("cardiacArrest")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="radio"
+                        id="cardiacArrestNo"
+                        value="No"
+                        {...register("cardiacArrest")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="cardiacArrestNo">No</label>
+                      <input
+                        type="radio"
+                        id="cardiacArrestYes"
+                        value="Yes"
+                        {...register("cardiacArrest")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="cardiacArrestYes">Yes</label>
+                    </div>
                   </div>
+                  {watch("cardiacArrest") === "Yes" && (
+                    <select
+                      id="cardiacArrestType"
+                      {...register("cardiacArrestType")}
+                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                    >
+                      <option value="">--- Choose Option ---</option>
+                      <option value="Ventricular Fibrillation">
+                        Ventricular Fibrillation
+                      </option>
+                      <option value="Asystole">Asystole</option>
+                      <option value="Pulseless Electrical Activity">
+                        Pulseless Electrical Activity
+                      </option>
+                    </select>
+                  )}
                 </div>
 
+                {/* Cardiogenic Shock */}
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
@@ -2307,147 +3788,33 @@ export default function Form() {
                     >
                       Cardiogenic Shock*
                     </label>
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="radio"
+                        id="cardiogenicShockNo"
+                        value="No"
+                        {...register("cardiogenicShock")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="cardiogenicShockNo">No</label>
+                      <input
+                        type="radio"
+                        id="cardiogenicShockYes"
+                        value="Yes"
+                        {...register("cardiogenicShock")}
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="cardiogenicShockYes">Yes</label>
+                    </div>
+                  </div>
+                  {watch("cardiogenicShock") === "Yes" && (
                     <input
                       type="text"
-                      id="cardiogenicShock"
-                      {...register("cardiogenicShock")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      id="cardiogenicShockDetails"
+                      placeholder="Details"
+                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                     />
-                  </div>
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="mechanicalComplications"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Mechanical complications - MR/VSD*
-                    </label>
-                    <input
-                      type="text"
-                      id="mechanicalComplications"
-                      {...register("mechanicalComplications")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="bleedingRequiringTransfusion"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Bleeding Requiring any Transfusion*
-                    </label>
-                    <input
-                      type="text"
-                      id="bleedingRequiringTransfusion"
-                      {...register("bleedingRequiringTransfusion")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="death"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Death*
-                    </label>
-                    <input
-                      type="text"
-                      id="death"
-                      {...register("death")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-m ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="discharge"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Discharge*
-                    </label>
-                    <input
-                      type="text"
-                      id="discharge"
-                      {...register("discharge")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                  {errors.discharge?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.discharge.message}
-                    </p>
                   )}
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="height"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Height (cm)*
-                    </label>
-                    <input
-                      type="text"
-                      id="height"
-                      {...register("height")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                  {errors.height?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.height.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="weight"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Weight (kg)*
-                    </label>
-                    <input
-                      type="text"
-                      id="weight"
-                      {...register("weight")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                  {errors.weight?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.weight.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="">
-                  <div className="flex gap-x-4">
-                    <label
-                      htmlFor="bmi"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      BMI (kg/m2)*
-                    </label>
-                    <input
-                      type="text"
-                      id="bmi"
-                      {...register("bmi")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 "
-                    />
-                  </div>
                 </div>
               </div>
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
@@ -2508,10 +3875,7 @@ export default function Form() {
                   In-Charge IDs*
                 </label>
                 {fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex gap-x-2 mb-4"
-                  >
+                  <div key={field.id} className="flex gap-x-2 mb-4">
                     <input
                       type="text"
                       {...register(`inchargeIds.${index}`)}

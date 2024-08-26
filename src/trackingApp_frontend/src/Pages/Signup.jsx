@@ -12,6 +12,7 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import Quote from "../components/Quote";
 import ActorContext from "../ActorContext";
+import LoadingScreen from "../LoadingScreen";
 //admin ambulance facility
 const Signup = () => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const Signup = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen />;
   }
 
   return (
