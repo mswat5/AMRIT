@@ -1,5 +1,4 @@
 import Blob "mo:base/Blob";
-import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
@@ -8,73 +7,110 @@ import Time "mo:base/Time";
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
 
+import AdminCanister "AdminCanister";
+import FacilityCanister "FacilityCanister";
+import ReportCanister "ReportCanister";
 import Types "Types";
 
 actor class PatientCanister() {
     type PatientRecord = Types.PatientRecord;
     type Result<T, E> = Result.Result<T, E>;
+    type AdminCanister = AdminCanister.AdminCanister;
+    type ReportCanister = ReportCanister.ReportCanister;
 
-    private stable var nextPatientId : Nat = 0;
-    private stable var patients = Map.new<Text, PatientRecord>();
+    type FacilityCanister = FacilityCanister.FacilityCanister;
+    let adminCanister : AdminCanister = actor ("bd3sg-teaaa-aaaaa-qaaba-cai");
+    let facilityCanister : FacilityCanister = actor ("br5f7-7uaaa-aaaaa-qaaca-cai");
+    let reportCanister : ReportCanister = actor ("by6od-j4aaa-aaaaa-qaadq-cai");
 
-    // Notify Incharges
-    private func notifyIncharges(details : Text, patientId : Text, inchargeIds : [Text]) : async () {
-        let adminCanister = actor ("bd3sg-teaaa-aaaaa-qaaba-cai") : actor {
-            notifySpecificIncharges : (Text, Text, [Text]) -> async ();
-        };
-
-        await adminCanister.notifySpecificIncharges(details, patientId, inchargeIds);
+    let accidentCanister = actor ("bkyz2-fmaaa-aaaaa-qaaaq-cai") : actor {
+        getAccidentDetails : (Text) -> async Result<Types.AccidentReport, Text>;
     };
+
+    private stable var nextPatientId : Nat = 1;
+    private stable var patients = Map.new<Text, PatientRecord>();
 
     public shared ({ caller }) func createPatientRecord(record : PatientRecord, file : ?Blob, inchargeIds : [Text]) : async Result<Text, Text> {
         if (Principal.isAnonymous(caller)) {
             return #err("Anonymous principals are not allowed to create patient records");
         };
 
-        let patientId = Nat.toText(nextPatientId);
-        nextPatientId += 1;
-
-        let newRecord : PatientRecord = {
-            id = patientId;
-            accidentId = record.accidentId;
-            name = record.name;
-            age = record.age;
-            currentFacilityId = record.currentFacilityId;
-            status = #Admitted;
-            treatmentDetails = "";
-
-            admissionTimestamp = Time.now();
-            dischargeTimestamp = null;
-        };
-
-        Map.set(patients, thash, patientId, newRecord);
-
-        // Generate admission report
-        let reportCanister = actor ("by6od-j4aaa-aaaaa-qaadq-cai") : actor {
-            generateReport : (Types.Report) -> async Result<Text, Text>;
-        };
-        let report : Types.Report = {
-            id = ""; // Will be assigned by ReportCanister
-            accidentId = record.accidentId;
-            patientId = patientId;
-            facilityId = record.currentFacilityId;
-            reportType = #TreatmentReport;
-            timestamp = Time.now();
-            file = file;
-            details = "Patient admitted to facility";
-        };
-
-        switch (await reportCanister.generateReport(report)) {
-            case (#ok(reportId)) {
-                await notifyIncharges("Patient admitted with ID: " # patientId, reportId, inchargeIds);
-                #ok("Patient record created successfully with ID: " # patientId # ". Report ID: " # reportId);
+        switch (await adminCanister.areAllIdsPresent(inchargeIds)) {
+            case (false) {
+                return #err(
+                    "Incharge IDs are wrong, some incharge with IDs are not present"
+                );
             };
-            case (#err(error)) {
-                // Log the error, but don't fail the patient record creation
-                // You might want to add some logging here
-                #ok("Patient record created successfully with ID: " # patientId # ", but report generation failed: " # error);
-            };
+            case (true) {};
         };
+
+        let resultReportingFacilityID = await facilityCanister.getFacilityId(caller);
+        switch (resultReportingFacilityID) {
+            case (#err(err)) {
+                #err("Your not registered as facility" # err);
+            };
+            case (#ok(facilityId)) {
+                let accidentDetailsTemp = await accidentCanister.getAccidentDetails(record.accidentId);
+
+                switch (accidentDetailsTemp) {
+                    case (#err(error)) {
+                        return (#err(error));
+                    };
+                    case (#ok(value)) {
+                        if (value.details.reportingFacilityId == facilityId or value.details.currentFacilityId == facilityId) {
+
+                        } else (
+                            return #err("You are not associated with this accident")
+                        );
+                    };
+
+                };
+                let patientId = Nat.toText(nextPatientId);
+                nextPatientId += 1;
+
+                let newRecord : PatientRecord = {
+                    accidentId = record.accidentId;
+                    name = record.name;
+                    age = record.age;
+                    treatmentDetails = record.treatmentDetails;
+
+                    id = patientId;
+                    status = #Admitted;
+                    currentFacilityId = facilityId;
+                    admissionTimestamp = Time.now();
+                    dischargeTimestamp = null;
+                };
+
+                Map.set(patients, thash, patientId, newRecord);
+
+                // Generate admission report
+
+                let report : Types.Report = {
+                    id = ""; // Will be assigned by ReportCanister
+                    accidentId = record.accidentId;
+                    patientId = patientId;
+                    facilityId = record.currentFacilityId;
+                    reportType = #TreatmentReport;
+                    timestamp = Time.now();
+                    file = file;
+                    details = "Patient admitted to facility";
+                };
+
+                switch (await reportCanister.generateReport(report)) {
+                    case (#ok(reportId)) {
+                        ignore await adminCanister.notifySpecificIncharges("Patient record created successfully with ID: " # patientId # ". Report ID: " # reportId, reportId, inchargeIds, report);
+                        #ok("Patient record created successfully with ID: " # patientId # ". Report ID: " # reportId);
+                    };
+                    case (#err(error)) {
+                        // Log the error, but don't fail the patient record creation
+                        // You might want to add some logging here
+                        #ok("Patient record created successfully with ID: " # patientId # ", but report generation failed: " # error);
+                    };
+                };
+            };
+
+        };
+
     };
 
     public shared ({ caller }) func updatePatientStatus(patientId : Text, status : Types.PatientStatus, file : ?Blob) : async Result<Text, Text> {
@@ -180,8 +216,21 @@ actor class PatientCanister() {
         switch (Map.get(patients, thash, patientId)) {
             case null { #err("Patient not found") };
             case (?patient) {
+
                 if (patient.currentFacilityId == newFacilityId) {
                     return #err("Patient is already in the specified facility");
+                };
+                switch (await facilityCanister.getFacilityId(caller)) {
+                    case (#ok(value)) {
+                        if (value == patient.currentFacilityId) {
+
+                        } else {
+                            return #err("Patient is not currently with the facility");
+                        };
+                    };
+                    case (#err(error)) {
+                        return #err("Patient is not currently with the facility");
+                    };
                 };
 
                 // Update patient record
@@ -193,9 +242,6 @@ actor class PatientCanister() {
                 Map.set(patients, thash, patientId, updatedPatient);
 
                 // Update facility records
-                let facilityCanister = actor ("br5f7-7uaaa-aaaaa-qaaca-cai") : actor {
-                    updatePatientCount : (Text, Int) -> async Result<Text, Text>;
-                };
 
                 // Decrease patient count in the old facility
                 ignore await facilityCanister.updatePatientCount(patient.currentFacilityId, -1);

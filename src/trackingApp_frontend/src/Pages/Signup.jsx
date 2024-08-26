@@ -17,29 +17,46 @@ const Signup = () => {
   const navigate = useNavigate();
   const { actors, isAuthenticated, login } = useContext(ActorContext);
 
+  const [loading, setLoading] = useState(false);
+
   // const [registrationStatus, setRegistrationStatus] = useState();
   const [c, setc] = useState(false);
   async function changeSigning() {
-    login();
+    setLoading(true);
+    await login();
     if (isAuthenticated) {
-      let resultRole = await actors.admin.getUserRole();
-      console.log(resultRole);
-      checkRegistration(resultRole.ok);
+      const result = await actors.admin.getUserRole();
+      if (result.ok) {
+        checkRegistration(result.ok);
+      } else {
+        console.log(result.err);
+      }
     }
+    setLoading(false);
   }
   const checkRegistration = (type) => {
     if (type === "admin") {
-      navigate("/Admin/");
+      navigate("/admin/");
     } else if (type === "facility") {
-      navigate("/Facility/");
+      navigate("/facility/");
     } else if (type === "ambulance") {
-      navigate("/Ambulance/");
+      navigate("/ambulance/");
     } else if (type === "incharge") {
-      navigate("/Incharge/");
+      navigate("/incharge/");
     } else {
       setc(!c);
     }
   };
+
+  const registerAdmin = async () => {
+    const result = await actors.admin.registerAdmin();
+    console.log(result);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2">
       <div>
@@ -63,7 +80,7 @@ const Signup = () => {
                 <Button
                   className="flex justify-between items-center w-full border border-gray-300 p-3 rounded-md mb-2"
                   variant="secondary"
-                  onClick={() => navigate("/admin/home")}
+                  onClick={registerAdmin}
                 >
                   <div className="flex items-center">
                     <User className="text-primary" />
@@ -74,7 +91,7 @@ const Signup = () => {
                 <Button
                   className="flex justify-between items-center w-full border border-gray-300 p-3 rounded-md mb-2"
                   variant="secondary"
-                  onClick={() => navigate("/incharge/home")}
+                  onClick={() => navigate("/register/incharge")}
                 >
                   <div className="flex items-center">
                     <UserRoundCheckIcon className="text-primary" />

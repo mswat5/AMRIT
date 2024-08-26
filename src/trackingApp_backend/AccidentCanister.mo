@@ -39,7 +39,27 @@ actor class AccidentCanister() {
     private stable var accidents = Map.new<Text, AccidentReport>();
     private stable var facilityAccidents = Map.new<Text, [Text]>();
 
+    // Define an array of permitted principals
+    private let permittedPrincipals : [Principal] = [
+        Principal.fromText("br5f7-7uaaa-aaaaa-qaaca-cai"),
+        Principal.fromText("by6od-j4aaa-aaaaa-qaadq-cai"),
+        Principal.fromText("b77ix-eeaaa-aaaaa-qaada-cai"),
+        Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai"),
+        Principal.fromText("be2us-64aaa-aaaaa-qaabq-cai"),
+        Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai"),
+
+    ];
+
     public shared ({ caller }) func createAccidentReport(details : Types.AccidentDetails, file : ?Blob, inchargeIds : [Text]) : async Result<Text, Text> {
+
+        switch (await adminCanister.areAllIdsPresent(inchargeIds)) {
+            case (false) {
+                return #err(
+                    "Incharge IDs are wrong, some incharge with IDs are not present"
+                );
+            };
+            case (true) {};
+        };
 
         let accidentId = Nat.toText(nextAccidentId);
 
@@ -155,6 +175,7 @@ actor class AccidentCanister() {
     };
 
     public query func getAccidentReport(accidentId : Text) : async Result<AccidentReport, Text> {
+
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
             case (?accident) { #ok(accident) };
@@ -164,6 +185,15 @@ actor class AccidentCanister() {
     public shared ({ caller }) func closeAccidentCase(accidentId : Text, file : ?Blob, patientID : Text, inchargeIds : [Text]) : async Result<Text, Text> {
         if (Principal.isAnonymous(caller)) {
             return #err("Anonymous principals are not allowed to close accident cases");
+        };
+
+        switch (await adminCanister.areAllIdsPresent(inchargeIds)) {
+            case (false) {
+                return #err(
+                    "Incharge IDs are wrong, some incharge with IDs are not present"
+                );
+            };
+            case (true) {};
         };
 
         switch (Map.get(accidents, thash, accidentId)) {
@@ -296,7 +326,10 @@ actor class AccidentCanister() {
         };
     };
 
-    public query func getAccidentDetails(accidentId : Text) : async Result<AccidentReport, Text> {
+    public shared ({ caller }) func getAccidentDetails(accidentId : Text) : async Result<AccidentReport, Text> {
+        if (not (await checkPermitted(caller))) {
+            return #err("This principals are not allowed to get accident details");
+        };
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
             case (?accident) { #ok(accident) };
@@ -345,6 +378,14 @@ actor class AccidentCanister() {
             case (#AccidentReport) { "Accident Update" };
             case (#TreatmentReport) { "Treatment Update" };
             case (#TransferReport) { "Patient Transfer" };
+        };
+    };
+
+    public func checkPermitted(caller : Principal) : async Bool {
+        let result = Array.indexOf<Principal>(caller, permittedPrincipals, Principal.equal);
+        switch (result) {
+            case (?value) { return true };
+            case (null) { return false };
         };
     };
 

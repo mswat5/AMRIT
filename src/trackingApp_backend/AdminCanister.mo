@@ -23,11 +23,14 @@ actor class AdminCanister() {
   type ReportNotification = Types.ReportNotification;
   type Result<T, E> = Result.Result<T, E>;
 
-  private stable var nextUserId : Nat = 0;
+  private stable var nextUserId : Nat = 1;
   private stable var pendingFacilities = Map.new<Text, FacilityRegistration>();
   private stable var pendingAmbulances = Map.new<Text, AmbulanceRegistration>();
   private stable var users = Map.new<Text, UserDetails>();
-  private stable var nextInchargeId : Nat = 0;
+
+  private stable var idAdminRegistered = false;
+  private stable var admin = "";
+
   private stable var pendingIncharges = Map.new<Text, InchargeDetails>();
   private stable var approvedIncharges = Map.new<Text, InchargeDetails>();
   private stable var inchargeReports = Map.new<Text, [Text]>(); // InchargeId -> [ReportId]
@@ -68,6 +71,10 @@ actor class AdminCanister() {
       return #err("Anonymous principals are not allowed to approve facilities");
     };
     //Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
+
     switch (Map.get(pendingFacilities, thash, facilityId)) {
       case null { #err("No pending registration found with ID: " # facilityId) };
       case (?registration) {
@@ -107,6 +114,9 @@ actor class AdminCanister() {
     };
 
     // Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
 
     switch (Map.get(pendingFacilities, thash, facilityId)) {
       case null {
@@ -150,6 +160,9 @@ actor class AdminCanister() {
       return #err("Anonymous principals are not allowed to approve ambulances");
     };
     //Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
 
     switch (Map.get(pendingAmbulances, thash, ambulanceId)) {
       case null { #err("No pending ambulance found with ID: " # ambulanceId) };
@@ -190,6 +203,9 @@ actor class AdminCanister() {
     };
 
     // Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
 
     switch (Map.get(pendingAmbulances, thash, ambulanceId)) {
       case null {
@@ -203,16 +219,27 @@ actor class AdminCanister() {
     };
   };
 
-  public query func listPendingRegistrations() : async Result.Result<[(Text, FacilityRegistration)], Text> {
+  public shared ({ caller }) func listPendingRegistrations() : async Result.Result<[(Text, FacilityRegistration)], Text> {
     //Admin Check
-
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
     #ok(Map.toArray(pendingFacilities));
   };
 
-  public query func listPendingAmbulances() : async [(Text, AmbulanceRegistration)] {
+  public shared ({ caller }) func listPendingAmbulances() : async Result.Result<[(Text, AmbulanceRegistration)], Text> {
     //Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
+    #ok(Map.toArray(pendingAmbulances));
+  };
 
-    Map.toArray(pendingAmbulances);
+  public shared ({ caller }) func listPendingIncharges() : async Result.Result<[(Text, InchargeDetails)], Text> {
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
+    #ok(Map.toArray(pendingIncharges));
   };
 
   public query func listUsers() : async Result.Result<[(Text, UserDetails)], Text> {
@@ -224,8 +251,12 @@ actor class AdminCanister() {
     };
   };
 
-  public query func getUserDetails(userId : Text) : async Result<UserDetails, Text> {
+  public shared ({ caller }) func getUserDetails(userId : Text) : async Result<UserDetails, Text> {
     //Admin Check
+    // Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
 
     switch (Map.get(users, thash, userId)) {
       case null { #err("User not found") };
@@ -233,8 +264,12 @@ actor class AdminCanister() {
     };
   };
 
-  public func getSystemOverview() : async Result<SystemOverview, Text> {
+  public shared ({ caller }) func getSystemOverview() : async Result<SystemOverview, Text> {
     //Admin Check
+    // Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
 
     let facilityCanister = actor ("br5f7-7uaaa-aaaaa-qaaca-cai") : actor {
       getTotalFacilities : () -> async Nat;
@@ -271,9 +306,6 @@ actor class AdminCanister() {
     let userId = Nat.toText(nextUserId);
     nextUserId += 1;
 
-    let inchargeId = Nat.toText(nextInchargeId);
-    nextInchargeId += 1;
-
     let userDetails : UserDetails = {
       id = userId;
       principal = caller;
@@ -284,7 +316,7 @@ actor class AdminCanister() {
     };
 
     let inchargeDetails : InchargeDetails = {
-      id = inchargeId;
+      id = userId;
       principal = caller;
       name = details.name;
       contactInfo = details.contactInfo;
@@ -294,10 +326,10 @@ actor class AdminCanister() {
       location = details.location;
     };
 
-    Map.set(pendingIncharges, thash, inchargeId, inchargeDetails);
+    Map.set(pendingIncharges, thash, userId, inchargeDetails);
     Map.set(users, thash, userId, userDetails);
 
-    #ok("Incharge registration submitted with ID: " # inchargeId);
+    #ok("Incharge registration submitted with ID: " # userId);
   };
 
   // Approve Incharge
@@ -308,6 +340,10 @@ actor class AdminCanister() {
     };
 
     //Admin Check
+    // Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
 
     switch (Map.get(pendingIncharges, thash, inchargeId)) {
       case null {
@@ -334,6 +370,29 @@ actor class AdminCanister() {
       };
     };
   };
+
+  public shared ({ caller }) func rejectIncharge(inchargeId : Text) : async Result<Text, Text> {
+    if (Principal.isAnonymous(caller)) {
+      return #err("Anonymous principals are not allowed to reject ambulances");
+    };
+
+    // Admin Check
+    if (not (await checkAdmin(caller))) {
+      return #err("You are not admin");
+    };
+
+    switch (Map.get(pendingIncharges, thash, inchargeId)) {
+      case null {
+        return #err("No pending incharge found with ID: " # inchargeId);
+      };
+      case (?registration) {
+        Map.delete(pendingIncharges, thash, inchargeId);
+        Map.delete(users, thash, inchargeId);
+        #ok("Incharge rejected successfully with ID: " # inchargeId);
+      };
+    };
+  };
+
   public query func getInchargeReports(inchargeId : Text) : async Result<[Text], Text> {
     switch (Map.get(inchargeReports, thash, inchargeId)) {
       case null { #err("No reports found for this incharge") };
@@ -514,7 +573,7 @@ actor class AdminCanister() {
       };
     };
 
-    #ok("admin");
+    #ok("User Not Found");
 
   };
 
@@ -523,6 +582,9 @@ actor class AdminCanister() {
   };
 
   public shared ({ caller }) func registerAdmin() : async Bool {
+    if (Principal.isAnonymous(caller) or idAdminRegistered) {
+      return false;
+    };
     let userDetails : UserDetails = {
       id = Nat.toText(9999);
       principal = caller;
@@ -532,13 +594,30 @@ actor class AdminCanister() {
       certificationID = "details.certificationID";
     };
     Map.set(users, thash, "9999", userDetails);
+    idAdminRegistered := true;
+    admin := Principal.toText(caller);
     return true;
   };
-  private func checkAdmin(caller : Principal) : async Bool {
-    let admin = "";
+
+  public query func checkAdmin(caller : Principal) : async Bool {
+
     if (admin == Principal.toText(caller)) {
       return true;
     };
     return false;
+  };
+
+  public func areAllIdsPresent(ids : [Text]) : async Bool {
+    for (id in ids.vals()) {
+      switch (Map.get(users, thash, id)) {
+        case null {
+          return false; // If any ID is not found, return false
+        };
+        case (?user) {
+          // ID is found, continue checking the next one
+        };
+      };
+    };
+    return true; // All IDs are found
   };
 };

@@ -48,20 +48,22 @@ const App = () => {
     accident: null,
     patient: null,
   });
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authClient, setAuthClient] = useState(null);
 
   useEffect(() => {
-    initAuthClient();
-  }, []);
+    const initialize = async () => {
+      await initAuthClient();
+    };
+
+    initialize();
+  }, [isAuthenticated]);
 
   async function initAuthClient() {
     const client = await AuthClient.create();
     setAuthClient(client);
     if (await client.isAuthenticated()) {
-      setIsAuthenticated(true);
-      await initializeActors(client);
+      initializeActors(client);
     }
   }
 
@@ -117,6 +119,14 @@ const App = () => {
   }
 
   async function login() {
+    setActors({
+      admin: null,
+      report: null,
+      facility: null,
+      ambulance: null,
+      accident: null,
+      patient: null,
+    });
     if (authClient) {
       await new Promise((resolve) => {
         authClient.login({
@@ -131,17 +141,35 @@ const App = () => {
 
   return (
     <ActorContext.Provider value={{ actors, isAuthenticated, login }}>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider
+        defaultTheme="dark"
+        storageKey="vite-ui-theme"
+      >
         <Router>
           <Routes>
-            <Route path="/" element={<Navigate to="/Register" />} />
-            <Route path="/Register" element={<FirstPageContent />} />
+            <Route
+              path="/"
+              element={<Navigate to="/Register" />}
+            />
+            <Route
+              path="/Register"
+              element={<FirstPageContent />}
+            />
             <Route path="/Register">
-              <Route path="Ambulance" element={<RegisterAmbulance />} />
+              <Route
+                path="Ambulance"
+                element={<RegisterAmbulance />}
+              />
 
-              <Route path="Incharge" element={<Inchargeform />} />
+              <Route
+                path="Incharge"
+                element={<Inchargeform />}
+              />
 
-              <Route path="Facility" element={<RegisterFacility />} />
+              <Route
+                path="Facility"
+                element={<RegisterFacility />}
+              />
             </Route>
             <Route
               path="/Admin/*"
@@ -151,14 +179,26 @@ const App = () => {
                 </SharedLayout>
               }
             >
-              <Route path="User-management" element={<UserManagement />} />
-              <Route path="Facility-approval" element={<FacilityApproval />} />
+              <Route
+                path="User-management"
+                element={<UserManagement />}
+              />
+              <Route
+                path="Facility-approval"
+                element={<FacilityApproval />}
+              />
               <Route
                 path="Ambulance-approval"
                 element={<AmbulanceApproval />}
               />
-              <Route path="incharge-approval" element={<InchargeApproval />} />
-              <Route path="*" element={<Navigate to="facility-approval" />} />
+              <Route
+                path="incharge-approval"
+                element={<InchargeApproval />}
+              />
+              <Route
+                path="*"
+                element={<Navigate to="facility-approval" />}
+              />
             </Route>
 
             <Route
@@ -185,8 +225,14 @@ const App = () => {
                 path="accident-management"
                 element={<AccidentManagement />}
               />
-              <Route path="reports" element={<Reports />} />
-              <Route path="*" element={<Navigate to="patient-management" />} />
+              <Route
+                path="reports"
+                element={<Reports />}
+              />
+              <Route
+                path="*"
+                element={<Navigate to="patient-management" />}
+              />
             </Route>
             <Route
               path="/Facility/*"
@@ -196,14 +242,32 @@ const App = () => {
                 </SharedLayout>
               }
             >
-              <Route path="item1/*" element={<FacilityItem1 />} />
-              <Route path="item2/*" element={<FacilityItem2 />} />
-              <Route path="item3/*" element={<FacilityItem3 />} />
-              <Route path="item4/*" element={<FacilityItem4 />} />
-              <Route path="item5/*" element={<FacilityItem5 />} />
+              <Route
+                path="item1/*"
+                element={<FacilityItem1 />}
+              />
+              <Route
+                path="item2/*"
+                element={<FacilityItem2 />}
+              />
+              <Route
+                path="item3/*"
+                element={<FacilityItem3 />}
+              />
+              <Route
+                path="item4/*"
+                element={<FacilityItem4 />}
+              />
+              <Route
+                path="item5/*"
+                element={<FacilityItem5 />}
+              />
               {/* <Route path="*" element={<FacilityItem1 />} /> */}
             </Route>
-            <Route path="*" element={<NotFound />} />
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
           </Routes>
         </Router>
       </ThemeProvider>
