@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { motion } from "framer-motion";
-import { z } from "zod";
+import { FormDataSchema } from "./zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import ActorContext from "../../../ActorContext";
@@ -88,156 +88,6 @@ const steps = [
   { id: "Step 5", name: "Complete" },
 ];
 
-export const FormDataSchema = z.object({
-  patientInitials: z
-    .object({
-      initial1: z
-        .string()
-        // .length(1, "Must be a single character")
-        // .transform((val) => val.toUpperCase())
-        .optional(),
-      initial2: z
-        .string()
-        // .length(1, "Must be a single character")
-        // .transform((val) => val.toUpperCase())
-        .optional(),
-      initial3: z
-        .string()
-        // .length(1, "Must be a single character")
-        // .transform((val) => val.toUpperCase())
-        .optional(),
-    })
-    .optional(),
-  mobile: z.string().optional(),
-  address: z.string().optional(),
-  gender: z.string().optional(),
-  dobKnownAge: z.string().optional(),
-  registrationDate: z.string().optional(),
-  inchargeIds: z.string().optional(),
-  // .array(z.string().min(1, "ID cannot be empty"))
-  // .min(1, "At least one in-charge ID is required"),
-  incidentid: z.string().optional(),
-  residence: z.string().optional(),
-  postalCode: z.string().optional(),
-  monthlyIncome: z.string().optional(),
-  inclusionCriteria: z.string().nullable().optional(),
-  stableAngina: z.boolean().optional(),
-  priorMI: z.boolean().optional(),
-  ptca: z.boolean().optional(),
-  cabg: z.boolean().optional(),
-  otherCardiovascularEvents: z.string().optional(),
-  prematureFamilyHistory: z.boolean().optional(),
-  dyslipidemiaOnStatin: z.boolean().optional(),
-  hypertension: z.boolean().optional(),
-  diabetes: z.boolean().optional(),
-  smokingStatus: z.boolean().optional(),
-  smokelessTobaccoStatus: z.boolean().optional(),
-  symptomOnset: z.string().optional(),
-  firstContact: z.string().optional(),
-  transportToFirstContact: z.string().nullable().optional(),
-  transportToHubHospital: z.string().nullable().optional(),
-  transportOtherSpecify: z.string().optional(),
-  presentationToER: z.string().optional(),
-  heartRate: z.string().optional(),
-  bloodPressure: z
-    .object({
-      systolic: z.string().optional(),
-      diastolic: z.string().optional(),
-    })
-    .optional(),
-  kilipClass: z.string().nullable().optional(),
-  indexECG: z.string().optional(),
-  ecgFindings: z.string().optional(),
-  stemiFindings: z
-    .object({
-      TSElevation: z.boolean().optional(),
-      AnteriorLeads: z.boolean().optional(),
-      LateralLeads: z.boolean().optional(),
-      InferiorLeads: z.boolean().optional(),
-      SeptalLeads: z.boolean().optional(),
-    })
-    .optional(),
-  nstemiFindings: z
-    .object({
-      STDepression: z.boolean().optional(),
-      TWaves: z.boolean().optional(),
-      None: z.boolean().optional(),
-    })
-    .optional(),
-  lbbb: z.string().nullable().optional(),
-  lbbbType: z.string().optional().nullable(),
-  rbbb: z.string().nullable().optional(),
-  rbbbType: z.string().optional().nullable(),
-  otherAbnormalities: z.string().nullable().optional(),
-  otherAbnormalityDetails: z
-    .object({
-      atrialFibFlutter: z.boolean().optional(),
-      vtach: z.boolean().optional(),
-      posteriorInfarction: z.boolean().optional(),
-      rbbb: z.boolean().optional(),
-      nonspecificSTChange: z.boolean().optional(),
-      pacedRhythm: z.boolean().optional(),
-      leftVentricularHypertrophy: z.boolean().optional(),
-      avBlock: z.boolean().optional(),
-    })
-    .optional(),
-  counselling: z.string().optional(),
-  reinfarction: z.string().optional(),
-  stroke: z.string().optional(),
-  vlFailure: z.string().optional(),
-  recurrentIschemia: z.string().optional(),
-  cardiacArrest: z.string().optional(),
-  cardiogenicShock: z.string().optional(),
-  mechanicalComplications: z.string().optional(),
-  bleedingRequiringTransfusion: z.string().optional(),
-  death: z.string().optional(),
-  discharge: z.string().optional(),
-  height: z.string().optional(),
-  weight: z.string().optional(),
-  bmi: z.string().optional(),
-  thrombolysis: z.string().optional(),
-  echo: z.string().optional(),
-  angiography: z.string().optional(),
-  ptca2: z.string().optional(),
-  preHubManagement: z.array(z.string()).nullable().optional(),
-  duringAdmission: z.array(z.string()).nullable().optional(),
-  prescribedAtDischarge: z.array(z.string()).nullable().optional(),
-  initialCreatinine: z.string().optional(),
-  randomGlucose: z.string().optional(),
-  fastingGlucose: z.string().optional(),
-  cardiacMarker: z
-    .object({
-      cpk: z
-        .object({
-          done: z.boolean().optional(),
-          qualitative: z.string().optional(),
-          quantitative: z.string().optional(),
-          value: z.string().optional(),
-          uln: z.string().optional(),
-        })
-        .optional(),
-      ckMb: z
-        .object({
-          done: z.boolean().optional(),
-          qualitative: z.string().optional(),
-          quantitative: z.string().optional(),
-          value: z.string().optional(),
-          uln: z.string().optional(),
-        })
-        .optional(),
-      troponin: z
-        .object({
-          done: z.boolean().optional(),
-          qualitative: z.string().optional(),
-          quantitative: z.string().optional(),
-          value: z.string().optional(),
-          uln: z.string().optional(),
-        })
-        .optional(),
-    })
-    .optional(),
-});
-
 export default function Form() {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
@@ -255,6 +105,35 @@ export default function Form() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(FormDataSchema),
+    // defaultValues: {
+    //   stableAngina: null,
+    //   priorMI: null,
+    //   ptca: null,
+    //   cabg: null,
+    //   otherCardiovascularEvents: null,
+    //   tiaOrStroke: null,
+    //   pad: null,
+    //   renovascularDisease: null,
+    //   chf: null,
+    //   otherVascularDisease: null,
+    //   prematureFamilyHistory: null,
+    //   dyslipidemiaOnStatin: null,
+    //   hypertension: null,
+    //   hypertensionDuration: null,
+    //   hypertensionDurationYears: null,
+    //   diabetes: "",
+    //   diabetesDuration: "",
+    //   diabetesInsulin: false,
+    //   diabetesOHA: false,
+    //   smokingStatus: "",
+    //   smokingType: "",
+    //   smokingSince: "",
+    //   smokingLeftYears: "",
+    //   smokelessTobaccoStatus: "",
+    //   tobaccoUsageType: "",
+    //   tobaccoTakingSince: "",
+    //   tobaccoLeftYears: "",
+    // },
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -312,7 +191,6 @@ export default function Form() {
         Register Facility
       </h1>
       <section className="flex flex-col justify-between p-16">
-        {/* Steps */}
         <nav aria-label="Progress">
           <ol
             role="list"
@@ -350,7 +228,6 @@ export default function Form() {
           </ol>
         </nav>
 
-        {/* Form */}
         <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
@@ -738,6 +615,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.stableAngina && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.stableAngina.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Prior MI */}
@@ -779,11 +661,16 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.priorMI && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.priorMI.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Additional Input for Prior MI if "Yes" is selected */}
                 {watch("priorMI") === "yes" && (
-                  <div className="flex gap-x-4">
+                  <div className="flex gap-x-4 mt-4">
                     <label
                       htmlFor="priorMIDetails"
                       className="block text-sm font-medium leading-6 text-gray-900"
@@ -797,11 +684,16 @@ export default function Form() {
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                       {...register("priorMIDetails")}
                     />
+                    {errors.priorMIDetails && (
+                      <p className="text-red-500 text-sm mt-2">
+                        {errors.priorMIDetails.message}
+                      </p>
+                    )}
                   </div>
                 )}
 
                 {/* PTCA */}
-                <div className="flex gap-x-4">
+                <div className="flex gap-x-4 mt-4">
                   <label
                     htmlFor="ptca"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -839,10 +731,15 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.ptca && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.ptca.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* CABG */}
-                <div className="flex gap-x-4">
+                <div className="flex gap-x-4 mt-4">
                   <label
                     htmlFor="cabg"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -880,6 +777,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.cabg && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.cabg.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Other Cardiovascular Events */}
@@ -930,6 +832,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.otherCardiovascularEvents && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.otherCardiovascularEvents.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Conditional Checkboxes */}
@@ -1042,6 +949,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.prematureFamilyHistory && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.prematureFamilyHistory.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Dyslipidemia / On Statin Therapy */}
@@ -1092,6 +1004,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.dyslipidemiaOnStatin && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.dyslipidemiaOnStatin.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Hypertension */}
@@ -1136,6 +1053,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.hypertension && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.hypertension.message}
+                    </p>
+                  )}
 
                   {watch("hypertension") === "yes" && (
                     <div className="ml-6 flex flex-col gap-y-4">
@@ -1166,6 +1088,11 @@ export default function Form() {
                           1 or more Yrs
                         </label>
                       </div>
+                      {errors.hypertensionDuration && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.hypertensionDuration.message}
+                        </p>
+                      )}
 
                       {watch("hypertensionDuration") === "1 or more yrs" && (
                         <div className="ml-6 flex flex-col gap-y-2">
@@ -1181,6 +1108,11 @@ export default function Form() {
                             {...register("hypertensionDurationYears")}
                             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           />
+                          {errors.hypertensionDurationYears && (
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.hypertensionDurationYears.message}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -1226,6 +1158,11 @@ export default function Form() {
                       Not Known
                     </label>
                   </div>
+                  {errors.diabetes && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.diabetes.message}
+                    </p>
+                  )}
 
                   {watch("diabetes") === "yes" && (
                     <div className="ml-6 flex flex-col gap-y-4">
@@ -1253,6 +1190,11 @@ export default function Form() {
                         </label>
                         <input type="checkbox" {...register("diabetesOHA")} />
                       </div>
+                      {errors.diabetesDuration && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.diabetesDuration.message}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1286,6 +1228,11 @@ export default function Form() {
                       Never
                     </label>
                   </div>
+                  {errors.smokingStatus && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.smokingStatus.message}
+                    </p>
+                  )}
 
                   {watch("smokingStatus") === "yes" && (
                     <div className="ml-6 flex flex-col gap-y-4">
@@ -1319,7 +1266,11 @@ export default function Form() {
                           Past Smoker
                         </label>
                       </div>
-
+                      {errors.smokingType && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.smokingType.message}
+                        </p>
+                      )}
                       {watch("smokingType") === "current" && (
                         <div className="flex gap-x-4">
                           <label className="block text-sm leading-6 text-gray-900">
@@ -1331,9 +1282,13 @@ export default function Form() {
                             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                             {...register("smokingSince")}
                           />
+                          {errors.smokingSince && (
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.smokingSince.message}
+                            </p>
+                          )}
                         </div>
                       )}
-
                       {watch("smokingType") === "past" && (
                         <div className="flex gap-x-4">
                           <label className="block text-sm leading-6 text-gray-900">
@@ -1345,6 +1300,11 @@ export default function Form() {
                             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                             {...register("smokingLeftYears")}
                           />
+                          {errors.smokingLeftYears && (
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.smokingLeftYears.message}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -1386,6 +1346,11 @@ export default function Form() {
                       No
                     </label>
                   </div>
+                  {errors.smokelessTobaccoStatus && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors.smokelessTobaccoStatus.message}
+                    </p>
+                  )}
 
                   {watch("smokelessTobaccoStatus") === "yes" && (
                     <div className="ml-6 flex flex-col gap-y-4">
@@ -1416,7 +1381,11 @@ export default function Form() {
                           Past
                         </label>
                       </div>
-
+                      {errors.tobaccoUsageType && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.tobaccoUsageType.message}
+                        </p>
+                      )}
                       {watch("tobaccoUsageType") === "current" && (
                         <div className="flex gap-x-4">
                           <label className="block text-sm leading-6 text-gray-900">
@@ -1427,9 +1396,13 @@ export default function Form() {
                             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                             {...register("tobaccoTakingSince")}
                           />
+                          {errors.tobaccoTakingSince && (
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.tobaccoTakingSince.message}
+                            </p>
+                          )}
                         </div>
                       )}
-
                       {watch("tobaccoUsageType") === "past" && (
                         <div className="flex gap-x-4">
                           <label className="block text-sm leading-6 text-gray-900">
@@ -1440,6 +1413,11 @@ export default function Form() {
                             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                             {...register("tobaccoLeftYears")}
                           />
+                          {errors.tobaccoLeftYears && (
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.tobaccoLeftYears.message}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -2413,6 +2391,11 @@ export default function Form() {
                       />
                     </>
                   )}
+                  {errors.initialCreatinine?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.initialCreatinine.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Random Glucose */}
@@ -2464,6 +2447,11 @@ export default function Form() {
                         className="ml-auto block w-1/4 rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                       />
                     </>
+                  )}
+                  {errors.randomGlucose?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.randomGlucose.message}
+                    </p>
                   )}
                 </div>
 
@@ -2517,8 +2505,257 @@ export default function Form() {
                       />
                     </>
                   )}
+                  {errors.fastingGlucose?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.fastingGlucose.message}
+                    </p>
+                  )}
                 </div>
+
+                {/* Cardiac Marker - Maximum Values in 1st 24 hrs */}
+                {/* <h2 className="mt-8 text-lg font-bold leading-6 text-gray-900">
+                  Cardiac Marker - Maximum Values in 1st 24 hrs
+                </h2>
+                <table className="mt-4 w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="border p-2"></th>
+                      <th className="border p-2">Not Done / Done</th>
+                      <th className="border p-2">Qualitative</th>
+                      <th className="border p-2">Quantitative</th>
+                      <th className="border p-2">Value</th>
+                      <th className="border p-2">ULN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border p-2">
+                        <label className="mr-2">CPK*</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="cpkNotDone"
+                          value="notDone"
+                          {...register("cardiacMarker.cpk.status")}
+                        />
+                        <label htmlFor="cpkNotDone" className="mr-2">
+                          No
+                        </label>
+                        <input
+                          type="radio"
+                          id="cpkDone"
+                          value="done"
+                          {...register("cardiacMarker.cpk.status")}
+                        />
+                        <label htmlFor="cpkDone">Yes</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="cpkQualitativePositive"
+                          value="positive"
+                          {...register("cardiacMarker.cpk.qualitative")}
+                        />
+                        <label
+                          htmlFor="cpkQualitativePositive"
+                          className="mr-2"
+                        >
+                          +ve
+                        </label>
+                        <input
+                          type="radio"
+                          id="cpkQualitativeNegative"
+                          value="negative"
+                          {...register("cardiacMarker.cpk.qualitative")}
+                        />
+                        <label htmlFor="cpkQualitativeNegative">-ve</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="cpkQuantitative"
+                          value="quantitative"
+                          {...register("cardiacMarker.cpk.quantitative")}
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="text"
+                          id="cpkValue"
+                          {...register("cardiacMarker.cpk.value")}
+                          placeholder="10 TO 9999"
+                          className="block w-full p-1.5"
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="text"
+                          id="cpkULN"
+                          {...register("cardiacMarker.cpk.uln")}
+                          className="block w-full p-1.5"
+                        />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td className="border p-2">
+                        <label className="mr-2">CK-MB*</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="ckMbNotDone"
+                          value="notDone"
+                          {...register("cardiacMarker.ckMb.status")}
+                        />
+                        <label htmlFor="ckMbNotDone" className="mr-2">
+                          No
+                        </label>
+                        <input
+                          type="radio"
+                          id="ckMbDone"
+                          value="done"
+                          {...register("cardiacMarker.ckMb.status")}
+                        />
+                        <label htmlFor="ckMbDone">Yes</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="ckMbQualitativePositive"
+                          value="positive"
+                          {...register("cardiacMarker.ckMb.qualitative")}
+                        />
+                        <label
+                          htmlFor="ckMbQualitativePositive"
+                          className="mr-2"
+                        >
+                          +ve
+                        </label>
+                        <input
+                          type="radio"
+                          id="ckMbQualitativeNegative"
+                          value="negative"
+                          {...register("cardiacMarker.ckMb.qualitative")}
+                        />
+                        <label htmlFor="ckMbQualitativeNegative">-ve</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="ckMbQuantitative"
+                          value="quantitative"
+                          {...register("cardiacMarker.ckMb.quantitative")}
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="text"
+                          id="ckMbValue"
+                          {...register("cardiacMarker.ckMb.value")}
+                          placeholder="10 TO 9999"
+                          className="block w-full p-1.5"
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="text"
+                          id="ckMbULN"
+                          {...register("cardiacMarker.ckMb.uln")}
+                          className="block w-full p-1.5"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2">
+                        <label className="mr-2">Troponin*</label>
+                        <input
+                          type="radio"
+                          id="troponinI"
+                          value="I"
+                          {...register("cardiacMarker.troponin.type")}
+                        />
+                        <label htmlFor="troponinT" className="mr-2">
+                          I
+                        </label>
+                        <input
+                          type="radio"
+                          id="troponinT"
+                          value="T"
+                          {...register("cardiacMarker.troponin.type")}
+                        />
+                        <label htmlFor="troponinT">T</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="troponinNotDone"
+                          value="notDone"
+                          {...register("cardiacMarker.troponin.status")}
+                        />
+                        <label htmlFor="troponinNotDone" className="mr-2">
+                          No
+                        </label>
+                        <input
+                          type="radio"
+                          id="troponinDone"
+                          value="done"
+                          {...register("cardiacMarker.troponin.status")}
+                        />
+                        <label htmlFor="troponinDone">Yes</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="troponinQualitativePositive"
+                          value="positive"
+                          {...register("cardiacMarker.troponin.qualitative")}
+                        />
+                        <label
+                          htmlFor="troponinQualitativePositive"
+                          className="mr-2"
+                        >
+                          +ve
+                        </label>
+                        <input
+                          type="radio"
+                          id="troponinQualitativeNegative"
+                          value="negative"
+                          {...register("cardiacMarker.troponin.qualitative")}
+                        />
+                        <label htmlFor="troponinQualitativeNegative">-ve</label>
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="radio"
+                          id="troponinQuantitative"
+                          value="quantitative"
+                          {...register("cardiacMarker.troponin.quantitative")}
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="text"
+                          id="troponinValue"
+                          {...register("cardiacMarker.troponin.value")}
+                          placeholder="0.009"
+                          className="block w-full p-1.5"
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="text"
+                          id="troponinULN"
+                          {...register("cardiacMarker.troponin.uln")}
+                          className="block w-full p-1.5"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table> */}
               </div>
+
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 J. Hospital Treatment &Counselling (Fill in all that apply for
                 each medication)
@@ -2575,6 +2812,11 @@ export default function Form() {
                       </label>
                     </div>
                   </div>
+                  {errors.preHubManagement && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.preHubManagement.message}
+                    </p>
+                  )}
                   {watch("preHubManagement") && (
                     <div>
                       <label>
@@ -2827,6 +3069,11 @@ export default function Form() {
                         Others
                       </label>
                     </div>
+                    {errors.duringAdmission && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.duringAdmission.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -2996,6 +3243,11 @@ export default function Form() {
                         Others
                       </label>
                     </div>
+                    {errors.prescribedAtDischarge && (
+                      <p className="mt-2 text-sm text-red-400">
+                        {errors.prescribedAtDischarge.message}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -3016,29 +3268,47 @@ export default function Form() {
                         type="radio"
                         id="thrombolysis-yes"
                         value="yes"
-                        {...register("thrombolysis")}
+                        {...register("thrombolysis", {
+                          required: "Please select an option",
+                        })}
                       />
                       <label htmlFor="thrombolysis-yes">Yes</label>
                       <input
                         type="radio"
                         id="thrombolysis-no"
                         value="no"
-                        {...register("thrombolysis")}
+                        {...register("thrombolysis", {
+                          required: "Please select an option",
+                        })}
                       />
                       <label htmlFor="thrombolysis-no">No</label>
                     </div>
                   </div>
 
-                  {/* Conditional rendering based on the selection */}
+                  {/* Error Message */}
+                  {errors.thrombolysis && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.thrombolysis.message}
+                    </p>
+                  )}
+
                   {watch("thrombolysis") === "yes" && (
                     <div className="mt-4">
-                      {/* Input Box */}
                       <input
                         type="text"
                         placeholder="Input for Thrombolysis"
                         className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
-                        {...register("thrombolysisInput")}
+                        {...register("thrombolysisInput", {
+                          required: "Please provide thrombolysis details",
+                        })}
                       />
+
+                      {/* Error Message */}
+                      {errors.thrombolysisInput && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.thrombolysisInput.message}
+                        </p>
+                      )}
 
                       {/* Thrombolytic Agents */}
                       <div className="mt-4">
@@ -3143,11 +3413,19 @@ export default function Form() {
                                 type="number"
                                 placeholder="Enter percentage"
                                 className="ml-2 block rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
-                                {...register("partialPercent")}
+                                {...register("partialPercent", {
+                                  required:
+                                    "Please provide percentage for partial resolution",
+                                })}
                               />
                             )}
                           </div>
                         </div>
+                        {errors.partialPercent && (
+                          <p className="mt-2 text-sm text-red-400">
+                            {errors.partialPercent.message}
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
@@ -3156,13 +3434,21 @@ export default function Form() {
                     <div className="mt-4">
                       <select
                         id="thrombolysisInput"
-                        {...register("thrombolysisInput")}
+                        {...register("thrombolysisInput", {
+                          required: "Please select an option",
+                        })}
                         className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
                       >
                         <option value="">Select</option>
-                        <option value="yes">partial ncl</option>
-                        <option value="no">None</option>
+                        <option value="partial ncl">Partial NCL</option>
+                        <option value="none">None</option>
                       </select>
+
+                      {errors.thrombolysisInput && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.thrombolysisInput.message}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -3180,20 +3466,30 @@ export default function Form() {
                         type="radio"
                         id="echo-yes"
                         value="yes"
-                        {...register("echo")}
+                        {...register("echo", {
+                          required: "Please select an option",
+                        })}
                       />
                       <label htmlFor="echo-yes">Yes</label>
                       <input
                         type="radio"
                         id="echo-no"
                         value="no"
-                        {...register("echo")}
+                        {...register("echo", {
+                          required: "Please select an option",
+                        })}
                       />
                       <label htmlFor="echo-no">No</label>
                     </div>
                   </div>
 
-                  {/* Conditional rendering based on the selection */}
+                  {/* Error Message */}
+                  {errors.echo && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.echo.message}
+                    </p>
+                  )}
+
                   {watch("echo") === "yes" && (
                     <div className="mt-4">
                       {/* LVEF Ejection Fraction %Value */}
@@ -3209,44 +3505,47 @@ export default function Form() {
                           id="lvef_ejection_fraction"
                           placeholder="Enter percentage"
                           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
-                          {...register("lvefEjectionFraction")}
+                          {...register("lvefEjectionFraction", {
+                            required:
+                              "Please enter the ejection fraction percentage",
+                            min: {
+                              value: 1,
+                              message: "Percentage must be greater than 0",
+                            },
+                            max: {
+                              value: 100,
+                              message: "Percentage must be 100 or less",
+                            },
+                          })}
                         />
                       </div>
 
+                      {/* Error Message */}
+                      {errors.lvefEjectionFraction && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.lvefEjectionFraction.message}
+                        </p>
+                      )}
+
                       {/* RWMA */}
                       <div className="mt-4">
-                        <label className="block text-sm font-medium leading-6 text-gray-900">
+                        <label
+                          htmlFor="rwma"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
                           RWMA
                         </label>
-                        <div className="flex gap-x-4">
-                          <div>
-                            <input
-                              type="radio"
-                              id="rwma-yes"
-                              value="yes"
-                              {...register("rwma")}
-                            />
-                            <label htmlFor="rwma-yes">Yes</label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              id="rwma-no"
-                              value="no"
-                              {...register("rwma")}
-                            />
-                            <label htmlFor="rwma-no">No</label>
-                          </div>
-                        </div>
+                        <select
+                          id="rwma"
+                          {...register("rwma")}
+                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Select</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
                       </div>
                     </div>
-                  )}
-
-                  {/* Error message */}
-                  {errors.echo?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.echo.message}
-                    </p>
                   )}
                 </div>
 
@@ -3503,7 +3802,7 @@ export default function Form() {
                 <div className="">
                   <div className="flex gap-x-4">
                     <label
-                      htmlFor="cabg"
+                      htmlFor="cabg2"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       CABG*
@@ -3511,23 +3810,23 @@ export default function Form() {
                     <div className="flex items-center gap-x-4">
                       <input
                         type="radio"
-                        id="cabg-yes"
+                        id="cabg2-yes"
                         value="yes"
-                        {...register("cabg")}
+                        {...register("cabg2")}
                       />
-                      <label htmlFor="cabg-yes">Yes</label>
+                      <label htmlFor="cabg2-yes">Yes</label>
                       <input
                         type="radio"
-                        id="cabg-no"
+                        id="cabg2-no"
                         value="no"
-                        {...register("cabg")}
+                        {...register("cabg2")}
                       />
-                      <label htmlFor="cabg-no">No</label>
+                      <label htmlFor="cabg2-no">No</label>
                     </div>
                   </div>
 
                   {/* Conditional rendering based on CABG selection */}
-                  {watch("cabg") === "yes" && (
+                  {watch("cabg2") === "yes" && (
                     <div className="mt-4">
                       <div className="flex gap-x-4 items-center">
                         <label
@@ -3540,22 +3839,22 @@ export default function Form() {
                           type="datetime-local"
                           id="cabg_time"
                           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
-                          {...register("cabgTime")}
+                          {...register("cabg2Time")}
                         />
                       </div>
                     </div>
                   )}
 
-                  {watch("cabg") === "no" && (
+                  {watch("cabg2") === "no" && (
                     <div className="mt-4">
                       <label
-                        htmlFor="cabg_reason"
+                        htmlFor="cabg2_reason"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
                         Choose Reason
                       </label>
                       <select
-                        id="cabg_reason"
+                        id="cabg2_reason"
                         className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm"
                         {...register("cabgReason")}
                       >
@@ -3567,13 +3866,14 @@ export default function Form() {
                     </div>
                   )}
 
-                  {errors.cabg?.message && (
+                  {errors.cabg2?.message && (
                     <p className="mt-2 text-sm text-red-400">
-                      {errors.cabg.message}
+                      {errors.cabg2.message}
                     </p>
                   )}
                 </div>
               </div>
+
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 L. EventsandOutcomeinTheHospital
               </p>
@@ -3607,23 +3907,29 @@ export default function Form() {
                     </div>
                   </div>
                   {watch("reinfarction") === "Yes" && (
-                    <input
-                      type="text"
-                      id="reinfarctionDetails"
-                      placeholder="Details"
-                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        id="reinfarctionDetails"
+                        placeholder="Details"
+                        className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                    </>
+                  )}
+                  {errors.reinfarction?.message && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.reinfarction.message}
+                    </p>
                   )}
                 </div>
-
-                {/* Stroke */}
-                <div className="">
+                {/* {stroke} */}
+                <div>
                   <div className="flex gap-x-4">
                     <label
                       htmlFor="stroke"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Stroke*
+                      Stroke
                     </label>
                     <div className="flex items-center gap-x-2">
                       <input
@@ -3645,26 +3951,38 @@ export default function Form() {
                     </div>
                   </div>
                   {watch("stroke") === "Yes" && (
-                    <select
-                      id="strokeType"
-                      {...register("strokeType")}
-                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="">--- Choose Type ---</option>
-                      <option value="Ischemic">Ischemic</option>
-                      <option value="Hemorrhagic">Hemorrhagic</option>
-                    </select>
+                    <>
+                      <select
+                        id="strokeType"
+                        {...register("strokeType")}
+                        className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      >
+                        <option value="">--- Choose Type ---</option>
+                        <option value="Ischemic">Ischemic</option>
+                        <option value="Hemorrhagic">Hemorrhagic</option>
+                      </select>
+                      {errors.strokeType && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.strokeType.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {errors.stroke && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.stroke.message}
+                    </p>
                   )}
                 </div>
 
                 {/* LV Failure */}
-                <div className="">
+                <div>
                   <div className="flex gap-x-4">
                     <label
                       htmlFor="lvFailure"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      LV Failure*
+                      LV Failure
                     </label>
                     <div className="flex items-center gap-x-2">
                       <input
@@ -3686,23 +4004,36 @@ export default function Form() {
                     </div>
                   </div>
                   {watch("lvFailure") === "Yes" && (
-                    <input
-                      type="text"
-                      id="lvFailureDetails"
-                      placeholder="Details"
-                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        id="lvFailureDetails"
+                        {...register("lvFailureDetails")}
+                        placeholder="Details"
+                        className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.lvFailureDetails && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.lvFailureDetails.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {errors.lvFailure && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.lvFailure.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Recurrent Ischemia/Angina */}
-                <div className="">
+                <div>
                   <div className="flex gap-x-4">
                     <label
                       htmlFor="recurrentIschemia"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Recurrent Ischemia/Angina*
+                      Recurrent Ischemia/Angina
                     </label>
                     <div className="flex items-center gap-x-2">
                       <input
@@ -3724,23 +4055,36 @@ export default function Form() {
                     </div>
                   </div>
                   {watch("recurrentIschemia") === "Yes" && (
-                    <input
-                      type="text"
-                      id="recurrentIschemiaDetails"
-                      placeholder="Details"
-                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        id="recurrentIschemiaDetails"
+                        {...register("recurrentIschemiaDetails")}
+                        placeholder="Details"
+                        className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.recurrentIschemiaDetails && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.recurrentIschemiaDetails.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {errors.recurrentIschemia && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.recurrentIschemia.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Cardiac Arrest */}
-                <div className="">
+                <div>
                   <div className="flex gap-x-4">
                     <label
                       htmlFor="cardiacArrest"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Cardiac Arrest*
+                      Cardiac Arrest
                     </label>
                     <div className="flex items-center gap-x-2">
                       <input
@@ -3762,31 +4106,43 @@ export default function Form() {
                     </div>
                   </div>
                   {watch("cardiacArrest") === "Yes" && (
-                    <select
-                      id="cardiacArrestType"
-                      {...register("cardiacArrestType")}
-                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="">--- Choose Option ---</option>
-                      <option value="Ventricular Fibrillation">
-                        Ventricular Fibrillation
-                      </option>
-                      <option value="Asystole">Asystole</option>
-                      <option value="Pulseless Electrical Activity">
-                        Pulseless Electrical Activity
-                      </option>
-                    </select>
+                    <>
+                      <select
+                        id="cardiacArrestType"
+                        {...register("cardiacArrestType")}
+                        className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      >
+                        <option value="">--- Choose Option ---</option>
+                        <option value="Ventricular Fibrillation">
+                          Ventricular Fibrillation
+                        </option>
+                        <option value="Asystole">Asystole</option>
+                        <option value="Pulseless Electrical Activity">
+                          Pulseless Electrical Activity
+                        </option>
+                      </select>
+                      {errors.cardiacArrestType && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.cardiacArrestType.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {errors.cardiacArrest && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.cardiacArrest.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Cardiogenic Shock */}
-                <div className="">
+                <div>
                   <div className="flex gap-x-4">
                     <label
                       htmlFor="cardiogenicShock"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Cardiogenic Shock*
+                      Cardiogenic Shock
                     </label>
                     <div className="flex items-center gap-x-2">
                       <input
@@ -3808,15 +4164,29 @@ export default function Form() {
                     </div>
                   </div>
                   {watch("cardiogenicShock") === "Yes" && (
-                    <input
-                      type="text"
-                      id="cardiogenicShockDetails"
-                      placeholder="Details"
-                      className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                    />
+                    <>
+                      <input
+                        type="text"
+                        id="cardiogenicShockDetails"
+                        {...register("cardiogenicShockDetails")}
+                        placeholder="Details"
+                        className="mt-2 block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.cardiogenicShockDetails && (
+                        <p className="mt-2 text-sm text-red-400">
+                          {errors.cardiogenicShockDetails.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {errors.cardiogenicShock && (
+                    <p className="mt-2 text-sm text-red-400">
+                      {errors.cardiogenicShock.message}
+                    </p>
                   )}
                 </div>
               </div>
+
               <p className="mt-5 text-3xl text-center font-bold leading-6 text-gray-600">
                 M. Counselling
               </p>
