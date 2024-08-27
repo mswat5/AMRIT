@@ -25,33 +25,42 @@ export const FormDataSchema = z.object({
   priorMI: z.enum(["yes", "no", "not known"]).nullable().optional(),
   ptca: z.enum(["yes", "no", "not known"]).nullable().optional(),
   cabg: z.enum(["yes", "no", "not known"]).nullable().optional(),
-  otherCardiovascularEvents: z.enum(["yes", "no", "not known"]).optional(),
+  otherCardiovascularEvents: z
+    .enum(["yes", "no", "not known"])
+    .nullable()
+    .optional(),
   tiaOrStroke: z.boolean().optional(),
   pad: z.boolean().optional(),
   renovascularDisease: z.boolean().optional(),
   chf: z.boolean().optional(),
   otherVascularDisease: z.boolean().optional(),
-  prematureFamilyHistory: z.enum(["yes", "no", "not known"]).optional(),
-  dyslipidemiaOnStatin: z.enum(["yes", "no", "not known"]).optional(),
-  hypertension: z.enum(["yes", "no", "not known"]).optional(),
+  prematureFamilyHistory: z
+    .enum(["yes", "no", "not known"])
+    .nullable()
+    .optional(),
+  dyslipidemiaOnStatin: z
+    .enum(["yes", "no", "not known"])
+    .nullable()
+    .optional(),
+  hypertension: z.enum(["yes", "no", "not known"]).nullable().optional(),
   hypertensionDuration: z.enum(["less than 1 yr", "1 or more yrs"]).optional(),
   hypertensionDurationYears: z.number().optional(),
-  diabetes: z.enum(["yes", "no", "not known"]).optional(),
+  diabetes: z.enum(["yes", "no", "not known"]).nullable().optional(),
   diabetesDuration: z.string().optional(),
   diabetesInsulin: z.boolean().optional(),
   diabetesOHA: z.boolean().optional(),
-  smokingStatus: z.enum(["yes", "no"]).optional(),
+  smokingStatus: z.enum(["yes", "no"]).nullable().optional(),
   smokingType: z.enum(["current", "past"]).optional(),
   smokingSince: z.string().optional(),
   smokingLeftYears: z.string().optional(),
-  smokelessTobaccoStatus: z.enum(["yes", "no"]).optional(),
+  smokelessTobaccoStatus: z.enum(["yes", "no"]).nullable().optional(),
   tobaccoUsageType: z.enum(["current", "past"]).optional(),
   tobaccoTakingSince: z.string().optional(),
   tobaccoLeftYears: z.string().optional(),
   symptomOnset: z.string().optional(),
   firstContact: z.string().optional(),
-  transportToFirstContact: z.string().optional(),
-  transportToHubHospital: z.string().optional(),
+  transportToFirstContact: z.string().nullable().optional(),
+  transportToHubHospital: z.string().nullable().optional(),
   transportOtherSpecify: z.string().optional(),
   presentationToER: z.string().optional(),
   heartRate: z.string().optional(),
@@ -64,9 +73,9 @@ export const FormDataSchema = z.object({
   kilipClass: z.union([z.string(), z.null()]).optional(),
   indexECG: z.string().optional(),
   ecgFindings: z.string().optional(),
-  lbbb: z.string().optional(),
-  rbbb: z.string().optional(),
-  otherAbnormalities: z.string().optional(),
+  lbbb: z.string().nullable().optional(),
+  rbbb: z.string().nullable().optional(),
+  otherAbnormalities: z.string().nullable().optional(),
 
   //page 4
 
