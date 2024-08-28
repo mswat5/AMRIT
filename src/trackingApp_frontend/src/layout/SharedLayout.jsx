@@ -6,12 +6,10 @@ import Nav from "./Nav";
 // }
 const SharedLayout = ({ children }) => {
   return (
-    <div >
-    <Nav />
+    <div>
+      <Nav />
       <div className="min-h-screen">
-        <div className=" dark:bg-slate-500  ">
-          {children} 
-        </div>
+        <div className=" dark:bg-slate-500  ">{children}</div>
       </div>
     </div>
   );
