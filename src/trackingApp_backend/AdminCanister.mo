@@ -614,10 +614,18 @@ actor class AdminCanister() {
           return false; // If any ID is not found, return false
         };
         case (?user) {
-          // ID is found, continue checking the next one
+          // Check if the user type is Incharge
+          switch (user.userType) {
+            case (#Incharge) {
+              // ID is valid and belongs to an Incharge, continue checking
+            };
+            case _ {
+              return false; // If the user type is not Incharge, return false
+            };
+          };
         };
       };
     };
-    return true; // All IDs are found
+    return true; // All IDs are valid Incharge IDs
   };
 };

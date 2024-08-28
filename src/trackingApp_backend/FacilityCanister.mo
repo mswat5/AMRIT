@@ -39,6 +39,9 @@ actor class FacilityCanister() {
         if (Principal.isAnonymous(caller)) {
             return #err("Anonymous principals are not allowed to add facilities");
         };
+        if (not (await checkPermitted(caller))) {
+            return #err("This principals are not allowed to generate reports");
+        };
 
         let newFacility : Facility = {
             id = id;
@@ -266,7 +269,7 @@ actor class FacilityCanister() {
 
     public query func checkRegistrationStatus(facilityId : Text) : async Result<Types.RegistrationStatus, Text> {
         switch (Map.get(facilities, thash, facilityId)) {
-            case null { #err("Facility not found") };
+            case (null) { #err("Facility not found") };
             case (?facility) { #ok(facility.registrationStatus) };
         };
     };

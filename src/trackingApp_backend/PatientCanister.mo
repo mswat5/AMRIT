@@ -213,67 +213,75 @@ actor class PatientCanister() {
             return #err("Anonymous principals are not allowed to transfer patients");
         };
 
-        switch (Map.get(patients, thash, patientId)) {
-            case null { #err("Patient not found") };
-            case (?patient) {
+        switch (await facilityCanister.checkRegistrationStatus(newFacilityId)) {
+            case (#err(err)) {
+                return #err(err);
+            };
+            case (#ok(value)) {
+                switch (Map.get(patients, thash, patientId)) {
+                    case null { #err("Patient not found") };
+                    case (?patient) {
 
-                if (patient.currentFacilityId == newFacilityId) {
-                    return #err("Patient is already in the specified facility");
-                };
-                switch (await facilityCanister.getFacilityId(caller)) {
-                    case (#ok(value)) {
-                        if (value == patient.currentFacilityId) {
-
-                        } else {
-                            return #err("Patient is not currently with the facility");
+                        if (patient.currentFacilityId == newFacilityId) {
+                            return #err("Patient is already in the specified facility");
                         };
-                    };
-                    case (#err(error)) {
-                        return #err("Patient is not currently with the facility");
-                    };
-                };
+                        switch (await facilityCanister.getFacilityId(caller)) {
+                            case (#ok(value)) {
+                                if (value == patient.currentFacilityId) {
 
-                // Update patient record
-                let updatedPatient : PatientRecord = {
-                    patient with
-                    currentFacilityId = newFacilityId;
-                    status = #InTransit;
-                };
-                Map.set(patients, thash, patientId, updatedPatient);
+                                } else {
+                                    return #err("Patient is not currently with the facility");
+                                };
+                            };
+                            case (#err(error)) {
+                                return #err("Patient is not currently with the facility");
+                            };
+                        };
 
-                // Update facility records
+                        // Update patient record
+                        let updatedPatient : PatientRecord = {
+                            patient with
+                            currentFacilityId = newFacilityId;
+                            status = #InTransit;
+                        };
+                        Map.set(patients, thash, patientId, updatedPatient);
 
-                // Decrease patient count in the old facility
-                ignore await facilityCanister.updatePatientCount(patient.currentFacilityId, -1);
+                        // Update facility records
 
-                // Increase patient count in the new facility
-                ignore await facilityCanister.updatePatientCount(newFacilityId, 1);
+                        // Decrease patient count in the old facility
+                        ignore await facilityCanister.updatePatientCount(patient.currentFacilityId, -1);
 
-                // Generate transfer report
-                let reportCanister = actor ("by6od-j4aaa-aaaaa-qaadq-cai") : actor {
-                    generateReport : (Types.Report) -> async Result<Text, Text>;
-                };
-                let report : Types.Report = {
-                    id = ""; // Will be assigned by ReportCanister
-                    accidentId = patient.accidentId;
-                    patientId = patientId;
-                    facilityId = newFacilityId;
-                    reportType = #TransferReport;
-                    timestamp = Time.now();
-                    file = file;
-                    details = "Patient transferred from facility " # patient.currentFacilityId # " to facility " # newFacilityId;
-                };
+                        // Increase patient count in the new facility
+                        ignore await facilityCanister.updatePatientCount(newFacilityId, 1);
 
-                switch (await reportCanister.generateReport(report)) {
-                    case (#ok(reportId)) {
-                        #ok("Patient transferred successfully. Transfer report ID: " # reportId);
-                    };
-                    case (#err(error)) {
-                        #err("Patient transferred, but error generating transfer report: " # error);
+                        // Generate transfer report
+                        let reportCanister = actor ("by6od-j4aaa-aaaaa-qaadq-cai") : actor {
+                            generateReport : (Types.Report) -> async Result<Text, Text>;
+                        };
+                        let report : Types.Report = {
+                            id = ""; // Will be assigned by ReportCanister
+                            accidentId = patient.accidentId;
+                            patientId = patientId;
+                            facilityId = newFacilityId;
+                            reportType = #TransferReport;
+                            timestamp = Time.now();
+                            file = file;
+                            details = "Patient transferred from facility " # patient.currentFacilityId # " to facility " # newFacilityId;
+                        };
+
+                        switch (await reportCanister.generateReport(report)) {
+                            case (#ok(reportId)) {
+                                #ok("Patient transferred successfully. Transfer report ID: " # reportId);
+                            };
+                            case (#err(error)) {
+                                #err("Patient transferred, but error generating transfer report: " # error);
+                            };
+                        };
                     };
                 };
             };
         };
+
     };
 
     public query func getTotalPatients() : async Nat {

@@ -36,10 +36,10 @@ const Transfer = () => {
   const onSubmit = async (data) => {
     console.log(data);
     const reportFile = new TextEncoder(JSON.stringify(data.file));
-    const result = await actors.transferPatient(
-      (patientId = data.patientId),
-      (newFacilityId = data.newFacilityId),
-      (file = reportFile)
+    const result = await actors.patient.transferPatient(
+      data.patientId,
+      data.newFacilityId,
+      []
     );
 
     console.log(result);

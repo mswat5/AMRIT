@@ -69,6 +69,7 @@ actor class AccidentCanister() {
                 let newDetails : Types.AccidentDetails = {
                     reportingFacilityId = value;
                     currentFacilityId = value;
+
                     severity = details.severity;
                     description = details.description;
                     location = details.location;
@@ -97,7 +98,7 @@ actor class AccidentCanister() {
                     id = ""; // Will be assigned by ReportCanister
                     accidentId = accidentId;
                     patientId = ""; // No patient associated yet
-                    facilityId = details.reportingFacilityId;
+                    facilityId = value;
                     reportType = #AccidentReport;
                     timestamp = Time.now();
                     file = file;
