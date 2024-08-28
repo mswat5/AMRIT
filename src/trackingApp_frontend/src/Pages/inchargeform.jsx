@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import ActorContext from "../ActorContext";
 import { Principal } from "@dfinity/principal";
 
@@ -28,7 +28,6 @@ const inchargeFormSchema = z.object({
 const InchargeForm = () => {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const { toast } = useToast();
   const { actors } = useContext(ActorContext);
   const navigate = useNavigate();
   const {
@@ -47,33 +46,6 @@ const InchargeForm = () => {
       certificationId: "",
     },
   });
-
-  const onSubmit = async (data) => {
-    console.log(data);
-    const getPrincipal = await actors.admin.whoami();
-    const result = await actors.admin.registerIncharge({
-      certificationID: data.certificationId,
-      contactInfo: {
-        phoneNumber: data.phoneNumber,
-        email: data.email,
-      },
-      id: "0",
-      inchargeType: {
-        [data.designation]: null,
-      },
-      location: {
-        latitude: latitude,
-        longitude: longitude,
-        address: data.location,
-      },
-      name: data.inchargeName,
-      principal: Principal.fromText(getPrincipal),
-      registrationStatus: { Pending: null },
-    });
-    console.log(result);
-    reset();
-    navigate("/Incharge/dashboard");
-  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -100,15 +72,56 @@ const InchargeForm = () => {
     }
   }, [toast]);
 
+  const onSubmit = async (data) => {
+    console.log(data);
+    const getPrincipal = await actors.admin.whoami();
+    const result = await actors.admin.registerIncharge({
+      certificationID: data.certificationId,
+      contactInfo: {
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+      },
+      id: "0",
+      inchargeType: {
+        [data.designation]: null,
+      },
+      location: {
+        latitude: latitude,
+        longitude: longitude,
+        address: data.location,
+      },
+      name: data.inchargeName,
+      principal: Principal.fromText(getPrincipal),
+      registrationStatus: { Pending: null },
+    });
+    console.log(result);
+    Object.keys(result).forEach((key) => {
+      if (key === "ok") {
+        //   alert("incharge ID No. :" + result[key]);
+        toast({
+          title: "Success",
+          description: "incharge ID No. :" + result[key],
+          variant: "success",
+        });
+      } else {
+        //  alert(result[key]);
+        toast({
+          title: "Error",
+          description: result[key],
+          variant: "destructive",
+        });
+      }
+      console.log(key);
+    });
+    reset();
+  };
+
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Incharge Information
       </h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="inchargeName"
@@ -161,10 +174,7 @@ const InchargeForm = () => {
             {...register("designation")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           >
-            <option
-              value=""
-              disabled
-            >
+            <option value="" disabled>
               Select a designation
             </option>
             <option value="DistrictHubCoordinator">

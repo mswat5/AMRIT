@@ -4,6 +4,7 @@ import { FormDataSchema } from "./zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import ActorContext from "../../../ActorContext";
+import { toast } from "@/components/ui/use-toast";
 
 const steps = [
   {
@@ -160,6 +161,24 @@ export default function Form() {
       [reportFile],
       data.inchargeIds
     );
+    Object.keys(result).forEach((key) => {
+      if (key === "ok") {
+        //   alert("incharge ID No. :" + result[key]);
+        toast({
+          title: "Success",
+          description: "incharge ID No. :" + result[key],
+          variant: "success",
+        });
+      } else {
+        //  alert(result[key]);
+        toast({
+          title: "Error",
+          description: result[key],
+          variant: "destructive",
+        });
+      }
+      console.log(key);
+    });
     console.log(result);
     reset();
   };

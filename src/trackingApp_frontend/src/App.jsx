@@ -157,7 +157,7 @@ const App = () => {
               <Route path="Facility" element={<RegisterFacility />} />
             </Route>
             <Route
-              path="/Admin/*"
+              path="/admin/*"
               element={
                 <SharedLayout>
                   <AppRoute />

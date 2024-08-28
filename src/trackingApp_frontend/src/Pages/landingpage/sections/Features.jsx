@@ -45,7 +45,7 @@ const Features = () => {
           {featuresData.map((feature, index) => (
             <div
               key={index}
-              className="p-6 bg-white rounded-lg shadow-md text-center"
+              className="p-6 bg-white rounded-lg shadow-md text-center hover:scale-105 transition duration-300 ease-in-out"
             >
               <div className="mb-4">{feature.icon}</div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>

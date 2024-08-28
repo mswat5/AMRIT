@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ActorContext from "../../../ActorContext";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 // Define the validation schema using Zod
 const reportIncidentSchema = z.object({
@@ -27,7 +27,6 @@ const ReportIncident = () => {
   const { actors } = useContext(ActorContext);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const { toast } = useToast();
   const {
     register,
     control,
@@ -98,13 +97,28 @@ const ReportIncident = () => {
     }
   }, [toast]);
 
+  Object.keys(result).forEach((key) => {
+    if (key === "ok") {
+      //   alert("incharge ID No. :" + result[key]);
+      toast({
+        title: "Success",
+        description: "incharge ID No. :" + result[key],
+        variant: "success",
+      });
+    } else {
+      //  alert(result[key]);
+      toast({
+        title: "Error",
+        description: result[key],
+        variant: "destructive",
+      });
+    }
+    console.log(key);
+  });
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Incident</h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="location"
@@ -175,10 +189,7 @@ const ReportIncident = () => {
             In-Charge IDs*
           </label>
           {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="mb-4"
-            >
+            <div key={field.id} className="mb-4">
               <div className="flex gap-x-2">
                 <input
                   type="text"

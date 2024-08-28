@@ -51,7 +51,6 @@ export default function Form() {
     // Log the JSON data to the console
     console.log(jsonData);
     reset();
-    navigate("/ambulance/home");
   };
 
   const next = async () => {
