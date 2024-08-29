@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import FacilityInfo from "../facilityDetails/info";
 import FindNearestFacility from "../facilityDetails/findNearest";
 
-const FacilityItem4 = () => {
+const FacilityDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [view, setView] = useState("cards");
@@ -46,7 +46,7 @@ const FacilityItem4 = () => {
         <div>
           <button
             onClick={handleBackClick}
-            className="block p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
+            className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
           >
             <ChevronLeft /> Back to Options
           </button>
@@ -76,4 +76,4 @@ const FormSwitcher = () => {
   }
 };
 
-export default FacilityItem4;
+export default FacilityDetails;

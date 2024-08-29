@@ -19,6 +19,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { toast } from "@/components/ui/use-toast";
 
 const FacilityApprovalTable = () => {
   const { actors } = useContext(ActorContext);
@@ -58,11 +59,26 @@ const FacilityApprovalTable = () => {
       if (result.ok) {
         console.log(`Approved facility with ID: ${id}`);
         setData(data.filter((facility) => facility[0] !== id));
+        toast({
+          title: "Success",
+          description: "facility ID No. :" + id + " Approved",
+          variant: "success",
+        });
       } else {
         console.error("Failed to approve facility:", result.err);
+        toast({
+          title: "Failed to approve facility:",
+          description: result.err,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error approving facility:", error);
+      toast({
+        title: "Error approving facility:",
+        description: error,
+        variant: "destructive",
+      });
     }
   };
 
@@ -73,11 +89,26 @@ const FacilityApprovalTable = () => {
       if (result.ok) {
         console.log(`Rejected facility with ID: ${id}`);
         setData(data.filter((facility) => facility[0] !== id));
+        toast({
+          title: "Success",
+          description: "facility ID No. :" + result[key] + " Rejected",
+          variant: "success",
+        });
       } else {
         console.error("Failed to reject facility:", result.err);
+        toast({
+          title: "Failed to reject facility:",
+          description: result.err,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error rejecting facility:", error);
+      toast({
+        title: "Error rejecting facility:",
+        description: error,
+        variant: "destructive",
+      });
     }
   };
 

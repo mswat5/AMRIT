@@ -32,11 +32,26 @@ const InchargeApproval = () => {
       if (result.ok) {
         console.log(`Approved incharge with ID: ${id}`);
         setData(data.filter((incharge) => incharge[0] !== id));
+        toast({
+          title: "Success",
+          description: "incharge ID No. :" + id + " Approved",
+          variant: "success",
+        });
       } else {
         console.error("Failed to approve incharge:", result.err);
+        toast({
+          title: "Failed to approve incharge:",
+          description: result.err,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error approving incharge:", error);
+      toast({
+        title: "Error approving incharge:",
+        description: error,
+        variant: "destructive",
+      });
     }
   };
 
