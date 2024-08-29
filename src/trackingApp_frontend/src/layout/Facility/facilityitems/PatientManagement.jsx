@@ -18,7 +18,7 @@ const PatientManagement = () => {
   };
 
   const handleBackClick = () => {
-    navigate("item1");
+    navigate("patient-management");
     setView("cards");
   };
 

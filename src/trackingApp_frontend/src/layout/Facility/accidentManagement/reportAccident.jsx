@@ -67,7 +67,24 @@ const ReportIncident = () => {
       [],
       data.inchargeIds
     );
-
+    Object.keys(result).forEach((key) => {
+      if (key === "ok") {
+        //   alert("incharge ID No. :" + result[key]);
+        toast({
+          title: "Success",
+          description: "incharge ID No. :" + result[key],
+          variant: "success",
+        });
+      } else {
+        //  alert(result[key]);
+        toast({
+          title: "Error",
+          description: result[key],
+          variant: "destructive",
+        });
+      }
+      console.log(key);
+    });
     console.log(result);
     console.log(result.ok);
   };
@@ -97,24 +114,6 @@ const ReportIncident = () => {
     }
   }, [toast]);
 
-  Object.keys(result).forEach((key) => {
-    if (key === "ok") {
-      //   alert("incharge ID No. :" + result[key]);
-      toast({
-        title: "Success",
-        description: "incharge ID No. :" + result[key],
-        variant: "success",
-      });
-    } else {
-      //  alert(result[key]);
-      toast({
-        title: "Error",
-        description: result[key],
-        variant: "destructive",
-      });
-    }
-    console.log(key);
-  });
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Report Incident</h1>

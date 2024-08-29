@@ -58,13 +58,13 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="col-span-2 dark:bg-slate-900 bg-secondary h-lvh p-2 ">
+    <div className="col-span-2 dark:bg-slate-900  min-h-screen p-2 py-4 border-r">
       <ul className="space-y-4">
         {items.map((item) => (
           <li
             key={item.id}
             className={cn(
-              "p-2 cursor-pointer rounded-md flex items-center gap-x-2 font-semibold",
+              "p-2 cursor-pointer rounded-md flex items-center gap-x-2 min-w-fit  font-semibold",
               activeItem === item.id ? "bg-primary text-white" : ""
             )}
             onClick={() => handleItemClick(item)}

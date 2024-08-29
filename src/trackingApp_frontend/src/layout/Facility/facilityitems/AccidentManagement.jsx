@@ -18,7 +18,7 @@ const InchargeAccidentManagement = () => {
   };
 
   const handleBackClick = () => {
-    navigate("item2");
+    navigate("accident-management");
     setView("cards");
   };
 

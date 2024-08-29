@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
-
 const AppRoute = ({ children }) => {
   return (
     <div className="">
@@ -10,7 +9,7 @@ const AppRoute = ({ children }) => {
           <Sidebar />
         </div>
         <div className="md:col-span-10  dark:bg-slate-500 p-2 h-screen">
-         <Outlet/>
+          <Outlet />
         </div>
       </div>
     </div>

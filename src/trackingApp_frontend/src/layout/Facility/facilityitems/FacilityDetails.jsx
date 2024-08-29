@@ -15,7 +15,7 @@ const FacilityDetails = () => {
   };
 
   const handleBackClick = () => {
-    navigate("item4");
+    navigate("facility-details");
     setView("cards");
   };
 

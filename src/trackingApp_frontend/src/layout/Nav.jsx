@@ -54,7 +54,7 @@ const Nav = () => {
   const isInchargeRoute = location.pathname.startsWith("/incharge");
 
   return (
-    <div className="flex justify-between p-2 items-center dark:bg-slate-900 border-b">
+    <div className="flex justify-between p-2 h-20 items-center dark:bg-slate-900 border-b">
       {!isFacilityRoute && !isAdminRoute && !isInchargeRoute ? (
         <div className={"text-3xl font-bold"}>AMRIT</div>
       ) : (
@@ -77,33 +77,37 @@ const Nav = () => {
           </div>
 
           <div
-            className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${
+            className={`md:hidden fixed top-16 left-0 z-10 w-full bg-background border-b shadow-sm ${
               isFacilityMenuOpen ? "block" : "hidden"
             }`}
           >
             <div className="flex flex-col justify-center items-center h-full">
               {[
                 {
-                  to: "/facility/item1",
+                  to: "/facility/patient-management",
                   icon: <User />,
                   text: "Patient Management",
                 },
                 {
-                  to: "/facility/item2",
+                  to: "/facility/accident-management",
                   icon: <AlertCircle />,
                   text: "Accident Management",
                 },
                 {
-                  to: "/facility/item3",
+                  to: "/facility/resource-management",
                   icon: <Package />,
                   text: "Resource Management",
                 },
                 {
-                  to: "/facility/item4",
+                  to: "/facility/facility-details",
                   icon: <Building />,
                   text: "Facility Details",
                 },
-                { to: "/facility/item5", icon: <FileText />, text: "Reports" },
+                {
+                  to: "/facility/reports",
+                  icon: <FileText />,
+                  text: "Reports",
+                },
               ].map((link, index) => (
                 <NavLink
                   key={index}
@@ -181,7 +185,7 @@ const Nav = () => {
           </div>
 
           <div
-            className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${
+            className={`md:hidden fixed top-16 left-0 z-10 w-full bg-background border-b shadow-sm ${
               isAdminMenuOpen ? "block" : "hidden"
             }`}
           >
@@ -279,7 +283,7 @@ const Nav = () => {
           </div>
 
           <div
-            className={`md:hidden fixed top-16 left-0 w-full bg-background border-b shadow-sm ${
+            className={`md:hidden fixed top-16 left-0 z-10 w-full bg-background border-b shadow-sm ${
               isInchargeMenuOpen ? "block" : "hidden"
             }`}
           >
