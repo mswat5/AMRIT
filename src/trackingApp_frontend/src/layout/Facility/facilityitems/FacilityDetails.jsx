@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import FacilityInfo from "../facilityDetails/info";
-import FindNearestFacility from "../facilityDetails/FindNearestFacility";
+import FindNearestFacility from "../facilityDetails/findNearest";
 
 const FacilityDetails = () => {
   const location = useLocation();

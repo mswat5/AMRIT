@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
-import { ActorContext } from "../../../context/ActorContext";
-import { toast } from "../../../components/ui/use-toast";
+import ActorContext from "../../../ActorContext";
+import { toast } from "@/components/ui/use-toast";
 
 const FindNearestFacility = () => {
   const { actors } = useContext(ActorContext);
