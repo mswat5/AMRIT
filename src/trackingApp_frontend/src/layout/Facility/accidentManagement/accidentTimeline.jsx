@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import ActorContext from "../../../ActorContext";
 
 const AccidentTimeline = ({ accidentActor }) => {
   const [accidentId, setAccidentId] = useState("");
   const [timeline, setTimeline] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { actors } = useContext(ActorContext);
 
   const fetchTimeline = async () => {
     if (!accidentId) {
@@ -13,7 +15,7 @@ const AccidentTimeline = ({ accidentActor }) => {
 
     setLoading(true);
     try {
-      const result = await accidentActor.getAccidentTimeline(accidentId);
+      const result = await actors.accident.getAccidentTimeline(accidentId);
       if ("ok" in result) {
         setTimeline(result.ok);
       } else {
@@ -55,7 +57,10 @@ const AccidentTimeline = ({ accidentActor }) => {
       {timeline.length > 0 ? (
         <div className="space-y-4">
           {timeline.map((event, index) => (
-            <div key={index} className="flex items-start space-x-4">
+            <div
+              key={index}
+              className="flex items-start space-x-4"
+            >
               <div className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full">
                 {index + 1}
               </div>

@@ -38,6 +38,7 @@ actor class AccidentCanister() {
     private stable var nextAccidentId : Nat = 1;
     private stable var accidents = Map.new<Text, AccidentReport>();
     private stable var facilityAccidents = Map.new<Text, [Text]>();
+    private stable var facilityAccidentMap = Map.new<Text, [Text]>();
 
     // Define an array of permitted principals
     private let permittedPrincipals : [Principal] = [
@@ -130,45 +131,109 @@ actor class AccidentCanister() {
 
     };
 
-    public shared ({ caller }) func assignPatientToAccident(accidentId : Text, patientId : Text, file : ?Blob) : async Result<Text, Text> {
+    public shared ({ caller }) func updateAccidentStatus(accidentId : Text, newStatus : Types.AccidentStatus) : async Result<Text, Text> {
         if (Principal.isAnonymous(caller)) {
-            return #err("Anonymous principals are not allowed to assign patients to accidents");
+            return #err("Anonymous principals are not allowed to update accident status");
         };
 
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
             case (?accident) {
-                // Update patient record
-
-                let patientUpdateResult = await patientCanister.updatePatientStatus(patientId, #UnderTreatment, file);
-
-                switch (patientUpdateResult) {
+                let facilityResult = await facilityCanister.getFacilityId(caller);
+                switch (facilityResult) {
                     case (#err(error)) {
-                        return #err("Error updating patient status: " # error);
+                        return #err("Error verifying facility: " # error);
                     };
-                    case (#ok(_)) {
-                        // Continue with report generation
+                    case (#ok(callerFacilityId)) {
+                        if (callerFacilityId != accident.details.reportingFacilityId and callerFacilityId != accident.details.currentFacilityId) {
+                            return #err("Only the reporting facility or the currently assigned facility can update accident status");
+                        };
+
+                        let updatedAccident : AccidentReport = {
+                            accident with
+                            status = newStatus;
+                        };
+
+                        Map.set(accidents, thash, accidentId, updatedAccident);
+
+                        let report : Types.Report = {
+                            id = ""; // Will be assigned by ReportCanister
+                            accidentId = accidentId;
+                            patientId = ""; // No specific patient for this update
+                            facilityId = callerFacilityId;
+                            reportType = #AccidentReport;
+                            timestamp = Time.now();
+                            file = null;
+                            details = "Accident status updated to " # debug_show (newStatus);
+                        };
+
+                        switch (await reportCanister.generateReport(report)) {
+                            case (#ok(reportId)) {
+                                #ok("Accident status updated successfully. Report ID: " # reportId);
+                            };
+                            case (#err(error)) {
+                                #ok("Accident status updated successfully, but report generation failed: " # error);
+                            };
+                        };
                     };
                 };
+            };
+        };
+    };
 
-                let report : Types.Report = {
-                    id = ""; // Will be assigned by ReportCanister
-                    accidentId = accidentId;
-                    patientId = patientId;
-                    facilityId = accident.details.reportingFacilityId;
-                    reportType = #AccidentReport;
-                    timestamp = Time.now();
-                    file = file;
-                    details = "Patient assigned to accident";
-                };
+    public shared ({ caller }) func editAccidentDetails(accidentId : Text, newDetails : Types.AccidentDetails) : async Result<Text, Text> {
+        if (Principal.isAnonymous(caller)) {
+            return #err("Anonymous principals are not allowed to edit accident details");
+        };
 
-                switch (await reportCanister.generateReport(report)) {
-                    case (#ok(reportId)) {
-                        #ok("Patient assigned to accident successfully. Report ID: " # reportId);
-                    };
+        switch (Map.get(accidents, thash, accidentId)) {
+            case null { #err("Accident not found") };
+            case (?accident) {
+                let facilityResult = await facilityCanister.getFacilityId(caller);
+                switch (facilityResult) {
                     case (#err(error)) {
-                        // Log the error, but don't fail the patient assignment
-                        #ok("Patient assigned to accident successfully, but report generation failed: " # error);
+                        return #err("Error verifying facility: " # error);
+                    };
+                    case (#ok(callerFacilityId)) {
+                        if (callerFacilityId != accident.details.reportingFacilityId and callerFacilityId != accident.details.currentFacilityId) {
+                            return #err("Only the reporting facility or the currently assigned facility can edit accident details");
+                        };
+
+                        let updatedDetails : Types.AccidentDetails = {
+                            reportingFacilityId = accident.details.reportingFacilityId;
+                            currentFacilityId = accident.details.currentFacilityId;
+
+                            severity = newDetails.severity;
+                            description = newDetails.description;
+                            location = newDetails.location;
+                        };
+
+                        let updatedAccident : AccidentReport = {
+                            accident with
+                            details = updatedDetails;
+                        };
+
+                        Map.set(accidents, thash, accidentId, updatedAccident);
+
+                        let report : Types.Report = {
+                            id = ""; // Will be assigned by ReportCanister
+                            accidentId = accidentId;
+                            patientId = ""; // No specific patient for this update
+                            facilityId = callerFacilityId;
+                            reportType = #AccidentReport;
+                            timestamp = Time.now();
+                            file = null;
+                            details = "Accident details updated";
+                        };
+
+                        switch (await reportCanister.generateReport(report)) {
+                            case (#ok(reportId)) {
+                                #ok("Accident details updated successfully. Report ID: " # reportId);
+                            };
+                            case (#err(error)) {
+                                #ok("Accident details updated successfully, but report generation failed: " # error);
+                            };
+                        };
                     };
                 };
             };
@@ -242,7 +307,7 @@ actor class AccidentCanister() {
                             case (#ok(reportId)) {
 
                                 switch (await adminCanister.notifySpecificIncharges("Accident case closed with ID: " # accidentId, accidentId, inchargeIds, report)) {
-                                    case (#ok(value)) {
+                                    case (#ok(_value)) {
                                         #ok("Accident case closed successfully. Report ID: " # reportId);
 
                                     };
@@ -304,26 +369,59 @@ actor class AccidentCanister() {
         };
     };
 
-    public query func getAccidentsByFacility(facilityId : Text) : async Result<[AccidentReport], Text> {
-        switch (Map.get(facilityAccidents, thash, facilityId)) {
-            case null { #ok([]) }; // No accidents found for this facility
-            case (?accidentIds) {
-                let facilityAccidents = Array.mapFilter<Text, AccidentReport>(
-                    accidentIds,
-                    func(id : Text) : ?AccidentReport {
-                        Map.get(accidents, thash, id);
-                    },
-                );
-                #ok(facilityAccidents);
+    public shared ({ caller }) func getAccidentsByFacility() : async Result<[AccidentReport], Text> {
+        let facilityId = await facilityCanister.getFacilityId(caller);
+        switch (facilityId) {
+            case (#ok(value)) {
+                switch (Map.get(facilityAccidents, thash, value)) {
+                    case null { #ok([]) }; // No accidents found for this facility
+                    case (?accidentIds) {
+                        let facilityAccidents = Array.mapFilter<Text, AccidentReport>(
+                            accidentIds,
+                            func(id : Text) : ?AccidentReport {
+                                Map.get(accidents, thash, id);
+                            },
+                        );
+                        #ok(facilityAccidents);
+                    };
+                };
+            };
+            case (#err(error)) {
+                return (#err(error));
             };
         };
+
     };
 
-    public query func listActiveAccidents() : async Result.Result<[AccidentReport], Text> {
-
-        switch (Iter.toArray(Map.vals(accidents))) {
-            case ((value)) { #ok(value) };
-            case ((error)) { #err("Error gettinng the active accidents") };
+    public shared ({ caller }) func listActiveAccidentsForFacility() : async Result.Result<[AccidentReport], Text> {
+        let facilityId = await facilityCanister.getFacilityId(caller);
+        switch (facilityId) {
+            case (#ok(id)) {
+                switch (Map.get(facilityAccidents, thash, id)) {
+                    case null { #ok([]) }; // No accidents found for this facility
+                    case (?accidentIds) {
+                        let activeAccidents = Array.mapFilter<Text, AccidentReport>(
+                            accidentIds,
+                            func(accidentId : Text) : ?AccidentReport {
+                                switch (Map.get(accidents, thash, accidentId)) {
+                                    case (?accident) {
+                                        if (accident.status != #Resolved) {
+                                            ?accident;
+                                        } else {
+                                            null;
+                                        };
+                                    };
+                                    case null { null };
+                                };
+                            },
+                        );
+                        #ok(activeAccidents);
+                    };
+                };
+            };
+            case (#err(error)) {
+                #err("Error getting facility ID: " # error);
+            };
         };
     };
 
@@ -341,7 +439,37 @@ actor class AccidentCanister() {
         Map.size(accidents);
     };
 
-    public func getAccidentTimeline(accidentId : Text) : async Result<[Types.TimelineEvent], Text> {
+    public shared ({ caller }) func getAccidentTimeline(accidentId : Text) : async Result<[Types.TimelineEvent], Text> {
+        // Check if caller is admin
+        if (await adminCanister.checkAdmin(caller)) {
+            return await generateTimeline(accidentId);
+        };
+
+        // Check if caller is an incharge associated with the accident
+
+        // Check if caller is from a facility associated with the accident
+        switch (await facilityCanister.getFacilityId(caller)) {
+            case (#ok(facilityId)) {
+                switch (Map.get(facilityAccidentMap, thash, facilityId)) {
+                    case (?accidentIds) {
+                        if (Array.find(accidentIds, func(id : Text) : Bool { id == accidentId }) != null) {
+                            return await generateTimeline(accidentId);
+                        };
+                    };
+                    case (null) {
+                        // Continue to error
+                    };
+                };
+            };
+            case (#err(_)) {
+                // Continue to error
+            };
+        };
+
+        #err("Not authorized to view this accident timeline");
+    };
+
+    private func generateTimeline(accidentId : Text) : async Result<[Types.TimelineEvent], Text> {
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
             case (?accident) {
@@ -351,7 +479,6 @@ actor class AccidentCanister() {
                 timeline := Array.append(timeline, [{ timestamp = accident.timestamp; status = debug_show (accident.status); details = "Accident Reported" }]);
 
                 // Get all reports for this accident
-
                 let reports = await reportCanister.listReportsForAccident(accidentId);
 
                 // Add events for each report
@@ -387,6 +514,25 @@ actor class AccidentCanister() {
         switch (result) {
             case (?value) { return true };
             case (null) { return false };
+        };
+    };
+
+    public func updateFacilityAccidentMap(facilityId : Text, accidentId : Text) : async Result<(), Text> {
+        switch (Map.get(accidents, thash, accidentId)) {
+            case null { #err("Accident not found") };
+            case (?accident) {
+                switch (Map.get(facilityAccidentMap, thash, facilityId)) {
+                    case null {
+                        Map.set(facilityAccidentMap, thash, facilityId, [accidentId]);
+                    };
+                    case (?accidentIds) {
+                        if (Array.find(accidentIds, func(id : Text) : Bool { id == accidentId }) == null) {
+                            Map.set(facilityAccidentMap, thash, facilityId, Array.append(accidentIds, [accidentId]));
+                        };
+                    };
+                };
+                #ok(());
+            };
         };
     };
 
