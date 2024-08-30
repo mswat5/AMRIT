@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
   ChevronRight,
   User,
@@ -21,18 +21,41 @@ const Signup = () => {
 
   // const [registrationStatus, setRegistrationStatus] = useState();
   const [c, setc] = useState(false);
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      if (isAuthenticated && actors.admin) {
+        setLoading(true);
+        try {
+          const result = await actors.admin.getUserRole();
+          if (result.ok) {
+            checkRegistration(result.ok);
+          } else {
+            console.log(result.err);
+            setc(true);
+          }
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+          setc(true);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    checkUserRole();
+  }, [isAuthenticated, actors.admin]);
+
   async function changeSigning() {
     setLoading(true);
-    await login();
-    if (isAuthenticated) {
-      const result = await actors.admin.getUserRole();
-      if (result.ok) {
-        checkRegistration(result.ok);
-      } else {
-        console.log(result.err);
-      }
+    try {
+      await login();
+      // The useEffect will handle the rest
+    } catch (error) {
+      console.error("Error during signing process:", error);
+      setc(true);
+      setLoading(false);
     }
-    setLoading(false);
   }
   const checkRegistration = (type) => {
     if (type === "admin") {

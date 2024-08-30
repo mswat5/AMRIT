@@ -10,7 +10,7 @@ const ActorContext = React.createContext({
     patient: null,
   },
   isAuthenticated: false,
-  login: () => {},
+  login: async () => {},
 });
 
 export default ActorContext;

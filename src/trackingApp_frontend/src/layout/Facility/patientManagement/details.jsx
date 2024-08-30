@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button'; // Adjust the import path based on your project structure
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button"; // Adjust the import path based on your project structure
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'; // Adjust the import path based on your project structure
+} from "@/components/ui/table"; // Adjust the import path based on your project structure
 
 import {
   flexRender,
@@ -50,31 +50,41 @@ const details = () => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
 
-const columns = [
-  { accessorKey: 'name', header: 'patient Name' },
-  { accessorKey: 'location', header: 'Location' },
-  // { accessorKey: 'status', header: 'Status' },
-  { accessorKey: 'contactInfo', header: 'Contact Info' },
-  { accessorKey: 'age', header: ' Age' },
-  {
-    accessorKey: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => (
-      <div className="flex justify-center space-x-2">
-        <Button onClick={() => handleEdit(row.original.id)} variant="success" className="bg-green-600 font-bold">Edit</Button>
-        <Button onClick={() => handleDelete(row.original.id)} 
-        className="font-bold" variant="">Delete</Button>
-         <Button onClick={() => handleDownload(row.original.id)} className="bg-purple-500 font-bold">
-           Download
-        </Button>
-      </div>
-    ),
-  },
-];
-
-const details = () => {
-  const [sorting, setSorting] = useState([]);
-  const [filtering, setFiltering] = useState('');
+  const columns = [
+    { accessorKey: "name", header: "patient Name" },
+    { accessorKey: "location", header: "Location" },
+    // { accessorKey: 'status', header: 'Status' },
+    { accessorKey: "contactInfo", header: "Contact Info" },
+    { accessorKey: "age", header: " Age" },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex justify-center space-x-2">
+          <Button
+            onClick={() => handleEdit(row.original.id)}
+            variant="success"
+            className="bg-green-600 font-bold"
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={() => handleDelete(row.original.id)}
+            className="font-bold"
+            variant=""
+          >
+            Delete
+          </Button>
+          <Button
+            onClick={() => handleDownload(row.original.id)}
+            className="bg-purple-500 font-bold"
+          >
+            Download
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -103,9 +113,9 @@ const details = () => {
       <Table className="min-w-full border-separate border-spacing-0">
         <TableCaption>A list of patients </TableCaption>
         <TableHeader className="">
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-gray-900 text-white ">
-              {headerGroup.headers.map(header => (
+              {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
@@ -127,9 +137,12 @@ const details = () => {
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.map(row => (
-            <TableRow key={row.id} className="dark:hover:bg-secondary hover:bg-gray-200  ">
-              {row.getVisibleCells().map(cell => (
+          {table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              className="dark:hover:bg-secondary hover:bg-gray-200  "
+            >
+              {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id} className="p-3 border border-gray-900">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
