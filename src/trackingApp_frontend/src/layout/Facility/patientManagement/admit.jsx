@@ -137,7 +137,7 @@ export default function Form() {
         //   alert("incharge ID No. :" + result[key]);
         toast({
           title: "Success",
-          description: "incharge ID No. :" + result[key],
+          description: result[key],
           variant: "success",
         });
       } else {
@@ -187,7 +187,10 @@ export default function Form() {
             className="space-y-4 md:flex md:space-x-8 md:space-y-0"
           >
             {steps.map((step, index) => (
-              <li key={step.name} className="md:flex-1">
+              <li
+                key={step.name}
+                className="md:flex-1"
+              >
                 {currentStep > index ? (
                   <div className="group flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                     <span className="text-sm font-medium text-red-600 transition-colors">
@@ -218,7 +221,10 @@ export default function Form() {
           </ol>
         </nav>
 
-        <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
+        <form
+          className="mt-12 py-12"
+          onSubmit={handleSubmit(processForm)}
+        >
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -578,7 +584,10 @@ export default function Form() {
                       value="yes"
                       {...register("stableAngina")}
                     />
-                    <label htmlFor="stableAnginaYes" className="text-gray-900">
+                    <label
+                      htmlFor="stableAnginaYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -588,7 +597,10 @@ export default function Form() {
                       value="no"
                       {...register("stableAngina")}
                     />
-                    <label htmlFor="stableAnginaNo" className="text-gray-900">
+                    <label
+                      htmlFor="stableAnginaNo"
+                      className="text-gray-900"
+                    >
                       No
                     </label>
 
@@ -627,7 +639,10 @@ export default function Form() {
                       value="yes"
                       {...register("priorMI")}
                     />
-                    <label htmlFor="priorMIYes" className="text-gray-900">
+                    <label
+                      htmlFor="priorMIYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -637,7 +652,10 @@ export default function Form() {
                       value="no"
                       {...register("priorMI")}
                     />
-                    <label htmlFor="priorMINo" className="text-gray-900">
+                    <label
+                      htmlFor="priorMINo"
+                      className="text-gray-900"
+                    >
                       No
                     </label>
 
@@ -647,7 +665,10 @@ export default function Form() {
                       value="not known"
                       {...register("priorMI")}
                     />
-                    <label htmlFor="priorMINotKnown" className="text-gray-900">
+                    <label
+                      htmlFor="priorMINotKnown"
+                      className="text-gray-900"
+                    >
                       Not Known
                     </label>
                   </div>
@@ -697,7 +718,10 @@ export default function Form() {
                       value="yes"
                       {...register("ptca")}
                     />
-                    <label htmlFor="ptcaYes" className="text-gray-900">
+                    <label
+                      htmlFor="ptcaYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -707,7 +731,10 @@ export default function Form() {
                       value="no"
                       {...register("ptca")}
                     />
-                    <label htmlFor="ptcaNo" className="text-gray-900">
+                    <label
+                      htmlFor="ptcaNo"
+                      className="text-gray-900"
+                    >
                       No
                     </label>
 
@@ -717,7 +744,10 @@ export default function Form() {
                       value="not known"
                       {...register("ptca")}
                     />
-                    <label htmlFor="ptcaNotKnown" className="text-gray-900">
+                    <label
+                      htmlFor="ptcaNotKnown"
+                      className="text-gray-900"
+                    >
                       Not Known
                     </label>
                   </div>
@@ -743,7 +773,10 @@ export default function Form() {
                       value="yes"
                       {...register("cabg")}
                     />
-                    <label htmlFor="cabgYes" className="text-gray-900">
+                    <label
+                      htmlFor="cabgYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -753,7 +786,10 @@ export default function Form() {
                       value="no"
                       {...register("cabg")}
                     />
-                    <label htmlFor="cabgNo" className="text-gray-900">
+                    <label
+                      htmlFor="cabgNo"
+                      className="text-gray-900"
+                    >
                       No
                     </label>
 
@@ -763,7 +799,10 @@ export default function Form() {
                       value="not known"
                       {...register("cabg")}
                     />
-                    <label htmlFor="cabgNotKnown" className="text-gray-900">
+                    <label
+                      htmlFor="cabgNotKnown"
+                      className="text-gray-900"
+                    >
                       Not Known
                     </label>
                   </div>
@@ -842,14 +881,24 @@ export default function Form() {
                         id="tiaOrStroke"
                         {...register("tiaOrStroke")}
                       />
-                      <label htmlFor="tiaOrStroke" className="text-gray-900">
+                      <label
+                        htmlFor="tiaOrStroke"
+                        className="text-gray-900"
+                      >
                         TIA OR Stroke
                       </label>
                     </div>
 
                     <div className="flex gap-x-4">
-                      <input type="checkbox" id="pad" {...register("pad")} />
-                      <label htmlFor="pad" className="text-gray-900">
+                      <input
+                        type="checkbox"
+                        id="pad"
+                        {...register("pad")}
+                      />
+                      <label
+                        htmlFor="pad"
+                        className="text-gray-900"
+                      >
                         PAD
                       </label>
                     </div>
@@ -869,8 +918,15 @@ export default function Form() {
                     </div>
 
                     <div className="flex gap-x-4">
-                      <input type="checkbox" id="chf" {...register("chf")} />
-                      <label htmlFor="chf" className="text-gray-900">
+                      <input
+                        type="checkbox"
+                        id="chf"
+                        {...register("chf")}
+                      />
+                      <label
+                        htmlFor="chf"
+                        className="text-gray-900"
+                      >
                         CHF
                       </label>
                     </div>
@@ -1016,7 +1072,10 @@ export default function Form() {
                       value="yes"
                       {...register("hypertension")}
                     />
-                    <label htmlFor="hypertensionYes" className="text-gray-900">
+                    <label
+                      htmlFor="hypertensionYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -1026,7 +1085,10 @@ export default function Form() {
                       value="no"
                       {...register("hypertension")}
                     />
-                    <label htmlFor="hypertensionNo" className="text-gray-900">
+                    <label
+                      htmlFor="hypertensionNo"
+                      className="text-gray-900"
+                    >
                       No
                     </label>
 
@@ -1124,7 +1186,10 @@ export default function Form() {
                       value="yes"
                       {...register("diabetes")}
                     />
-                    <label htmlFor="diabetesYes" className="text-gray-900">
+                    <label
+                      htmlFor="diabetesYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -1134,7 +1199,10 @@ export default function Form() {
                       value="no"
                       {...register("diabetes")}
                     />
-                    <label htmlFor="diabetesNo" className="text-gray-900">
+                    <label
+                      htmlFor="diabetesNo"
+                      className="text-gray-900"
+                    >
                       No
                     </label>
 
@@ -1144,7 +1212,10 @@ export default function Form() {
                       value="not known"
                       {...register("diabetes")}
                     />
-                    <label htmlFor="diabetesNotKnown" className="text-gray-900">
+                    <label
+                      htmlFor="diabetesNotKnown"
+                      className="text-gray-900"
+                    >
                       Not Known
                     </label>
                   </div>
@@ -1178,7 +1249,10 @@ export default function Form() {
                         <label className="block text-sm leading-6 text-gray-900">
                           Only OHA:
                         </label>
-                        <input type="checkbox" {...register("diabetesOHA")} />
+                        <input
+                          type="checkbox"
+                          {...register("diabetesOHA")}
+                        />
                       </div>
                       {errors.diabetesDuration && (
                         <p className="text-red-500 text-sm mt-2">
@@ -1204,7 +1278,10 @@ export default function Form() {
                       value="yes"
                       {...register("smokingStatus")}
                     />
-                    <label htmlFor="smokingStatusYes" className="text-gray-900">
+                    <label
+                      htmlFor="smokingStatusYes"
+                      className="text-gray-900"
+                    >
                       Yes
                     </label>
 
@@ -1214,7 +1291,10 @@ export default function Form() {
                       value="no"
                       {...register("smokingStatus")}
                     />
-                    <label htmlFor="smokingStatusNo" className="text-gray-900">
+                    <label
+                      htmlFor="smokingStatusNo"
+                      className="text-gray-900"
+                    >
                       Never
                     </label>
                   </div>
@@ -1252,7 +1332,10 @@ export default function Form() {
                           value="past"
                           {...register("smokingType")}
                         />
-                        <label htmlFor="pastSmoker" className="text-gray-900">
+                        <label
+                          htmlFor="pastSmoker"
+                          className="text-gray-900"
+                        >
                           Past Smoker
                         </label>
                       </div>
@@ -1357,7 +1440,10 @@ export default function Form() {
                           value="current"
                           {...register("tobaccoUsageType")}
                         />
-                        <label htmlFor="currentUser" className="text-gray-900">
+                        <label
+                          htmlFor="currentUser"
+                          className="text-gray-900"
+                        >
                           Current
                         </label>
 
@@ -1367,7 +1453,10 @@ export default function Form() {
                           value="past"
                           {...register("tobaccoUsageType")}
                         />
-                        <label htmlFor="pastUser" className="text-gray-900">
+                        <label
+                          htmlFor="pastUser"
+                          className="text-gray-900"
+                        >
                           Past
                         </label>
                       </div>
@@ -2764,7 +2853,10 @@ export default function Form() {
                         {...register("preHubManagement")}
                         value="Aspirin"
                       />
-                      <label htmlFor="aspirin" className="ml-2">
+                      <label
+                        htmlFor="aspirin"
+                        className="ml-2"
+                      >
                         Aspirin
                       </label>
                     </div>
@@ -2775,7 +2867,10 @@ export default function Form() {
                         {...register("preHubManagement")}
                         value="Statins"
                       />
-                      <label htmlFor="statins" className="ml-2">
+                      <label
+                        htmlFor="statins"
+                        className="ml-2"
+                      >
                         Statins
                       </label>
                     </div>
@@ -2786,7 +2881,10 @@ export default function Form() {
                         {...register("preHubManagement")}
                         value="Clopidogrel / Prasugrel / Ticagretor"
                       />
-                      <label htmlFor="clopidogrel" className="ml-2">
+                      <label
+                        htmlFor="clopidogrel"
+                        className="ml-2"
+                      >
                         Clopidogrel / Prasugrel / Ticagretor
                       </label>
                     </div>
@@ -2797,7 +2895,10 @@ export default function Form() {
                         {...register("preHubManagement")}
                         value="Others"
                       />
-                      <label htmlFor="others" className="ml-2">
+                      <label
+                        htmlFor="others"
+                        className="ml-2"
+                      >
                         Others
                       </label>
                     </div>
@@ -2821,7 +2922,10 @@ export default function Form() {
                             {...register("preHubManagement")}
                             value="Heparin"
                           />
-                          <label htmlFor="heparin" className="ml-2">
+                          <label
+                            htmlFor="heparin"
+                            className="ml-2"
+                          >
                             Heparin
                           </label>
                         </div>
@@ -2832,7 +2936,10 @@ export default function Form() {
                             {...register("preHubManagement")}
                             value="Nitrates"
                           />
-                          <label htmlFor="nitrates" className="ml-2">
+                          <label
+                            htmlFor="nitrates"
+                            className="ml-2"
+                          >
                             Nitrates
                           </label>
                         </div>
@@ -2843,7 +2950,10 @@ export default function Form() {
                             {...register("preHubManagement")}
                             value="Beta-Blockers"
                           />
-                          <label htmlFor="beta-blockers" className="ml-2">
+                          <label
+                            htmlFor="beta-blockers"
+                            className="ml-2"
+                          >
                             Beta-Blockers
                           </label>
                         </div>
@@ -2854,7 +2964,10 @@ export default function Form() {
                             {...register("preHubManagement")}
                             value="ACE Inhibitors"
                           />
-                          <label htmlFor="ace-inhibitors" className="ml-2">
+                          <label
+                            htmlFor="ace-inhibitors"
+                            className="ml-2"
+                          >
                             ACE Inhibitors
                           </label>
                         </div>
@@ -2865,7 +2978,10 @@ export default function Form() {
                             {...register("preHubManagement")}
                             value="None"
                           />
-                          <label htmlFor="none" className="ml-2">
+                          <label
+                            htmlFor="none"
+                            className="ml-2"
+                          >
                             None of These
                           </label>
                         </div>
@@ -2887,7 +3003,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Aspirin"
                       />
-                      <label htmlFor="aspirinAdmission" className="ml-2">
+                      <label
+                        htmlFor="aspirinAdmission"
+                        className="ml-2"
+                      >
                         Aspirin
                       </label>
                     </div>
@@ -2898,7 +3017,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="LMWH & Fondaparinux"
                       />
-                      <label htmlFor="lmwh" className="ml-2">
+                      <label
+                        htmlFor="lmwh"
+                        className="ml-2"
+                      >
                         LMWH & Fondaparinux
                       </label>
                     </div>
@@ -2909,7 +3031,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Beta-Blockers"
                       />
-                      <label htmlFor="beta-blockers-admission" className="ml-2">
+                      <label
+                        htmlFor="beta-blockers-admission"
+                        className="ml-2"
+                      >
                         Beta-Blockers
                       </label>
                     </div>
@@ -2920,7 +3045,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="SGLT2 Inhibitors"
                       />
-                      <label htmlFor="sglt2" className="ml-2">
+                      <label
+                        htmlFor="sglt2"
+                        className="ml-2"
+                      >
                         SGLT2 Inhibitors
                       </label>
                     </div>
@@ -2931,7 +3059,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Glycoprotein II B/III A Inhibitors"
                       />
-                      <label htmlFor="glycoprotein" className="ml-2">
+                      <label
+                        htmlFor="glycoprotein"
+                        className="ml-2"
+                      >
                         Glycoprotein II B/III A Inhibitors
                       </label>
                     </div>
@@ -2942,7 +3073,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Unfractionated Heparin"
                       />
-                      <label htmlFor="heparin" className="ml-2">
+                      <label
+                        htmlFor="heparin"
+                        className="ml-2"
+                      >
                         Unfractionated Heparin
                       </label>
                     </div>
@@ -2953,7 +3087,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Nitrates"
                       />
-                      <label htmlFor="nitrates" className="ml-2">
+                      <label
+                        htmlFor="nitrates"
+                        className="ml-2"
+                      >
                         Nitrates
                       </label>
                     </div>
@@ -2964,7 +3101,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="ARNI"
                       />
-                      <label htmlFor="arni" className="ml-2">
+                      <label
+                        htmlFor="arni"
+                        className="ml-2"
+                      >
                         ARNI
                       </label>
                     </div>
@@ -2975,7 +3115,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="ARBs"
                       />
-                      <label htmlFor="arbs" className="ml-2">
+                      <label
+                        htmlFor="arbs"
+                        className="ml-2"
+                      >
                         ARBs
                       </label>
                     </div>
@@ -2986,7 +3129,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Other Antidiabetics"
                       />
-                      <label htmlFor="other-antidiabetics" className="ml-2">
+                      <label
+                        htmlFor="other-antidiabetics"
+                        className="ml-2"
+                      >
                         Other Antidiabetics
                       </label>
                     </div>
@@ -2997,7 +3143,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Statins"
                       />
-                      <label htmlFor="statins-admission" className="ml-2">
+                      <label
+                        htmlFor="statins-admission"
+                        className="ml-2"
+                      >
                         Statins
                       </label>
                     </div>
@@ -3022,7 +3171,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="MRA"
                       />
-                      <label htmlFor="mra-admission" className="ml-2">
+                      <label
+                        htmlFor="mra-admission"
+                        className="ml-2"
+                      >
                         MRA
                       </label>
                     </div>
@@ -3033,7 +3185,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Insulin"
                       />
-                      <label htmlFor="insulin-admission" className="ml-2">
+                      <label
+                        htmlFor="insulin-admission"
+                        className="ml-2"
+                      >
                         Insulin
                       </label>
                     </div>
@@ -3044,7 +3199,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Clopidogrel / Prasugrel / Ticagretor"
                       />
-                      <label htmlFor="clopidogrel-admission" className="ml-2">
+                      <label
+                        htmlFor="clopidogrel-admission"
+                        className="ml-2"
+                      >
                         Clopidogrel / Prasugrel / Ticagretor
                       </label>
                     </div>
@@ -3055,7 +3213,10 @@ export default function Form() {
                         {...register("duringAdmission")}
                         value="Others"
                       />
-                      <label htmlFor="others-admission" className="ml-2">
+                      <label
+                        htmlFor="others-admission"
+                        className="ml-2"
+                      >
                         Others
                       </label>
                     </div>
@@ -3080,7 +3241,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Aspirin"
                       />
-                      <label htmlFor="aspirin-discharge" className="ml-2">
+                      <label
+                        htmlFor="aspirin-discharge"
+                        className="ml-2"
+                      >
                         Aspirin
                       </label>
                     </div>
@@ -3091,7 +3255,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Clopidogrel / Prasugrel / Ticagretor"
                       />
-                      <label htmlFor="clopidogrel-discharge" className="ml-2">
+                      <label
+                        htmlFor="clopidogrel-discharge"
+                        className="ml-2"
+                      >
                         Clopidogrel / Prasugrel / Ticagretor
                       </label>
                     </div>
@@ -3102,7 +3269,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Oral Anticoagulants"
                       />
-                      <label htmlFor="oral-anticoagulants" className="ml-2">
+                      <label
+                        htmlFor="oral-anticoagulants"
+                        className="ml-2"
+                      >
                         Oral Anticoagulants
                       </label>
                     </div>
@@ -3113,7 +3283,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Beta-Blockers"
                       />
-                      <label htmlFor="beta-blockers-discharge" className="ml-2">
+                      <label
+                        htmlFor="beta-blockers-discharge"
+                        className="ml-2"
+                      >
                         Beta-Blockers
                       </label>
                     </div>
@@ -3124,7 +3297,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Statins"
                       />
-                      <label htmlFor="statins-discharge" className="ml-2">
+                      <label
+                        htmlFor="statins-discharge"
+                        className="ml-2"
+                      >
                         Statins
                       </label>
                     </div>
@@ -3135,7 +3311,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="MRA"
                       />
-                      <label htmlFor="mra-discharge" className="ml-2">
+                      <label
+                        htmlFor="mra-discharge"
+                        className="ml-2"
+                      >
                         MRA
                       </label>
                     </div>
@@ -3146,7 +3325,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="ARNI"
                       />
-                      <label htmlFor="arni-discharge" className="ml-2">
+                      <label
+                        htmlFor="arni-discharge"
+                        className="ml-2"
+                      >
                         ARNI
                       </label>
                     </div>
@@ -3171,7 +3353,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Insulin"
                       />
-                      <label htmlFor="insulin-discharge" className="ml-2">
+                      <label
+                        htmlFor="insulin-discharge"
+                        className="ml-2"
+                      >
                         Insulin
                       </label>
                     </div>
@@ -3182,7 +3367,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Nitrates"
                       />
-                      <label htmlFor="nitrates-discharge" className="ml-2">
+                      <label
+                        htmlFor="nitrates-discharge"
+                        className="ml-2"
+                      >
                         Nitrates
                       </label>
                     </div>
@@ -3193,7 +3381,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="ARBs"
                       />
-                      <label htmlFor="arbs-discharge" className="ml-2">
+                      <label
+                        htmlFor="arbs-discharge"
+                        className="ml-2"
+                      >
                         ARBs
                       </label>
                     </div>
@@ -3204,7 +3395,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="SGLT2 Inhibitors"
                       />
-                      <label htmlFor="sglt2-discharge" className="ml-2">
+                      <label
+                        htmlFor="sglt2-discharge"
+                        className="ml-2"
+                      >
                         SGLT2 Inhibitors
                       </label>
                     </div>
@@ -3229,7 +3423,10 @@ export default function Form() {
                         {...register("prescribedAtDischarge")}
                         value="Others"
                       />
-                      <label htmlFor="others-discharge" className="ml-2">
+                      <label
+                        htmlFor="others-discharge"
+                        className="ml-2"
+                      >
                         Others
                       </label>
                     </div>
@@ -4235,7 +4432,10 @@ export default function Form() {
                   In-Charge IDs*
                 </label>
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex gap-x-2 mb-4">
+                  <div
+                    key={field.id}
+                    className="flex gap-x-2 mb-4"
+                  >
                     <input
                       type="text"
                       {...register(`inchargeIds.${index}`)}

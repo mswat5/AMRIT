@@ -36,6 +36,8 @@ actor class AdminCanister() {
   private stable var inchargeReports = Map.new<Text, [Text]>(); // InchargeId -> [ReportId]
   private stable var inchargeReportAccess = Map.new<Text, [{ reportId : Text; patientId : Text; accidentId : Text }]>();
 
+  private stable var inchargeAccidentMap = Map.new<Text, [Text]>();
+
   public shared query ({ caller }) func whoami() : async Text {
     return Principal.toText(caller);
   };
@@ -67,9 +69,7 @@ actor class AdminCanister() {
   };
 
   public shared ({ caller }) func approveFacility(facilityId : Text) : async Result<Text, Text> {
-    if (Principal.isAnonymous(caller)) {
-      return #err("Anonymous principals are not allowed to approve facilities");
-    };
+
     //Admin Check
     if (not (await checkAdmin(caller))) {
       return #err("You are not admin");
@@ -589,6 +589,7 @@ actor class AdminCanister() {
       id = Nat.toText(9999);
       principal = caller;
       userType = #Admin;
+
       name = "Admin";
       registrationStatus = #Approved;
       certificationID = "details.certificationID";

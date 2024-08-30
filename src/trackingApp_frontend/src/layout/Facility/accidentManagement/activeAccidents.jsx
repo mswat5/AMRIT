@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button"; // Adjust the import path based on your project structure
 import {
   Table,
@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Adjust the import path based on your project structure
+import ActorContext from "../../../ActorContext";
 
 import {
   flexRender,
@@ -49,11 +50,32 @@ const handleTimeline = (id) => {
 
 const columns = [
   { accessorKey: "id", header: "ID" },
-  { accessorKey: "description", header: "Description" },
-  { accessorKey: "severity", header: "Severity" },
-  // { accessorKey: 'numberOfVictims', header: 'Number of Victims' },
-  { accessorKey: "status", header: "Status" },
-  { accessorKey: "reportedAt", header: "Reported at" },
+  {
+    accessorKey: "details",
+    header: "Description",
+    cell: ({ row }) => <div>{row.original.details.description}</div>,
+  },
+  {
+    accessorKey: "details",
+    header: "Severity",
+    cell: ({ row }) => (
+      <div>{Object.keys(row.original.details.severity)[0]}</div>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <div>{Object.keys(row.original.status)[0]}</div>,
+  },
+  {
+    accessorKey: "timestamp",
+    header: "Reported at",
+    cell: ({ row }) => (
+      <div>
+        {new Date(Number(row.original.timestamp) / 1000000).toLocaleString()}
+      </div>
+    ),
+  },
   {
     accessorKey: "actions",
     header: "Actions",
@@ -82,9 +104,23 @@ const columns = [
   },
 ];
 
-const activeAccidents = () => {
+const ActiveAccidents = () => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
+  const [data, setData] = useState([]);
+  const { actors } = useContext(ActorContext);
+
+  useEffect(() => {
+    async function fetchActiveAccidents() {
+      const result = await actors.accident.listActiveAccidentsForFacility();
+      if (result.ok) {
+        setData(result.ok);
+      } else {
+        console.error(result.err);
+      }
+    }
+    fetchActiveAccidents();
+  }, [actors]);
 
   const table = useReactTable({
     data,
@@ -104,7 +140,7 @@ const activeAccidents = () => {
   return (
     <div className="p-4 min-h-screen dark:bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-blue-700 via-blue-800 to-gray-900 flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4">
-        Active Incidents Reported by Your Facility
+        Active Incidents at Your Facility
       </h1>
       <div className="p-4 flex flex-col items-center overflow-x-auto w-full ">
         <input
@@ -207,4 +243,4 @@ const activeAccidents = () => {
   );
 };
 
-export default activeAccidents;
+export default ActiveAccidents;

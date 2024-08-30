@@ -41,8 +41,21 @@ const Transfer = () => {
       data.newFacilityId,
       []
     );
-
-    console.log(result);
+    Object.keys(result).forEach((key) => {
+      if (key === "ok") {
+        toast({
+          title: "Success",
+          description: result[key],
+          variant: "success",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: result[key],
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   return (

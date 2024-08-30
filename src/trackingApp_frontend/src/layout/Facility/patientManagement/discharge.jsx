@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import ActorContext from "../../../ActorContext";
+import { toast } from "@/components/ui/use-toast";
 const dischargeSchema = z.object({
   accidentId: z
     .string()
@@ -40,20 +41,44 @@ const Discharge = () => {
       file: null,
     },
   });
+  const { actors } = useContext(ActorContext);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "inchargeIds",
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const result = await actors.accident.closeAccidentCase(
+      data.accidentId,
+      [],
+      data.patientId,
+      data.inchargeIds
+    );
+    if ("ok" in result) {
+      toast({
+        title: "Success",
+        description: result.ok,
+        variant: "success",
+      });
+    } else if ("err" in result) {
+      toast({
+        title: "Error",
+        description: result.err,
+        variant: "destructive",
+      });
+    }
+
     console.log(data);
   };
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Discharge Form</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-y-6"
+      >
         <div>
           <label
             htmlFor="accidentId"
@@ -117,7 +142,10 @@ const Discharge = () => {
             In-Charge IDs*
           </label>
           {fields.map((field, index) => (
-            <div key={field.id} className="mb-4">
+            <div
+              key={field.id}
+              className="mb-4"
+            >
               <div className="flex gap-x-2">
                 <input
                   type="text"

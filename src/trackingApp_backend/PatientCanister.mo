@@ -25,6 +25,7 @@ actor class PatientCanister() {
 
     let accidentCanister = actor ("bkyz2-fmaaa-aaaaa-qaaaq-cai") : actor {
         getAccidentDetails : (Text) -> async Result<Types.AccidentReport, Text>;
+        updateFacilityAccidentMap : (Text, Text) -> async Result<(), Text>;
     };
 
     private stable var nextPatientId : Nat = 1;
@@ -167,6 +168,7 @@ actor class PatientCanister() {
             case (?patient) {
                 let updatedPatient : PatientRecord = {
                     patient with
+
                     currentFacilityId = newFacilityId;
                     status = #InTransit;
                 };
@@ -217,11 +219,10 @@ actor class PatientCanister() {
             case (#err(err)) {
                 return #err(err);
             };
-            case (#ok(value)) {
+            case (#ok(_value)) {
                 switch (Map.get(patients, thash, patientId)) {
                     case null { #err("Patient not found") };
                     case (?patient) {
-
                         if (patient.currentFacilityId == newFacilityId) {
                             return #err("Patient is already in the specified facility");
                         };
@@ -247,17 +248,20 @@ actor class PatientCanister() {
                         Map.set(patients, thash, patientId, updatedPatient);
 
                         // Update facility records
-
-                        // Decrease patient count in the old facility
                         ignore await facilityCanister.updatePatientCount(patient.currentFacilityId, -1);
-
-                        // Increase patient count in the new facility
                         ignore await facilityCanister.updatePatientCount(newFacilityId, 1);
 
-                        // Generate transfer report
-                        let reportCanister = actor ("by6od-j4aaa-aaaaa-qaadq-cai") : actor {
-                            generateReport : (Types.Report) -> async Result<Text, Text>;
+                        // Add entry in facility and accidents IDs map in accident canister
+                        switch (await accidentCanister.updateFacilityAccidentMap(newFacilityId, patient.accidentId)) {
+                            case (#err(error)) {
+                                return #err("Failed to update facility-accident map: " # error);
+                            };
+                            case (#ok(_)) {
+                                // Continue with report generation
+                            };
                         };
+
+                        // Generate transfer report
                         let report : Types.Report = {
                             id = ""; // Will be assigned by ReportCanister
                             accidentId = patient.accidentId;
@@ -274,7 +278,7 @@ actor class PatientCanister() {
                                 #ok("Patient transferred successfully. Transfer report ID: " # reportId);
                             };
                             case (#err(error)) {
-                                #err("Patient transferred, but error generating transfer report: " # error);
+                                #err("Patient transferred and facility-accident map updated, but error generating transfer report: " # error);
                             };
                         };
                     };
