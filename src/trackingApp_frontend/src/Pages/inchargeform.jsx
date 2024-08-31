@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
 import ActorContext from "../ActorContext";
 import { Principal } from "@dfinity/principal";
+import { ChevronLeft } from "lucide-react";
 
 const inchargeFormSchema = z.object({
   inchargeName: z.string().min(1, "Incharge Name is required"),
@@ -46,7 +47,9 @@ const InchargeForm = () => {
       certificationId: "",
     },
   });
-
+  const handleBackClick = () => {
+    navigate("/register");
+  };
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -118,13 +121,16 @@ const InchargeForm = () => {
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">
+      <button
+        onClick={handleBackClick}
+        className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
+      >
+        <ChevronLeft /> Back To Register
+      </button>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Incharge Information
       </h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="inchargeName"
@@ -177,10 +183,7 @@ const InchargeForm = () => {
             {...register("designation")}
             className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
           >
-            <option
-              value=""
-              disabled
-            >
+            <option value="" disabled>
               Select a designation
             </option>
             <option value="DistrictHubCoordinator">
