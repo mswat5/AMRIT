@@ -4,9 +4,10 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
+import Array "mo:base/Array";
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
-
+import Iter "mo:base/Iter";
 import AdminCanister "AdminCanister";
 import FacilityCanister "FacilityCanister";
 import ReportCanister "ReportCanister";
@@ -58,6 +59,9 @@ actor class PatientCanister() {
                         return (#err(error));
                     };
                     case (#ok(value)) {
+                        if (value.status != #Reported) {
+                            return #err("Patient record can only be created when accident status is Reported");
+                        };
                         if (value.details.reportingFacilityId == facilityId or value.details.currentFacilityId == facilityId) {
 
                         } else (
@@ -122,6 +126,10 @@ actor class PatientCanister() {
         switch (Map.get(patients, thash, patientId)) {
             case null { #err("Patient not found") };
             case (?patient) {
+                if (patient.status == #Discharged) {
+                    return #err("Cannot update status of a discharged patient");
+                };
+
                 let updatedPatient : PatientRecord = {
                     patient with
                     status = status;
@@ -166,6 +174,9 @@ actor class PatientCanister() {
         switch (Map.get(patients, thash, patientId)) {
             case null { #err("Patient not found") };
             case (?patient) {
+                if (patient.status == #Discharged) {
+                    return #err("Cannot update facility of a discharged patient");
+                };
                 let updatedPatient : PatientRecord = {
                     patient with
 
@@ -210,6 +221,46 @@ actor class PatientCanister() {
         };
     };
 
+    public shared ({ caller }) func getPatientsForFacility() : async Result<[PatientRecord], Text> {
+        if (Principal.isAnonymous(caller)) {
+            return #err("Anonymous principals are not allowed to get patient records");
+        };
+
+        // Get the caller's facility ID
+        switch (await facilityCanister.getFacilityId(caller)) {
+            case (#err(error)) {
+                return #err("Error verifying caller's facility: " # error);
+            };
+            case (#ok(facilityId)) {
+                // Check if the facility is registered
+                switch (await facilityCanister.checkRegistrationStatus(facilityId)) {
+                    case (#err(error)) {
+                        return #err("Error checking facility registration: " # error);
+                    };
+                    case (#ok(status)) {
+                        if (status != #Approved) {
+                            return #err("Facility is not approved");
+                        };
+                    };
+                };
+
+                // Filter patients for the caller's facility
+                let facilityPatients = Array.mapFilter<(Text, PatientRecord), PatientRecord>(
+                    Iter.toArray(Map.entries(patients)),
+                    func((_, patient) : (Text, PatientRecord)) : ?PatientRecord {
+                        if (patient.currentFacilityId == facilityId) {
+                            ?patient;
+                        } else {
+                            null;
+                        };
+                    },
+                );
+
+                #ok(facilityPatients);
+            };
+        };
+    };
+
     public shared ({ caller }) func transferPatient(patientId : Text, newFacilityId : Text, file : ?Blob) : async Result<Text, Text> {
         if (Principal.isAnonymous(caller)) {
             return #err("Anonymous principals are not allowed to transfer patients");
@@ -223,6 +274,9 @@ actor class PatientCanister() {
                 switch (Map.get(patients, thash, patientId)) {
                     case null { #err("Patient not found") };
                     case (?patient) {
+                        if (patient.status == #Discharged) {
+                            return #err("Cannot transfer a discharged patient");
+                        };
                         if (patient.currentFacilityId == newFacilityId) {
                             return #err("Patient is already in the specified facility");
                         };
@@ -234,7 +288,7 @@ actor class PatientCanister() {
                                     return #err("Patient is not currently with the facility");
                                 };
                             };
-                            case (#err(error)) {
+                            case (#err(_error)) {
                                 return #err("Patient is not currently with the facility");
                             };
                         };
@@ -291,6 +345,7 @@ actor class PatientCanister() {
     public query func getTotalPatients() : async Nat {
         Map.size(patients);
     };
+
     public query func getPatientCurrentFacility(patientId : Text) : async Result<Text, Text> {
         switch (Map.get(patients, thash, patientId)) {
             case null { #err("Patient not found") };

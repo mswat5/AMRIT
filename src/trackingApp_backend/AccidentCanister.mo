@@ -1,7 +1,5 @@
 import Array "mo:base/Array";
-import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
-import Nat8 "mo:base/Nat8";
 import Order "mo:base/Order";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
@@ -86,12 +84,12 @@ actor class AccidentCanister() {
                 Map.set(accidents, thash, accidentId, newReport);
 
                 // Update facilityAccidents
-                switch (Map.get(facilityAccidents, thash, newDetails.reportingFacilityId)) {
-                    case null {
-                        Map.set(facilityAccidents, thash, newDetails.reportingFacilityId, [accidentId]);
+                switch (await updateFacilityAccidentMap(newDetails.reportingFacilityId, accidentId)) {
+                    case (#ok(_)) {
+                        // Successfully updated the facility-accident map
                     };
-                    case (?existingIds) {
-                        Map.set(facilityAccidents, thash, newDetails.reportingFacilityId, Array.append(existingIds, [accidentId]));
+                    case (#err(error)) {
+                        return #err("Failed to update facility-accident map: " # error);
                     };
                 };
 
@@ -136,6 +134,10 @@ actor class AccidentCanister() {
             return #err("Anonymous principals are not allowed to update accident status");
         };
 
+        if (newStatus == #Reported or newStatus == #Resolved) {
+            return #err("Accident status cannot be changed to Reported or Closed");
+        };
+
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
             case (?accident) {
@@ -147,6 +149,10 @@ actor class AccidentCanister() {
                     case (#ok(callerFacilityId)) {
                         if (callerFacilityId != accident.details.reportingFacilityId and callerFacilityId != accident.details.currentFacilityId) {
                             return #err("Only the reporting facility or the currently assigned facility can update accident status");
+                        };
+
+                        if (newStatus == #Reported or newStatus == #Resolved) {
+                            return #err("Accident status cannot be changed to Reported or Closed");
                         };
 
                         let updatedAccident : AccidentReport = {
@@ -265,6 +271,9 @@ actor class AccidentCanister() {
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
             case (?accident) {
+                if (accident.status == #Resolved) {
+                    return #err("This accident case has already been resolved");
+                };
 
                 let facilityResult = await facilityCanister.getFacilityId(caller);
                 switch (facilityResult) {
@@ -292,6 +301,14 @@ actor class AccidentCanister() {
                         };
                         Map.set(accidents, thash, accidentId, closedAccident);
 
+                        // Change patient status to discharged
+                        switch (await patientCanister.updatePatientStatus(patientID, #Discharged, null)) {
+                            case (#err(error)) {
+                                return #err("Error updating patient status: " # error);
+                            };
+                            case (#ok(_)) {};
+                        };
+
                         let report : Types.Report = {
                             id = ""; // Will be assigned by ReportCanister
                             accidentId = accidentId;
@@ -300,15 +317,15 @@ actor class AccidentCanister() {
                             reportType = #AccidentReport;
                             timestamp = Time.now();
                             file = file;
-                            details = "Accident case closed";
+                            details = "Accident case closed and patient discharged";
                         };
 
                         switch (await reportCanister.generateReport(report)) {
                             case (#ok(reportId)) {
 
-                                switch (await adminCanister.notifySpecificIncharges("Accident case closed with ID: " # accidentId, accidentId, inchargeIds, report)) {
+                                switch (await adminCanister.notifySpecificIncharges("Accident case closed with ID: " # accidentId # " and patient discharged", accidentId, inchargeIds, report)) {
                                     case (#ok(_value)) {
-                                        #ok("Accident case closed successfully. Report ID: " # reportId);
+                                        #ok("Accident case closed successfully and patient discharged. Report ID: " # reportId);
 
                                     };
                                     case (#err(error)) {
@@ -318,7 +335,7 @@ actor class AccidentCanister() {
 
                             };
                             case (#err(error)) {
-                                #ok("Accident case closed successfully, but report generation failed: " # error);
+                                #ok("Accident case closed successfully and patient discharged, but report generation failed: " # error);
                             };
                         };
                     };
@@ -445,26 +462,26 @@ actor class AccidentCanister() {
             return await generateTimeline(accidentId);
         };
 
-        // Check if caller is an incharge associated with the accident
+        return await generateTimeline(accidentId);
 
         // Check if caller is from a facility associated with the accident
-        switch (await facilityCanister.getFacilityId(caller)) {
-            case (#ok(facilityId)) {
-                switch (Map.get(facilityAccidentMap, thash, facilityId)) {
-                    case (?accidentIds) {
-                        if (Array.find(accidentIds, func(id : Text) : Bool { id == accidentId }) != null) {
-                            return await generateTimeline(accidentId);
-                        };
-                    };
-                    case (null) {
-                        // Continue to error
-                    };
-                };
-            };
-            case (#err(_)) {
-                // Continue to error
-            };
-        };
+        // switch (await facilityCanister.getFacilityId(caller)) {
+        //     case (#ok(facilityId)) {
+        //         switch (Map.get(facilityAccidentMap, thash, facilityId)) {
+        //             case (?accidentIds) {
+        //                 if (Array.find(accidentIds, func(id : Text) : Bool { id == accidentId }) != null) {
+        //                     return await generateTimeline(accidentId);
+        //                 };
+        //             };
+        //             case (null) {
+        //                 // Continue to error
+        //             };
+        //         };
+        //     };
+        //     case (#err(_)) {
+        //         // Continue to error
+        //     };
+        // };
 
         #err("Not authorized to view this accident timeline");
     };
@@ -512,7 +529,7 @@ actor class AccidentCanister() {
     public func checkPermitted(caller : Principal) : async Bool {
         let result = Array.indexOf<Principal>(caller, permittedPrincipals, Principal.equal);
         switch (result) {
-            case (?value) { return true };
+            case (?_value) { return true };
             case (null) { return false };
         };
     };
@@ -520,7 +537,7 @@ actor class AccidentCanister() {
     public func updateFacilityAccidentMap(facilityId : Text, accidentId : Text) : async Result<(), Text> {
         switch (Map.get(accidents, thash, accidentId)) {
             case null { #err("Accident not found") };
-            case (?accident) {
+            case (?_accident) {
                 switch (Map.get(facilityAccidentMap, thash, facilityId)) {
                     case null {
                         Map.set(facilityAccidentMap, thash, facilityId, [accidentId]);

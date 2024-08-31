@@ -28,7 +28,7 @@ actor class FacilityCanister() {
         Principal.fromText("b77ix-eeaaa-aaaaa-qaada-cai"),
         Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai"),
         Principal.fromText("be2us-64aaa-aaaaa-qaabq-cai"),
-        Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai"),
+        Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai")
 
     ];
 
@@ -308,7 +308,7 @@ actor class FacilityCanister() {
         Map.size(facilities);
     };
 
-    public func getNearestFacilities(service : Text, lat : Float, lon : Float) : async [Facility] {
+    public query func getNearestFacilities(service : Text, lat : Float, lon : Float) : async  Result.Result< [Facility], Text> {
         let facilitiesWithService = Array.filter<Facility>(
             Iter.toArray(Map.vals(facilities)),
             func(facility : Facility) : Bool {
@@ -343,7 +343,7 @@ actor class FacilityCanister() {
             };
         };
 
-        Buffer.toArray(nearestFacilitiesBuffer);
+        #ok(Buffer.toArray(nearestFacilitiesBuffer));
     };
 
     private func calculateDistance(lat1 : Float, lon1 : Float, lat2 : Float, lon2 : Float) : Float {
