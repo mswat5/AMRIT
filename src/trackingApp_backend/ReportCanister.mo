@@ -27,7 +27,6 @@ actor class ReportCanister() {
         Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai"),
         Principal.fromText("be2us-64aaa-aaaaa-qaabq-cai"),
         Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai"),
-
     ];
 
     public shared ({ caller }) func generateReport(report : Report) : async Result<Text, Text> {

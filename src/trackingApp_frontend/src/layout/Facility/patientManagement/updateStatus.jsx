@@ -1,8 +1,9 @@
 import React from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import ActorContext from "../../../ActorContext";
 // Update the validation schema with patientStatus options
 const updateStatusSchema = z.object({
   patientId: z
@@ -39,8 +40,38 @@ const UpdateStatus = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const { actors } = useContext(ActorContext);
+
+  const onSubmit = async (data) => {
+    try {
+      const { patientId, patientStatus, file } = data;
+
+      // Convert file to Uint8Array
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file[0]);
+
+      fileReader.onload = async (event) => {
+        const uint8Array = new Uint8Array(event.target.result);
+
+        // Call the backend function to update patient status
+        const result = await actors.patient.updatePatientStatus(
+          patientId,
+          { [patientStatus]: null },
+          [uint8Array]
+        );
+
+        if (result.ok) {
+          console.log("Patient status updated successfully:", result.ok);
+          // Add success notification or redirect logic here
+        } else {
+          console.error("Error updating patient status:", result.err);
+          // Add error notification logic here
+        }
+      };
+    } catch (error) {
+      console.error("Error in onSubmit:", error);
+      // Add error notification logic here
+    }
   };
 
   return (

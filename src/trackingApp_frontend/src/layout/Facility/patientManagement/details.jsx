@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Button } from "@/components/ui/button"; // Adjust the import path based on your project structure
 import {
   Table,
@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Adjust the import path based on your project structure
-
+import ActorContext from "../../../ActorContext";
 import {
   flexRender,
   getCoreRowModel,
@@ -49,13 +49,32 @@ const handleDelete = (id) => {
 const details = () => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
+  const [patients, setPatients] = useState([]);
+  const { actors } = useContext(ActorContext);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const result = await actors.patient.getPatientsForFacility();
+        if (result.ok) {
+          setPatients(result.ok);
+        } else {
+          console.error("Error fetching patients:", result.err);
+        }
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+
+    fetchPatients();
+  }, [actors]);
 
   const columns = [
-    { accessorKey: "name", header: "patient Name" },
-    { accessorKey: "location", header: "Location" },
-    // { accessorKey: 'status', header: 'Status' },
+    { accessorKey: "id", header: "Patient ID" },
+    { accessorKey: "name", header: "Patient Name" },
+    { accessorKey: "age", header: "Age" },
+    { accessorKey: "status", header: "Status" },
     { accessorKey: "contactInfo", header: "Contact Info" },
-    { accessorKey: "age", header: " Age" },
     {
       accessorKey: "actions",
       header: "Actions",
@@ -87,7 +106,7 @@ const details = () => {
   ];
 
   const table = useReactTable({
-    data,
+    data: patients,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -100,7 +119,6 @@ const details = () => {
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
   });
-
   return (
     <div className="p-4 flex flex-col items-center overflow-x-auto w-full">
       <input

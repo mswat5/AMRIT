@@ -142,7 +142,7 @@ const App = () => {
   }
 
   return (
-    <ActorContext.Provider value={{ actors, isAuthenticated, login }}>
+    <ActorContext.Provider value={{ actors, setActors, isAuthenticated, login }}>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Toaster />
         <Router>

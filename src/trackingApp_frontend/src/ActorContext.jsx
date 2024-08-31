@@ -9,6 +9,7 @@ const ActorContext = React.createContext({
     accident: null,
     patient: null,
   },
+  setActors: () => {},
   isAuthenticated: false,
   login: async () => {},
 });
