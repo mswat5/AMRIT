@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button"; // Adjust the import path based on your project structure
 import {
   Table,
@@ -19,22 +19,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-// Sample data for demonstration
-const data = Array.from({ length: 50 }, (_, i) => ({
-  id: (i + 1).toString(),
-  description: `hfsjenakmd`,
-  severity: i % 2 === 0 ? "Minor" : "Major",
-  // numberOfVictims: (i * 2).toString(),
-  status: "Reported",
-  reportedAt: new Date().toLocaleString(),
-}));
-
-// Function to handle edit
-const handleEdit = (id) => {
-  // Handle edit logic
-  console.log(`Edited record with ID: ${id}`);
-};
 
 // Function to handle delete
 const handleDelete = (id) => {
@@ -108,7 +92,10 @@ const ActiveAccidents = () => {
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [data, setData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAccident, setSelectedAccident] = useState(null);
   const { actors } = useContext(ActorContext);
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     async function fetchActiveAccidents() {
@@ -122,6 +109,35 @@ const ActiveAccidents = () => {
     fetchActiveAccidents();
   }, [actors]);
 
+  const handleEdit = (id) => {
+    const accident = data.find((acc) => acc.id === id);
+    setSelectedAccident(accident);
+    setFormData({
+      id: accident.id,
+      description: accident.details.description,
+      severity: Object.keys(accident.details.severity)[0],
+    });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedAccident(null);
+  };
+
+  const updateAccident = async (updatedAccident) => {
+    const result = await actors.accident.updateAccident(updatedAccident);
+    if (result.ok) {
+      setData((prevData) =>
+        prevData.map((acc) =>
+          acc.id === updatedAccident.id ? updatedAccident : acc
+        )
+      );
+    } else {
+      console.error(result.err);
+    }
+    closeModal();
+  };
   const table = useReactTable({
     data,
     columns,
