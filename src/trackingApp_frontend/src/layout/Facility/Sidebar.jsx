@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils"; // Utility function from SHADCN or your project
 import { useNavigate, useLocation } from "react-router-dom";
-import { User, AlertCircle, Package, Building, FileText } from "lucide-react";
+import { User, AlertCircle, Package, Building, Ambulance } from "lucide-react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -35,9 +35,9 @@ const Sidebar = () => {
 
     {
       id: "5",
-      label: "Reports",
-      path: "/facility/reports",
-      icon: <FileText />,
+      label: "Ambulance",
+      path: "/facility/ambulance",
+      icon: <Ambulance />,
     },
   ];
 
