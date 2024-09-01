@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { motion } from "framer-motion";
-import { FormDataSchema } from "./zod";
+import { FormDataSchema } from "../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import ActorContext from "../../../ActorContext";
