@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 import { toast } from "@/components/ui/use-toast";
 import { reportIncidentSchema } from "../../zod";
 

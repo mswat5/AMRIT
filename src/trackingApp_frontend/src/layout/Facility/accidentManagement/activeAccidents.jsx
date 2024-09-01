@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 
 import {
   flexRender,

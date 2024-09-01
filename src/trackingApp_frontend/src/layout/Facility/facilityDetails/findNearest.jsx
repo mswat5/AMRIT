@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import ActorContext from "../../../ActorContext";
 import { toast } from "@/components/ui/use-toast";
+import { ActorContext } from "../../../ActorContext";
 
 const FindNearestFacility = () => {
   const { actors } = useContext(ActorContext);
@@ -61,9 +61,8 @@ const FindNearestFacility = () => {
     const userCoords = `${userLocation.latitude},${userLocation.longitude}`;
     const facilityCoords = `${facilityLocation.latitude},${facilityLocation.longitude}`;
     const url = `https://www.google.com/maps/dir/?api=1&origin=${userCoords}&destination=${facilityCoords}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
-
 
   return (
     <div className="mt-5 max-w-xl mx-auto p-6 bg-white rounded-lg">

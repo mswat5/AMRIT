@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FormDataSchema } from "../../zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 import { toast } from "@/components/ui/use-toast";
 
 const steps = [

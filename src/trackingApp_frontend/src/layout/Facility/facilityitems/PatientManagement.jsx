@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import AdmitPatient from "../patientManagement/admit";
@@ -6,11 +5,13 @@ import Discharge from "../patientManagement/discharge";
 import Transfer from "../patientManagement/transfer";
 import GetPatientDetails from "../patientManagement/details";
 import UpdatePatientStatus from "../patientManagement/updateStatus";
+import { ViewContext } from "../../../ActorContext";
+import { useContext } from "react";
 
 const PatientManagement = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [view, setView] = useState("cards");
+  const { view, setView } = useContext(ViewContext);
 
   const handleCardClick = (form) => {
     navigate(`${form}`);

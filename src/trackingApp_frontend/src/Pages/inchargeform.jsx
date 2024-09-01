@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
-import ActorContext from "../ActorContext";
+import { ActorContext } from "../ActorContext";
 import { Principal } from "@dfinity/principal";
 import { ChevronLeft } from "lucide-react";
 

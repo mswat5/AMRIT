@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import FacilityInfo from "../facilityDetails/info";
 import FindNearestFacility from "../facilityDetails/findNearest";
+import { ViewContext } from "../../../ActorContext";
+import { useContext } from "react";
 
 const FacilityDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [view, setView] = useState("cards");
+  const { view, setView } = useContext(ViewContext);
 
   const handleCardClick = (form) => {
     navigate(`${form}`, { state: { formType: form } });

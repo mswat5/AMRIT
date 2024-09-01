@@ -21,9 +21,9 @@ import {
   AlertOctagon, // New icon for Accident Management
   File, // New icon for Reports
 } from "lucide-react"; // Add relevant icons
-import {  useContext,useState } from "react";
+import { useContext, useState } from "react";
 
-import ActorContext from "../ActorContext";
+import { ActorContext } from "../ActorContext";
 const Nav = () => {
   const { actors, setActors } = useContext(ActorContext);
   const [isFacilityMenuOpen, setIsFacilityMenuOpen] = useState(false);
@@ -326,25 +326,25 @@ const Nav = () => {
           </div>
         </>
       )}
-<div className="flex items-center">
-  <ModeToggle />
-  <Button
-    className="ml-4"
-    onClick={() => {
-      setActors({
-        admin: null,
-        report: null,
-        facility: null,
-        ambulance: null,
-        accident: null,
-        patient: null,
-      });
-      navigate("/register");
-    }}
-  >
-    Logout
-  </Button>
-</div>
+      <div className="flex items-center">
+        <ModeToggle />
+        <Button
+          className="ml-4"
+          onClick={() => {
+            setActors({
+              admin: null,
+              report: null,
+              facility: null,
+              ambulance: null,
+              accident: null,
+              patient: null,
+            });
+            navigate("/register");
+          }}
+        >
+          Logout
+        </Button>
+      </div>
     </div>
   );
 };

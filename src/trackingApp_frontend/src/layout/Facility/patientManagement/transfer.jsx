@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 import { toast } from "@/components/ui/use-toast";
-import { useContext } from "react";
 
 const transferSchema = z.object({
   patientId: z

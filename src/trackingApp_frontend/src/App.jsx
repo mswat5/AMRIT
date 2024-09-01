@@ -36,7 +36,7 @@ import { createActor as createPatientActor } from "../../declarations/patientCan
 import { createActor as createAmbulanceActor } from "../../declarations/ambulanceCanister";
 import { createActor as createReportActor } from "../../declarations/reportCanister";
 
-import ActorContext from "./ActorContext";
+import { ActorContext, ViewContext } from "./ActorContext";
 import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent } from "@dfinity/agent";
 import { useEffect, useState } from "react";
@@ -140,97 +140,111 @@ const App = () => {
       await initializeActors(authClient);
     }
   }
-
+  const [view, setView] = useState("cards");
   return (
     <ActorContext.Provider
       value={{ actors, setActors, isAuthenticated, login }}
     >
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <Toaster />
-        <Router>
-          <Routes>
-            <Route path="/" element={<Amrit />} />
-            <Route path="/register" element={<FirstPageContent />} />
-            <Route path="/register">
-              <Route path="ambulance" element={<RegisterAmbulance />} />
+      <ViewContext.Provider value={{ view, setView }}>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+          <Toaster />
+          <Router>
+            <Routes>
+              <Route path="/" element={<Amrit />} />
+              <Route path="/register" element={<FirstPageContent />} />
+              <Route path="/register">
+                <Route path="ambulance" element={<RegisterAmbulance />} />
 
-              <Route path="incharge" element={<Inchargeform />} />
+                <Route path="incharge" element={<Inchargeform />} />
 
-              <Route path="facility" element={<RegisterFacility />} />
-            </Route>
-            <Route
-              path="/admin/*"
-              element={
-                <SharedLayout>
-                  <AppRoute />
-                </SharedLayout>
-              }
-            >
-              <Route path="user-management" element={<UserManagement />} />
-              <Route path="facility-approval" element={<FacilityApproval />} />
+                <Route path="facility" element={<RegisterFacility />} />
+              </Route>
               <Route
-                path="ambulance-approval"
-                element={<AmbulanceApproval />}
-              />
-              <Route path="incharge-approval" element={<InchargeApproval />} />
-              <Route path="*" element={<Navigate to="facility-approval" />} />
-            </Route>
+                path="/admin/*"
+                element={
+                  <SharedLayout>
+                    <AppRoute />
+                  </SharedLayout>
+                }
+              >
+                <Route path="user-management" element={<UserManagement />} />
+                <Route
+                  path="facility-approval"
+                  element={<FacilityApproval />}
+                />
+                <Route
+                  path="ambulance-approval"
+                  element={<AmbulanceApproval />}
+                />
+                <Route
+                  path="incharge-approval"
+                  element={<InchargeApproval />}
+                />
+                <Route path="*" element={<Navigate to="facility-approval" />} />
+              </Route>
 
-            <Route
-              path="/ambulance/*"
-              element={
-                <SharedLayout>
-                  <AppRoute2 />
-                </SharedLayout>
-              }
-            />
-            <Route
-              path="/incharge/*"
-              element={
-                <SharedLayout>
-                  <AppRoute />
-                </SharedLayout>
-              }
-            >
               <Route
-                path="patient-management"
-                element={<PatientManagementTable />}
+                path="/ambulance/*"
+                element={
+                  <SharedLayout>
+                    <AppRoute2 />
+                  </SharedLayout>
+                }
               />
               <Route
-                path="accident-management"
-                element={<InchargeAccidentManagement />}
-              />
-              <Route path="reports" element={<ReportsTable />} />
-              <Route path="*" element={<Navigate to="patient-management" />} />
-            </Route>
-            <Route
-              path="/facility/*"
-              element={
-                <SharedLayout>
-                  <AppRoute3 />
-                </SharedLayout>
-              }
-            >
+                path="/incharge/*"
+                element={
+                  <SharedLayout>
+                    <AppRoute />
+                  </SharedLayout>
+                }
+              >
+                <Route
+                  path="patient-management"
+                  element={<PatientManagementTable />}
+                />
+                <Route
+                  path="accident-management"
+                  element={<InchargeAccidentManagement />}
+                />
+                <Route path="reports" element={<ReportsTable />} />
+                <Route
+                  path="*"
+                  element={<Navigate to="patient-management" />}
+                />
+              </Route>
               <Route
-                path="patient-management/*"
-                element={<PatientManagement />}
-              />
-              <Route
-                path="accident-management/*"
-                element={<AccidentManagement />}
-              />
-              <Route
-                path="resource-management/*"
-                element={<ResourceManagement />}
-              />
-              <Route path="facility-details/*" element={<FacilityDetails />} />
-              <Route path="ambulance/*" element={<Ambulance />} />
-              {/* <Route path="*" element={<FacilityItem1 />} /> */}
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
-      </ThemeProvider>
+                path="/facility/*"
+                element={
+                  <SharedLayout>
+                    <AppRoute3 />
+                  </SharedLayout>
+                }
+              >
+                <Route
+                  path="patient-management/*"
+                  element={<PatientManagement />}
+                />
+                <Route
+                  path="accident-management/*"
+                  element={<AccidentManagement />}
+                />
+                <Route
+                  path="resource-management/*"
+                  element={<ResourceManagement />}
+                />
+                <Route
+                  path="facility-details/*"
+                  element={<FacilityDetails />}
+                />
+                <Route path="ambulance/*" element={<Ambulance />} />
+                {/* <Route path="*" element={<FacilityItem1 />} /> */}
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
+        </ThemeProvider>
+      </ViewContext.Provider>
     </ActorContext.Provider>
   );
 };
