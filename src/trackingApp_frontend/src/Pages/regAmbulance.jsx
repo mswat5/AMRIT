@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { ChevronLeft } from "lucide-react";
 
 const steps = [
   {
@@ -43,7 +44,9 @@ export default function Form() {
   } = useForm({
     resolver: zodResolver(FormDataSchema),
   });
-
+  const handleBackClick = () => {
+    navigate("/register");
+  };
   const processForm = (data) => {
     // Convert form data to JSON format
     const jsonData = JSON.stringify(data, null, 2);
@@ -76,6 +79,12 @@ export default function Form() {
 
   return (
     <div>
+      <button
+        onClick={handleBackClick}
+        className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
+      >
+        <ChevronLeft /> Back To Register
+      </button>
       <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8">
         Register Ambulance
       </h1>

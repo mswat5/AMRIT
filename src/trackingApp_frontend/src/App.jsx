@@ -19,7 +19,7 @@ import PatientManagement from "./layout/Facility/facilityitems/PatientManagement
 import AccidentManagement from "./layout/Facility/facilityitems/AccidentManagement";
 import ResourceManagement from "./layout/Facility/facilityitems/ResourceManagement";
 import FacilityDetails from "./layout/Facility/facilityitems/FacilityDetails";
-import Reports from "./layout/Facility/facilityitems/Reports";
+import Ambulance from "./layout/Facility/facilityitems/Ambulance";
 import UserManagement from "./layout/Admin/UserManagement";
 import FacilityApproval from "./layout/Admin/FacilityApproval";
 import AmbulanceApproval from "./layout/Admin/AmbulanceApproval";
@@ -142,7 +142,9 @@ const App = () => {
   }
 
   return (
-    <ActorContext.Provider value={{ actors, setActors, isAuthenticated, login }}>
+    <ActorContext.Provider
+      value={{ actors, setActors, isAuthenticated, login }}
+    >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Toaster />
         <Router>
@@ -222,7 +224,7 @@ const App = () => {
                 element={<ResourceManagement />}
               />
               <Route path="facility-details/*" element={<FacilityDetails />} />
-              <Route path="reports/*" element={<Reports />} />
+              <Route path="ambulance/*" element={<Ambulance />} />
               {/* <Route path="*" element={<FacilityItem1 />} /> */}
             </Route>
             <Route path="*" element={<NotFound />} />

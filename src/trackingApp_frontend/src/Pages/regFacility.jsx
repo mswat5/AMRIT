@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "@/components/ui/use-toast";
 import { Principal } from "@dfinity/principal";
-
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 const steps = [
   {
     id: "Step 1",
@@ -57,7 +58,7 @@ export default function Form() {
   const [currentStep, setCurrentStep] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-
+  const navigate = useNavigate();
   const { actors } = useContext(ActorContext);
 
   const delta = currentStep - previousStep;
@@ -139,7 +140,9 @@ export default function Form() {
     });
     reset();
   };
-
+  const handleBackClick = () => {
+    navigate("/register");
+  };
   const next = async () => {
     const fields = steps[currentStep].fields;
     const output = await trigger(fields, { shouldFocus: true });
@@ -166,6 +169,13 @@ export default function Form() {
   });
   return (
     <div>
+      <button
+        onClick={handleBackClick}
+        className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
+      >
+        <ChevronLeft /> Back To Register
+      </button>
+
       <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8">
         Register Facility
       </h1>
@@ -177,10 +187,7 @@ export default function Form() {
             className="space-y-4 md:flex md:space-x-8 md:space-y-0"
           >
             {steps.map((step, index) => (
-              <li
-                key={step.name}
-                className="md:flex-1"
-              >
+              <li key={step.name} className="md:flex-1">
                 {currentStep > index ? (
                   <div className="group flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                     <span className="text-sm font-medium text-red-600 transition-colors ">
@@ -212,10 +219,7 @@ export default function Form() {
         </nav>
 
         {/* Form */}
-        <form
-          className="mt-12 py-12"
-          onSubmit={handleSubmit(processForm)}
-        >
+        <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -321,10 +325,7 @@ export default function Form() {
                     Services
                   </label>
                   {fields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="flex gap-x-2 mb-4"
-                    >
+                    <div key={field.id} className="flex gap-x-2 mb-4">
                       <input
                         type="text"
                         {...register(`services.${index}`)}
