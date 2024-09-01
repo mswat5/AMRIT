@@ -7,11 +7,11 @@ import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Time "mo:base/Time";
+
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
 
-import AmbulanceCanister "AmbulanceCanister";
+
 import Types "Types";
 
 actor class AdminCanister() {
@@ -35,8 +35,6 @@ actor class AdminCanister() {
   private stable var approvedIncharges = Map.new<Text, InchargeDetails>();
   private stable var inchargeReports = Map.new<Text, [Text]>(); // InchargeId -> [ReportId]
   private stable var inchargeReportAccess = Map.new<Text, [{ reportId : Text; patientId : Text; accidentId : Text }]>();
-
-  private stable var inchargeAccidentMap = Map.new<Text, [Text]>();
 
   public shared query ({ caller }) func whoami() : async Text {
     return Principal.toText(caller);

@@ -362,7 +362,7 @@ actor class FacilityCanister() {
     public query func checkPermitted(caller : Principal) : async Bool {
         let result = Array.indexOf<Principal>(caller, permittedPrincipals, Principal.equal);
         switch (result) {
-            case (?value) { return true };
+            case (?_value) { return true };
             case (null) { return false };
         };
     };
