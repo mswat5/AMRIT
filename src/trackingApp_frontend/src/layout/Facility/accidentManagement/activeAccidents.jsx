@@ -19,84 +19,124 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-// Function to handle delete
-const handleDelete = (id) => {
-  // Handle delete logic
-  console.log(`Deleted record with ID: ${id}`);
-};
-
-// Function to handle Timeline
-const handleTimeline = (id) => {
-  // Handle Timeline logic
-  console.log(`Timeline record with ID: ${id}`);
-};
-
-const columns = [
-  { accessorKey: "id", header: "ID" },
-  {
-    accessorKey: "details",
-    header: "Description",
-    cell: ({ row }) => <div>{row.original.details.description}</div>,
-  },
-  {
-    accessorKey: "details",
-    header: "Severity",
-    cell: ({ row }) => (
-      <div>{Object.keys(row.original.details.severity)[0]}</div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <div>{Object.keys(row.original.status)[0]}</div>,
-  },
-  {
-    accessorKey: "timestamp",
-    header: "Reported at",
-    cell: ({ row }) => (
-      <div>
-        {new Date(Number(row.original.timestamp) / 1000000).toLocaleString()}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex justify-center space-x-2">
-        <Button
-          onClick={() => handleEdit(row.original.id)}
-          className="bg-blue-500 font-bold"
-        >
-          Edit
-        </Button>
-        <Button
-          onClick={() => handleDelete(row.original.id)}
-          className="bg-red-500 font-bold"
-        >
-          Delete
-        </Button>
-        <Button
-          onClick={() => handleTimeline(row.original.id)}
-          className="bg-purple-500 font-bold"
-        >
-          Get Timeline
-        </Button>
-      </div>
-    ),
-  },
-];
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const ActiveAccidents = () => {
+  const [data, setData] = useState([
+    {
+      id: 1,
+      details: {
+        description: "Test accident description",
+        severity: { high: true },
+      },
+      status: { active: true },
+      timestamp: Date.now() * 1000, // Current timestamp in microseconds
+    },
+  ]);
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [data, setData] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAccident, setSelectedAccident] = useState(null);
+  //const [data, setData] = useState([]);
+  const [timeline, setTimeline] = useState([]);
   const { actors } = useContext(ActorContext);
   const [formData, setFormData] = useState({});
-
+  const [loading, setLoading] = useState(false);
+  const [selectedAccident, setSelectedAccident] = useState(null);
+  const columns = [
+    { accessorKey: "id", header: "ID" },
+    {
+      accessorKey: "details",
+      header: "Description",
+      cell: ({ row }) => <div>{row.original.details.description}</div>,
+    },
+    // {
+    //   accessorKey: "details",
+    //   header: "Severity",
+    //   cell: ({ row }) => (
+    //     <div>{Object.keys(row.original.details.severity)[0]}</div>
+    //   ),
+    // },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <div>{Object.keys(row.original.status)[0]}</div>,
+    },
+    {
+      accessorKey: "timestamp",
+      header: "Reported at",
+      cell: ({ row }) => (
+        <div>
+          {new Date(Number(row.original.timestamp) / 1000000).toLocaleString()}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex justify-center space-x-2">
+          <Button
+            onClick={() => handleEdit(row.original.id)}
+            className="bg-blue-500 font-bold"
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={() => handleDelete(row.original.id)}
+            className="bg-red-500 font-bold"
+          >
+            Delete
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                onClick={() => fetchTimeline(row.original.id)}
+                variant="outline"
+              >
+                Get Timeline
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Get Timeline</DialogTitle>
+                <DialogDescription>
+                  you are getting the timeline for this accident.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                {timeline.map((event) => (
+                  <div key={event.id}>{event.description}</div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      ),
+    },
+  ];
+  const fetchTimeline = async (accidentId) => {
+    setLoading(true);
+    try {
+      const result = await actors.accident.getAccidentTimeline(accidentId);
+      if ("ok" in result) {
+        setTimeline(result.ok);
+      } else {
+        throw new Error(result.err);
+      }
+    } catch (error) {
+      console.error("Error fetching accident timeline:", error);
+      alert("Failed to fetch accident timeline");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     async function fetchActiveAccidents() {
       const result = await actors.accident.listActiveAccidentsForFacility();
@@ -116,28 +156,15 @@ const ActiveAccidents = () => {
       id: accident.id,
       description: accident.details.description,
       severity: Object.keys(accident.details.severity)[0],
+      status: Object.keys(accident.status)[0],
     });
-    setIsModalOpen(true);
+    console.log(accident);
+  };
+  const handleDelete = (id) => {
+    // Handle delete logic
+    console.log(`Deleted record with ID: ${id}`);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedAccident(null);
-  };
-
-  const updateAccident = async (updatedAccident) => {
-    const result = await actors.accident.updateAccident(updatedAccident);
-    if (result.ok) {
-      setData((prevData) =>
-        prevData.map((acc) =>
-          acc.id === updatedAccident.id ? updatedAccident : acc
-        )
-      );
-    } else {
-      console.error(result.err);
-    }
-    closeModal();
-  };
   const table = useReactTable({
     data,
     columns,
