@@ -51,6 +51,17 @@ const Sidebar = () => {
     if (currentItem) {
       setActiveItem(currentItem.id);
     }
+    const lastPathSegment = location.pathname.split("/").pop();
+    console.log("last path segment", lastPathSegment);
+    if (
+      lastPathSegment === "accident-management" ||
+      lastPathSegment === "patient-management" ||
+      lastPathSegment === "resource-management" ||
+      lastPathSegment === "ambulance" ||
+      lastPathSegment === "facility-details"
+    ) {
+      setView("cards");
+    }
   }, [location.pathname]);
 
   const handleItemClick = (item) => {
