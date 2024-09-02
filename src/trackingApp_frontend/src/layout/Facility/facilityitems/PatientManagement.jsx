@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Plus } from "lucide-react";
 import AdmitPatient from "../patientManagement/admit";
 import Discharge from "../patientManagement/discharge";
 import Transfer from "../patientManagement/transfer";
@@ -7,6 +7,7 @@ import GetPatientDetails from "../patientManagement/details";
 import UpdatePatientStatus from "../patientManagement/updateStatus";
 import { ViewContext } from "../../../ActorContext";
 import { useContext } from "react";
+import admitpatientpic from "../../../assets/images/admitpatientpic.jpg";
 
 const PatientManagement = () => {
   const location = useLocation();
@@ -28,37 +29,74 @@ const PatientManagement = () => {
       {view === "cards" && (
         <div>
           <h2 className="text-xl font-bold mb-4">Patient Management</h2>
-          <div className="space-y-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div
               onClick={() => handleCardClick("admit")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Admit Patient
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Admit Patient
+              </div>
             </div>
             <div
               onClick={() => handleCardClick("discharge")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Discharge
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">Discharge</div>
             </div>
             <div
               onClick={() => handleCardClick("transfer")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Transfer to Another Facility
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Transfer to Another Facility
+              </div>
             </div>
             <div
               onClick={() => handleCardClick("details")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Get Patient Details
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Get Patient Details
+              </div>
             </div>
-
             <div
               onClick={() => handleCardClick("update-status")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Update Patient Status
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Update Patient Status
+              </div>
             </div>
           </div>
         </div>

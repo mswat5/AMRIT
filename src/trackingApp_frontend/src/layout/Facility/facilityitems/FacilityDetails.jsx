@@ -5,6 +5,7 @@ import FacilityInfo from "../facilityDetails/info";
 import FindNearestFacility from "../facilityDetails/findNearest";
 import { ViewContext } from "../../../ActorContext";
 import { useContext } from "react";
+import admitpatientpic from "../../../assets/images/admitpatientpic.jpg";
 
 const FacilityDetails = () => {
   const location = useLocation();
@@ -26,19 +27,35 @@ const FacilityDetails = () => {
       {view === "cards" && (
         <div>
           <h2 className="text-xl font-bold mb-4">Facility Information</h2>
-          <div className="space-y-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div
               onClick={() => handleCardClick("info")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Facility Info
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Facility Info
+              </div>
             </div>
 
             <div
               onClick={() => handleCardClick("find-nearest")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Find Nearest Facility
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Find Nearest Facility
+              </div>
             </div>
           </div>
         </div>

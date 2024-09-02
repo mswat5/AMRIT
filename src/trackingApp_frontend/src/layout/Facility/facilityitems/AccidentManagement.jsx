@@ -8,6 +8,7 @@ import AccidentTimeline from "../accidentManagement/accidentTimeline";
 import UpdateAccidentStatus from "../accidentManagement/updateAccidentStatus";
 import { ViewContext } from "../../../ActorContext";
 import { useContext } from "react";
+import admitpatientpic from "../../../assets/images/admitpatientpic.jpg";
 
 const InchargeAccidentManagement = () => {
   const location = useLocation();
@@ -29,36 +30,76 @@ const InchargeAccidentManagement = () => {
       {view === "cards" && (
         <div>
           <h2 className="text-xl font-bold mb-4">Accident Management</h2>
-          <div className="space-y-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div
               onClick={() => handleCardClick("report-accident")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Report Accident
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Report Accident
+              </div>
             </div>
             <div
               onClick={() => handleCardClick("accident-reported")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Accidents Reported by Your Facility
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Accidents Reported by Your Facility
+              </div>
             </div>
             <div
               onClick={() => handleCardClick("active-accidents")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              List of Active Accidents
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                List of Active Accidents
+              </div>
             </div>
             <div
               onClick={() => handleCardClick("accident-timeline")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Accident Timeline
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Accident Timeline
+              </div>
             </div>
             <div
               onClick={() => handleCardClick("update-accident-status")}
-              className="block p-4 bg-gray-200 rounded-md cursor-pointer"
+              className="font-bold text-xl bg-gray-800 rounded-xl cursor-pointer flex md:flex-col justify-between items-center gap-y-4 p-4 shadow-md transition-transform transform hover:scale-105"
             >
-              Update Accident Status
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={admitpatientpic} // Same image for all cards
+                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
+                />
+              </div>
+              <div className="text-white min-w-fit text-center">
+                Update Accident Status
+              </div>
             </div>
           </div>
         </div>

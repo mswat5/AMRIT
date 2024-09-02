@@ -1,12 +1,9 @@
 import React from "react";
 import Nav from "./Nav";
 
-// interface Props {
-//   children: React.ReactNode;
-// }
 const SharedLayout = ({ children }) => {
   return (
-    <div>
+    <div className="">
       <Nav />
       <div className="min-h-screen">
         <div className=" dark:bg-slate-500  ">{children}</div>
