@@ -20,7 +20,7 @@ const PatientManagement = () => {
   };
 
   const handleBackClick = () => {
-    navigate("patient-management");
+    navigate("/facility/patient-management");
     setView("cards");
   };
 

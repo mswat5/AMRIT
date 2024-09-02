@@ -21,7 +21,7 @@ const InchargeAccidentManagement = () => {
   };
 
   const handleBackClick = () => {
-    navigate("accident-management");
+    navigate("/facility/accident-management");
     setView("cards");
   };
 
