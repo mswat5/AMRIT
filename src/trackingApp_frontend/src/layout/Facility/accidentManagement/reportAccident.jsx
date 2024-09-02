@@ -2,26 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 import { toast } from "@/components/ui/use-toast";
-
-// Define the validation schema using Zod
-const reportIncidentSchema = z.object({
-  location: z.string().min(1, "Location is required"),
-  description: z.string().min(1, "Description is required"),
-  severity: z.enum(
-    ["Minor", "Moderate", "Severe", "Critical"],
-    "Select a severity level"
-  ),
-  inchargeIds: z
-    .array(
-      z
-        .string()
-        .min(1, "ID cannot be empty")
-        .regex(/^\+?\d+$/, "Invalid input (should be a number)")
-    )
-    .min(1, "At least one in-charge ID is required"),
-});
+import { reportIncidentSchema } from "../../zod";
 
 const ReportIncident = () => {
   const { actors } = useContext(ActorContext);

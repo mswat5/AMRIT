@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import ActorContext from "../ActorContext";
+import { ActorContext } from "../ActorContext";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";

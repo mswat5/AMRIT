@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { cn } from "@/lib/utils"; // Utility function from SHADCN or your project
 import { useNavigate, useLocation } from "react-router-dom";
 import { User, AlertCircle, Package, Building, Ambulance } from "lucide-react";
+import { ViewContext } from "../../ActorContext";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const { setView } = useContext(ViewContext);
   const items = [
     {
       id: "1",
@@ -55,6 +56,7 @@ const Sidebar = () => {
   const handleItemClick = (item) => {
     setActiveItem(item.id);
     navigate(item.path);
+    setView("cards");
   };
 
   return (

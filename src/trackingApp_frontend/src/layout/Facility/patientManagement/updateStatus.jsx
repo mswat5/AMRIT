@@ -1,9 +1,8 @@
-import React from "react";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 // Update the validation schema with patientStatus options
 const updateStatusSchema = z.object({
   patientId: z

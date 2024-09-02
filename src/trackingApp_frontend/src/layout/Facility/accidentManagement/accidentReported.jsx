@@ -18,7 +18,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 
 const IncidentReported = () => {
   const [sorting, setSorting] = useState([]);

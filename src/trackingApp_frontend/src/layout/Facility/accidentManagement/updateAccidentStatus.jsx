@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ActorContext from "../../../ActorContext";
+import { ActorContext } from "../../../ActorContext";
 import { toast } from "@/components/ui/use-toast";
 
 const updateAccidentStatusSchema = z.object({
@@ -55,10 +55,7 @@ const UpdateAccidentStatus = () => {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         Update Accident Status
       </h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-6"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-6">
         <div>
           <label
             htmlFor="accidentId"

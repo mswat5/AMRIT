@@ -6,11 +6,13 @@ import AccidentReported from "../accidentManagement/accidentReported";
 import ActiveAccidents from "../accidentManagement/activeAccidents";
 import AccidentTimeline from "../accidentManagement/accidentTimeline";
 import UpdateAccidentStatus from "../accidentManagement/updateAccidentStatus";
+import { ViewContext } from "../../../ActorContext";
+import { useContext } from "react";
 
 const InchargeAccidentManagement = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [view, setView] = useState("cards");
+  const { view, setView } = useContext(ViewContext);
 
   const handleCardClick = (form) => {
     navigate(`${form}`, { state: { formType: form } });

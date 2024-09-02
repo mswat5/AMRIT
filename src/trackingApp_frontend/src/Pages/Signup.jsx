@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import Quote from "../components/Quote";
-import ActorContext from "../ActorContext";
+import { ActorContext } from "../ActorContext";
 import LoadingScreen from "../LoadingScreen";
 //admin ambulance facility
 const Signup = () => {

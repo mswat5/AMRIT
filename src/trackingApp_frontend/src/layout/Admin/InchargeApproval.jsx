@@ -19,7 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "@/components/ui/use-toast";
 
-import ActorContext from "../../ActorContext";
+import { ActorContext } from "../../ActorContext";
 
 const InchargeApproval = () => {
   const [sorting, setSorting] = useState([]);

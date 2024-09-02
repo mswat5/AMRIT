@@ -136,3 +136,29 @@ export const FormDataSchema = z.object({
   inchargeIds: z.array(z.string().min(1, "ID cannot be empty")).optional(),
   incidentid: z.string().optional(),
 });
+export const reportIncidentSchema = z.object({
+  location: z.string().min(1, "Location is required"),
+  description: z.string().min(1, "Description is required"),
+  severity: z.enum(
+    ["Minor", "Moderate", "Severe", "Critical"],
+    "Select a severity level"
+  ),
+  inchargeIds: z
+    .array(
+      z
+        .string()
+        .min(1, "ID cannot be empty")
+        .regex(/^\+?\d+$/, "Invalid input (should be a number)")
+    )
+    .min(1, "At least one in-charge ID is required"),
+});
+export const facilitySchema = z.object({
+  facilityName: z.string().min(1, "Facility Name is required"),
+  facilityLocation: z.string().min(1, "Location is required"),
+  facilityCapacity: z.number().min(1, "Capacity is required"),
+  services: z.string().min(1, "Services are required"),
+  certificationId: z.string().min(1, "Certification ID is required"),
+  contactName: z.string().min(1, "Contact Name is required"),
+  contactEmail: z.string().email("Invalid email address"),
+  contactPhone: z.string().min(1, "Contact Phone is required"),
+});

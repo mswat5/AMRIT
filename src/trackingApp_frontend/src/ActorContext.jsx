@@ -1,6 +1,6 @@
 import React from "react";
 
-const ActorContext = React.createContext({
+export const ActorContext = React.createContext({
   actors: {
     admin: null,
     report: null,
@@ -13,5 +13,7 @@ const ActorContext = React.createContext({
   isAuthenticated: false,
   login: async () => {},
 });
-
-export default ActorContext;
+export const ViewContext = React.createContext({
+  view: "cards",
+  setView: () => {},
+});

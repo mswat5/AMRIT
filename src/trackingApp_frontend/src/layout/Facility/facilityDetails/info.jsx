@@ -1,19 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-// Define the validation schema using Zod
-const facilitySchema = z.object({
-  facilityName: z.string().min(1, "Facility Name is required"),
-  facilityLocation: z.string().min(1, "Location is required"),
-  facilityCapacity: z.number().min(1, "Capacity is required"),
-  services: z.string().min(1, "Services are required"),
-  certificationId: z.string().min(1, "Certification ID is required"),
-  contactName: z.string().min(1, "Contact Name is required"),
-  contactEmail: z.string().email("Invalid email address"),
-  contactPhone: z.string().min(1, "Contact Phone is required"),
-});
+import { facilitySchema } from "../../zod";
 
 const FacilityInfo = () => {
   const {
@@ -171,7 +159,7 @@ const FacilityInfo = () => {
         <div>
           <label
             htmlFor="services"
-            className="block text-sm font-medium leading-6 text-gray-900"
+            className="block ext-sm font-medium leading-6 text-gray-900"
           >
             Services Offered*
           </label>
