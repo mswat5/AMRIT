@@ -238,7 +238,7 @@ const App = () => {
                   element={<FacilityDetails />}
                 />
                 <Route path="ambulance/*" element={<Ambulance />} />
-                {/* <Route path="*" element={<FacilityItem1 />} /> */}
+                <Route path="*" element={<Navigate to="facility-details" />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
