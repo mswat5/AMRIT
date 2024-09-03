@@ -6,9 +6,8 @@ export default function ContactUs() {
     <section id="contact" className="py-10 md:py-16 px-6">
       <div className="container mx-auto px-4 md:px-6 py-6 ">
         <div className="grid lg:grid-cols-2 gap-8 items-center">
-          {/* Left side: Heading and Socials */}
           <div className="space-y-4">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-gray-800">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-gray-800 dark:text-white">
               Get in touch
             </h2>
             <p className="text-gray-600">
@@ -17,7 +16,6 @@ export default function ContactUs() {
             <Socials />
           </div>
 
-          {/* Right side: Contact Form */}
           <div className="mt-6 lg:mt-0">
             <ContactForm />
           </div>

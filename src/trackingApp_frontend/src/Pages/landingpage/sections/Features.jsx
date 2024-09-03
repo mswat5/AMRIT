@@ -3,25 +3,25 @@ import { Shield, Globe, HeartPulse, Layers } from "lucide-react"; // Example ico
 
 const featuresData = [
   {
-    icon: <Shield className="w-8 h-8 text-indigo-600" />,
+    icon: <Shield className="w-8 h-8 text-indigo-600 dark:text-black" />,
     title: "Unmatched Security",
     description:
       "State-of-the-art encryption protects sensitive data, ensuring its privacy and security at all times.",
   },
   {
-    icon: <Globe className="w-8 h-8 text-indigo-600" />,
+    icon: <Globe className="w-8 h-8 text-indigo-600 dark:text-black" />,
     title: "Global Accessibility",
     description:
       "Access and manage your health data from anywhere in the world, anytime you need it.",
   },
   {
-    icon: <HeartPulse className="w-8 h-8 text-indigo-600" />,
+    icon: <HeartPulse className="w-8 h-8 text-indigo-600 dark:text-black" />,
     title: "Real-time Monitoring",
     description:
       "Stay updated with real-time monitoring of critical health indicators, available 24/7.",
   },
   {
-    icon: <Layers className="w-8 h-8 text-indigo-600" />,
+    icon: <Layers className="w-8 h-8 text-indigo-600 dark:text-black" />,
     title: "Comprehensive Analytics",
     description:
       "In-depth analytics provide insights into trends and potential health risks, tailored to your data.",
@@ -48,7 +48,9 @@ const Features = () => {
               className="p-6 bg-white rounded-lg shadow-md text-center hover:scale-105 transition duration-300 ease-in-out"
             >
               <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <h3 className="text-xl font-semibold mb-2 dark:text-black">
+                {feature.title}
+              </h3>
               <p className="text-gray-600">{feature.description}</p>
             </div>
           ))}

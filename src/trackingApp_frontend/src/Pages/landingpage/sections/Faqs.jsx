@@ -66,19 +66,19 @@ function Faqs() {
   };
 
   return (
-    <section id="faqs" className="py-12 md:py-24 px-8 ">
+    <section id="faqs" className="py-12 md:py-24 px-8  ">
       <div className="container mx-auto">
         <div className="text-center mb-8">
-          <h1 className="py-4 text-3xl font-bold tracking-tight md:text-5xl text-gray-800">
+          <h1 className="py-4 text-3xl font-bold tracking-tight md:text-5xl text-gray-800 dark:text-white">
             Frequently Asked Questions
           </h1>
         </div>
 
         <div className="space-y-4">
           {faqData.map((item, index) => (
-            <div key={index} className="bg-white rounded-lg ">
+            <div key={index} className="bg-white  rounded-lg ">
               <button
-                className="flex justify-between w-full p-4 text-left text-lg font-medium bg-gray-100 rounded-t-lg focus:outline-none hover:bg-gray-200 transition duration-300"
+                className="flex justify-between w-full p-4 text-left text-lg font-medium bg-gray-100 dark:bg-gray-800 rounded-t-lg focus:outline-none hover:bg-gray-200 transition duration-300"
                 onClick={() => toggleAccordion(index)}
               >
                 {item.question}
