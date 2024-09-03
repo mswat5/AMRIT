@@ -22,7 +22,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -32,42 +31,9 @@ import { FormDataSchema } from "../../zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-// // Sample data for demonstration
-// const data = Array.from({ length: 50 }, (_, i) => ({
-//   id: (i + 1).toString(),
-//   name: `patient ${String.fromCharCode(65 + (i % 26))}`,
-//   location: `Location ${String.fromCharCode(65 + (i % 26))}`,
-//   // status: i % 2 === 0 ? 'Pending' : 'Approved',
-//   contactInfo: `123-456-78${i.toString().padStart(2, "0")}`,
-//   age: `${String.fromCharCode(65 + (i % 26))}${i}yr`,
-// }));
-
-const handleEdit = (id) => {
-  // Handle approve logic
-  console.log(`Edit patient with ID: ${id}`);
-};
-const handleDownload = (id) => {
-  // Handle download logic
-  console.log(`download record with ID: ${id}`);
-};
-const handleDelete = (id) => {
-  // Handle reject logic
-  console.log(`Delete Patient with ID: ${id}`);
-};
-
 const details = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([
-    {
-      id: "1",
-      name: "John Doe",
-      age: "30",
-      status: "Active",
-      contactInfo: "123-456-7890",
-
-      location: "Delhi",
-    },
-  ]);
+  const [data, setData] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [patients, setPatients] = useState([]);
@@ -90,76 +56,47 @@ const details = () => {
     name: "inchargeIds",
   });
 
+  const handleEdit = (id, file) => {
+    setInitialData();
+    console.log(`Edit patient with ID: ${id}`);
+  };
+  const handleDownload = (id) => {
+    // Handle download logic
+    console.log(`download record with ID: ${id}`);
+  };
+  const handleDelete = (id) => {
+    // Handle reject logic
+    console.log(`Delete Patient with ID: ${id}`);
+  };
+
   useEffect(() => {
-    // Simulating an API call to fetch initial data
-    const fetchData = async () => {
-      const dummyData = {
-        patientInitials: {
-          initial1: "J",
-          initial2: "D",
-          initial3: "S",
-        },
-        mobile: "123-456-7890",
-        address: "123 Main St, Delhi",
-        gender: "Male",
-        dobKnownAge: "30",
-        registrationDate: new Date().toISOString(),
-        residence: "Delhi",
-        postalCode: "110001",
-        monthlyIncome: "50000",
-        inclusionCriteria: null,
-        stableAngina: "no",
-        priorMI: "not known",
-        ptca: "no",
-        cabg: "not known",
-        otherCardiovascularEvents: "no",
-        tiaOrStroke: false,
-        pad: false,
-        renovascularDisease: false,
-        chf: false,
-        otherVascularDisease: false,
-        prematureFamilyHistory: "no",
-        dyslipidemiaOnStatin: "not known",
-        hypertension: "no",
-        hypertensionDuration: "less than 1 yr",
-        hypertensionDurationYears: 0,
-        diabetes: "no",
-        diabetesDuration: null,
-        diabetesInsulin: false,
-      };
-      setInitialData(dummyData);
-      // Set form values with the fetched data
-      for (const [key, value] of Object.entries(dummyData)) {
-        setValue(key, value);
+    const fetchPatients = async () => {
+      try {
+        const result = await actors.patient.getPatientsForFacility();
+        if (result.ok) {
+          setData(result.ok);
+        } else {
+          console.error("Error fetching patients:", result.err);
+        }
+      } catch (error) {
+        console.error("Error fetching patients:", error);
       }
     };
 
-    fetchData();
-  }, [setValue]);
-
-  // useEffect(() => {
-  //   const fetchPatients = async () => {
-  //     try {
-  //       const result = await actors.patient.getPatientsForFacility();
-  //       if (result.ok) {
-  //         setPatients(result.ok);
-  //       } else {
-  //         console.error("Error fetching patients:", result.err);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching patients:", error);
-  //     }
-  //   };
-
-  //   fetchPatients();
-  // }, [actors]);
+    fetchPatients();
+  }, [actors]);
 
   const columns = [
     { accessorKey: "id", header: "Patient ID" },
+    { accessorKey: "accidentId", header: "Accident ID" },
     { accessorKey: "name", header: "Patient Name" },
     { accessorKey: "age", header: "Age" },
-    { accessorKey: "status", header: "Status" },
-    { accessorKey: "contactInfo", header: "Contact Info" },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <div>{Object.keys(row.original.status)[0]}</div>,
+    },
+    { accessorKey: "admissionTimestamp", header: "Admission Timestamp" },
     {
       accessorKey: "actions",
       header: "Actions",
@@ -167,7 +104,11 @@ const details = () => {
         <div className="flex justify-center space-x-2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="success" className="bg-indigo-500 ">
+              <Button
+                variant="success"
+                className="bg-indigo-500 "
+                onClick={() => handleEdit(row.original.id, row.original.file)}
+              >
                 Edit
               </Button>
             </DialogTrigger>
@@ -570,7 +511,10 @@ const details = () => {
                           value="yes"
                           {...register("priorMI")}
                         />
-                        <label htmlFor="priorMIYes" className="text-gray-900">
+                        <label
+                          htmlFor="priorMIYes"
+                          className="text-gray-900"
+                        >
                           Yes
                         </label>
 
@@ -580,7 +524,10 @@ const details = () => {
                           value="no"
                           {...register("priorMI")}
                         />
-                        <label htmlFor="priorMINo" className="text-gray-900">
+                        <label
+                          htmlFor="priorMINo"
+                          className="text-gray-900"
+                        >
                           No
                         </label>
 
@@ -643,7 +590,10 @@ const details = () => {
                           value="yes"
                           {...register("ptca")}
                         />
-                        <label htmlFor="ptcaYes" className="text-gray-900">
+                        <label
+                          htmlFor="ptcaYes"
+                          className="text-gray-900"
+                        >
                           Yes
                         </label>
 
@@ -653,7 +603,10 @@ const details = () => {
                           value="no"
                           {...register("ptca")}
                         />
-                        <label htmlFor="ptcaNo" className="text-gray-900">
+                        <label
+                          htmlFor="ptcaNo"
+                          className="text-gray-900"
+                        >
                           No
                         </label>
 
@@ -663,7 +616,10 @@ const details = () => {
                           value="not known"
                           {...register("ptca")}
                         />
-                        <label htmlFor="ptcaNotKnown" className="text-gray-900">
+                        <label
+                          htmlFor="ptcaNotKnown"
+                          className="text-gray-900"
+                        >
                           Not Known
                         </label>
                       </div>
@@ -689,7 +645,10 @@ const details = () => {
                           value="yes"
                           {...register("cabg")}
                         />
-                        <label htmlFor="cabgYes" className="text-gray-900">
+                        <label
+                          htmlFor="cabgYes"
+                          className="text-gray-900"
+                        >
                           Yes
                         </label>
 
@@ -699,7 +658,10 @@ const details = () => {
                           value="no"
                           {...register("cabg")}
                         />
-                        <label htmlFor="cabgNo" className="text-gray-900">
+                        <label
+                          htmlFor="cabgNo"
+                          className="text-gray-900"
+                        >
                           No
                         </label>
 
@@ -709,7 +671,10 @@ const details = () => {
                           value="not known"
                           {...register("cabg")}
                         />
-                        <label htmlFor="cabgNotKnown" className="text-gray-900">
+                        <label
+                          htmlFor="cabgNotKnown"
+                          className="text-gray-900"
+                        >
                           Not Known
                         </label>
                       </div>
@@ -802,7 +767,10 @@ const details = () => {
                             id="pad"
                             {...register("pad")}
                           />
-                          <label htmlFor="pad" className="text-gray-900">
+                          <label
+                            htmlFor="pad"
+                            className="text-gray-900"
+                          >
                             PAD
                           </label>
                         </div>
@@ -827,7 +795,10 @@ const details = () => {
                             id="chf"
                             {...register("chf")}
                           />
-                          <label htmlFor="chf" className="text-gray-900">
+                          <label
+                            htmlFor="chf"
+                            className="text-gray-900"
+                          >
                             CHF
                           </label>
                         </div>
@@ -1088,7 +1059,10 @@ const details = () => {
                           value="yes"
                           {...register("diabetes")}
                         />
-                        <label htmlFor="diabetesYes" className="text-gray-900">
+                        <label
+                          htmlFor="diabetesYes"
+                          className="text-gray-900"
+                        >
                           Yes
                         </label>
 
@@ -1098,7 +1072,10 @@ const details = () => {
                           value="no"
                           {...register("diabetes")}
                         />
-                        <label htmlFor="diabetesNo" className="text-gray-900">
+                        <label
+                          htmlFor="diabetesNo"
+                          className="text-gray-900"
+                        >
                           No
                         </label>
 
@@ -1350,7 +1327,10 @@ const details = () => {
                               value="past"
                               {...register("tobaccoUsageType")}
                             />
-                            <label htmlFor="pastUser" className="text-gray-900">
+                            <label
+                              htmlFor="pastUser"
+                              className="text-gray-900"
+                            >
                               Past
                             </label>
                           </div>
@@ -2745,7 +2725,10 @@ const details = () => {
                             {...register("preHubManagement")}
                             value="Aspirin"
                           />
-                          <label htmlFor="aspirin" className="ml-2">
+                          <label
+                            htmlFor="aspirin"
+                            className="ml-2"
+                          >
                             Aspirin
                           </label>
                         </div>
@@ -2756,7 +2739,10 @@ const details = () => {
                             {...register("preHubManagement")}
                             value="Statins"
                           />
-                          <label htmlFor="statins" className="ml-2">
+                          <label
+                            htmlFor="statins"
+                            className="ml-2"
+                          >
                             Statins
                           </label>
                         </div>
@@ -2767,7 +2753,10 @@ const details = () => {
                             {...register("preHubManagement")}
                             value="Clopidogrel / Prasugrel / Ticagretor"
                           />
-                          <label htmlFor="clopidogrel" className="ml-2">
+                          <label
+                            htmlFor="clopidogrel"
+                            className="ml-2"
+                          >
                             Clopidogrel / Prasugrel / Ticagretor
                           </label>
                         </div>
@@ -2778,7 +2767,10 @@ const details = () => {
                             {...register("preHubManagement")}
                             value="Others"
                           />
-                          <label htmlFor="others" className="ml-2">
+                          <label
+                            htmlFor="others"
+                            className="ml-2"
+                          >
                             Others
                           </label>
                         </div>
@@ -2802,7 +2794,10 @@ const details = () => {
                                 {...register("preHubManagement")}
                                 value="Heparin"
                               />
-                              <label htmlFor="heparin" className="ml-2">
+                              <label
+                                htmlFor="heparin"
+                                className="ml-2"
+                              >
                                 Heparin
                               </label>
                             </div>
@@ -2813,7 +2808,10 @@ const details = () => {
                                 {...register("preHubManagement")}
                                 value="Nitrates"
                               />
-                              <label htmlFor="nitrates" className="ml-2">
+                              <label
+                                htmlFor="nitrates"
+                                className="ml-2"
+                              >
                                 Nitrates
                               </label>
                             </div>
@@ -2824,7 +2822,10 @@ const details = () => {
                                 {...register("preHubManagement")}
                                 value="Beta-Blockers"
                               />
-                              <label htmlFor="beta-blockers" className="ml-2">
+                              <label
+                                htmlFor="beta-blockers"
+                                className="ml-2"
+                              >
                                 Beta-Blockers
                               </label>
                             </div>
@@ -2835,7 +2836,10 @@ const details = () => {
                                 {...register("preHubManagement")}
                                 value="ACE Inhibitors"
                               />
-                              <label htmlFor="ace-inhibitors" className="ml-2">
+                              <label
+                                htmlFor="ace-inhibitors"
+                                className="ml-2"
+                              >
                                 ACE Inhibitors
                               </label>
                             </div>
@@ -2846,7 +2850,10 @@ const details = () => {
                                 {...register("preHubManagement")}
                                 value="None"
                               />
-                              <label htmlFor="none" className="ml-2">
+                              <label
+                                htmlFor="none"
+                                className="ml-2"
+                              >
                                 None of These
                               </label>
                             </div>
@@ -2868,7 +2875,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Aspirin"
                           />
-                          <label htmlFor="aspirinAdmission" className="ml-2">
+                          <label
+                            htmlFor="aspirinAdmission"
+                            className="ml-2"
+                          >
                             Aspirin
                           </label>
                         </div>
@@ -2879,7 +2889,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="LMWH & Fondaparinux"
                           />
-                          <label htmlFor="lmwh" className="ml-2">
+                          <label
+                            htmlFor="lmwh"
+                            className="ml-2"
+                          >
                             LMWH & Fondaparinux
                           </label>
                         </div>
@@ -2904,7 +2917,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="SGLT2 Inhibitors"
                           />
-                          <label htmlFor="sglt2" className="ml-2">
+                          <label
+                            htmlFor="sglt2"
+                            className="ml-2"
+                          >
                             SGLT2 Inhibitors
                           </label>
                         </div>
@@ -2915,7 +2931,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Glycoprotein II B/III A Inhibitors"
                           />
-                          <label htmlFor="glycoprotein" className="ml-2">
+                          <label
+                            htmlFor="glycoprotein"
+                            className="ml-2"
+                          >
                             Glycoprotein II B/III A Inhibitors
                           </label>
                         </div>
@@ -2926,7 +2945,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Unfractionated Heparin"
                           />
-                          <label htmlFor="heparin" className="ml-2">
+                          <label
+                            htmlFor="heparin"
+                            className="ml-2"
+                          >
                             Unfractionated Heparin
                           </label>
                         </div>
@@ -2937,7 +2959,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Nitrates"
                           />
-                          <label htmlFor="nitrates" className="ml-2">
+                          <label
+                            htmlFor="nitrates"
+                            className="ml-2"
+                          >
                             Nitrates
                           </label>
                         </div>
@@ -2948,7 +2973,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="ARNI"
                           />
-                          <label htmlFor="arni" className="ml-2">
+                          <label
+                            htmlFor="arni"
+                            className="ml-2"
+                          >
                             ARNI
                           </label>
                         </div>
@@ -2959,7 +2987,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="ARBs"
                           />
-                          <label htmlFor="arbs" className="ml-2">
+                          <label
+                            htmlFor="arbs"
+                            className="ml-2"
+                          >
                             ARBs
                           </label>
                         </div>
@@ -2970,7 +3001,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Other Antidiabetics"
                           />
-                          <label htmlFor="other-antidiabetics" className="ml-2">
+                          <label
+                            htmlFor="other-antidiabetics"
+                            className="ml-2"
+                          >
                             Other Antidiabetics
                           </label>
                         </div>
@@ -2981,7 +3015,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Statins"
                           />
-                          <label htmlFor="statins-admission" className="ml-2">
+                          <label
+                            htmlFor="statins-admission"
+                            className="ml-2"
+                          >
                             Statins
                           </label>
                         </div>
@@ -3006,7 +3043,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="MRA"
                           />
-                          <label htmlFor="mra-admission" className="ml-2">
+                          <label
+                            htmlFor="mra-admission"
+                            className="ml-2"
+                          >
                             MRA
                           </label>
                         </div>
@@ -3017,7 +3057,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Insulin"
                           />
-                          <label htmlFor="insulin-admission" className="ml-2">
+                          <label
+                            htmlFor="insulin-admission"
+                            className="ml-2"
+                          >
                             Insulin
                           </label>
                         </div>
@@ -3042,7 +3085,10 @@ const details = () => {
                             {...register("duringAdmission")}
                             value="Others"
                           />
-                          <label htmlFor="others-admission" className="ml-2">
+                          <label
+                            htmlFor="others-admission"
+                            className="ml-2"
+                          >
                             Others
                           </label>
                         </div>
@@ -3067,7 +3113,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="Aspirin"
                           />
-                          <label htmlFor="aspirin-discharge" className="ml-2">
+                          <label
+                            htmlFor="aspirin-discharge"
+                            className="ml-2"
+                          >
                             Aspirin
                           </label>
                         </div>
@@ -3092,7 +3141,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="Oral Anticoagulants"
                           />
-                          <label htmlFor="oral-anticoagulants" className="ml-2">
+                          <label
+                            htmlFor="oral-anticoagulants"
+                            className="ml-2"
+                          >
                             Oral Anticoagulants
                           </label>
                         </div>
@@ -3117,7 +3169,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="Statins"
                           />
-                          <label htmlFor="statins-discharge" className="ml-2">
+                          <label
+                            htmlFor="statins-discharge"
+                            className="ml-2"
+                          >
                             Statins
                           </label>
                         </div>
@@ -3128,7 +3183,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="MRA"
                           />
-                          <label htmlFor="mra-discharge" className="ml-2">
+                          <label
+                            htmlFor="mra-discharge"
+                            className="ml-2"
+                          >
                             MRA
                           </label>
                         </div>
@@ -3139,7 +3197,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="ARNI"
                           />
-                          <label htmlFor="arni-discharge" className="ml-2">
+                          <label
+                            htmlFor="arni-discharge"
+                            className="ml-2"
+                          >
                             ARNI
                           </label>
                         </div>
@@ -3164,7 +3225,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="Insulin"
                           />
-                          <label htmlFor="insulin-discharge" className="ml-2">
+                          <label
+                            htmlFor="insulin-discharge"
+                            className="ml-2"
+                          >
                             Insulin
                           </label>
                         </div>
@@ -3175,7 +3239,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="Nitrates"
                           />
-                          <label htmlFor="nitrates-discharge" className="ml-2">
+                          <label
+                            htmlFor="nitrates-discharge"
+                            className="ml-2"
+                          >
                             Nitrates
                           </label>
                         </div>
@@ -3186,7 +3253,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="ARBs"
                           />
-                          <label htmlFor="arbs-discharge" className="ml-2">
+                          <label
+                            htmlFor="arbs-discharge"
+                            className="ml-2"
+                          >
                             ARBs
                           </label>
                         </div>
@@ -3197,7 +3267,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="SGLT2 Inhibitors"
                           />
-                          <label htmlFor="sglt2-discharge" className="ml-2">
+                          <label
+                            htmlFor="sglt2-discharge"
+                            className="ml-2"
+                          >
                             SGLT2 Inhibitors
                           </label>
                         </div>
@@ -3222,7 +3295,10 @@ const details = () => {
                             {...register("prescribedAtDischarge")}
                             value="Others"
                           />
-                          <label htmlFor="others-discharge" className="ml-2">
+                          <label
+                            htmlFor="others-discharge"
+                            className="ml-2"
+                          >
                             Others
                           </label>
                         </div>
@@ -4225,7 +4301,10 @@ const details = () => {
                       In-Charge IDs*
                     </label>
                     {fields.map((field, index) => (
-                      <div key={field.id} className="flex gap-x-2 mb-4">
+                      <div
+                        key={field.id}
+                        className="flex gap-x-2 mb-4"
+                      >
                         <input
                           type="text"
                           {...register(`inchargeIds.${index}`)}
@@ -4306,6 +4385,7 @@ const details = () => {
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
   });
+
   return (
     <div className="p-4 flex flex-col items-center overflow-x-auto w-full">
       <input
@@ -4319,7 +4399,10 @@ const details = () => {
         <TableCaption>A list of patients </TableCaption>
         <TableHeader className="">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-gray-900 text-white ">
+            <TableRow
+              key={headerGroup.id}
+              className="bg-gray-900 text-white "
+            >
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
@@ -4348,7 +4431,10 @@ const details = () => {
               className="dark:hover:bg-secondary hover:bg-gray-200  "
             >
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="p-3 border border-gray-900">
+                <TableCell
+                  key={cell.id}
+                  className="p-3 border border-gray-900"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}

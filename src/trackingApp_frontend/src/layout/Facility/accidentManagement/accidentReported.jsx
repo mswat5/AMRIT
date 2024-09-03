@@ -30,6 +30,7 @@ const IncidentReported = () => {
     async function fetchAccidentsReported() {
       const result = await actors.accident.getAccidentsByFacility();
       if (result.ok) {
+        console.log(result.ok);
         setData(result.ok);
       } else {
         console.error(result.err);

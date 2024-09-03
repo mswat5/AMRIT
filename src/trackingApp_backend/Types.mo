@@ -101,6 +101,7 @@ module {
         treatmentDetails : Text;
         admissionTimestamp : Time.Time;
         dischargeTimestamp : ?Time.Time;
+        file : ?Blob;
     };
 
     public type PatientStatus = {

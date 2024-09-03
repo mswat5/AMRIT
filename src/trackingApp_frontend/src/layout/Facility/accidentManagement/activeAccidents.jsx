@@ -127,7 +127,10 @@ const ActiveAccidents = () => {
         <div className="flex justify-center space-x-2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="success" className="bg-indigo-500 ">
+              <Button
+                variant="success"
+                className="bg-indigo-500 "
+              >
                 Edit
               </Button>
             </DialogTrigger>
@@ -268,6 +271,7 @@ const ActiveAccidents = () => {
     async function fetchActiveAccidents() {
       const result = await actors.accident.listActiveAccidentsForFacility();
       if (result.ok) {
+        console.log(result.ok);
         setData(result.ok);
       } else {
         console.error(result.err);

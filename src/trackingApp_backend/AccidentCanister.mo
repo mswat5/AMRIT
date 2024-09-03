@@ -35,7 +35,6 @@ actor class AccidentCanister() {
 
     private stable var nextAccidentId : Nat = 1;
     private stable var accidents = Map.new<Text, AccidentReport>();
-    private stable var facilityAccidents = Map.new<Text, [Text]>();
     private stable var facilityAccidentMap = Map.new<Text, [Text]>();
 
     // Define an array of permitted principals
@@ -84,15 +83,16 @@ actor class AccidentCanister() {
                 Map.set(accidents, thash, accidentId, newReport);
 
                 // Update facilityAccidents
-                switch (await updateFacilityAccidentMap(newDetails.reportingFacilityId, accidentId)) {
-                    case (#ok(_)) {
-                        // Successfully updated the facility-accident map
+                switch (Map.get(facilityAccidentMap, thash, value)) {
+                    case null {
+                        Map.set(facilityAccidentMap, thash, value, [accidentId]);
                     };
-                    case (#err(error)) {
-                        return #err("Failed to update facility-accident map: " # error);
+                    case (?accidentIds) {
+                        if (Array.find(accidentIds, func(id : Text) : Bool { id == accidentId }) == null) {
+                            Map.set(facilityAccidentMap, thash, value, Array.append(accidentIds, [accidentId]));
+                        };
                     };
                 };
-
                 let report : Types.Report = {
                     id = ""; // Will be assigned by ReportCanister
                     accidentId = accidentId;
@@ -390,8 +390,8 @@ actor class AccidentCanister() {
         let facilityId = await facilityCanister.getFacilityId(caller);
         switch (facilityId) {
             case (#ok(value)) {
-                switch (Map.get(facilityAccidents, thash, value)) {
-                    case null { #ok([]) }; // No accidents found for this facility
+                switch (Map.get(facilityAccidentMap, thash, value)) {
+                    case null { #err("No accidents found for this facility") }; // No accidents found for this facility
                     case (?accidentIds) {
                         let facilityAccidents = Array.mapFilter<Text, AccidentReport>(
                             accidentIds,
@@ -414,8 +414,8 @@ actor class AccidentCanister() {
         let facilityId = await facilityCanister.getFacilityId(caller);
         switch (facilityId) {
             case (#ok(id)) {
-                switch (Map.get(facilityAccidents, thash, id)) {
-                    case null { #ok([]) }; // No accidents found for this facility
+                switch (Map.get(facilityAccidentMap, thash, id)) {
+                    case null { #err("No accidents found for this facility") }; // No accidents found for this facility
                     case (?accidentIds) {
                         let activeAccidents = Array.mapFilter<Text, AccidentReport>(
                             accidentIds,

@@ -1,13 +1,14 @@
+import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Iter "mo:base/Iter";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
-import Array "mo:base/Array";
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
-import Iter "mo:base/Iter";
+
 import AdminCanister "AdminCanister";
 import FacilityCanister "FacilityCanister";
 import ReportCanister "ReportCanister";
@@ -78,12 +79,14 @@ actor class PatientCanister() {
                     name = record.name;
                     age = record.age;
                     treatmentDetails = record.treatmentDetails;
+                    file = file;
 
                     id = patientId;
                     status = #Admitted;
                     currentFacilityId = facilityId;
                     admissionTimestamp = Time.now();
                     dischargeTimestamp = null;
+
                 };
 
                 Map.set(patients, thash, patientId, newRecord);
