@@ -56,7 +56,7 @@ const Nav = () => {
   const isInchargeRoute = location.pathname.startsWith("/incharge");
 
   return (
-    <div className="flex justify-between p-2 h-20 items-center dark:bg-slate-900 border-b">
+    <div className="flex justify-between p-2 h-20 items-center dark:bg-slate-900 border-b dark:border-white">
       {!isFacilityRoute && !isAdminRoute && !isInchargeRoute ? (
         <div className={"text-3xl font-bold"}>AMRIT</div>
       ) : (

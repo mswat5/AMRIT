@@ -8,7 +8,7 @@ const AppRoute = ({ children }) => {
         <div className="lg:col-span-2 col-span-1 dark:bg-slate-900 hidden md:block">
           <Sidebar />
         </div>
-        <div className="md:col-span-11 lg:col-span-10  dark:bg-slate-500 p-2 h-screen">
+        <div className="md:col-span-11 lg:col-span-10  dark:bg-slate-900 p-2 h-screen">
           <Outlet />
         </div>
       </div>

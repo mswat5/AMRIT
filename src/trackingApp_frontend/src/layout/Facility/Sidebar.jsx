@@ -71,7 +71,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="col-span-2 dark:bg-slate-900  min-h-screen p-2 py-4 border-r">
+    <div className="col-span-2 dark:bg-slate-900  min-h-screen p-2 py-4 border-r dark:border-white">
       <ul className="space-y-4">
         {items.map((item) => (
           <li
