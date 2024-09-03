@@ -5,7 +5,8 @@ import FacilityInfo from "../facilityDetails/info";
 import FindNearestFacility from "../facilityDetails/findNearest";
 import { ViewContext } from "../../../ActorContext";
 import { useContext } from "react";
-import admitpatientpic from "../../../assets/images/admitpatientpic.jpg";
+import facilityinfo from "../../../assets/images/facilityinfo.jpg";
+import nearestfacility from "../../../assets/images/nearestfacility.jpg";
 
 const FacilityDetails = () => {
   const location = useLocation();
@@ -34,7 +35,7 @@ const FacilityDetails = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={facilityinfo}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -49,7 +50,7 @@ const FacilityDetails = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={nearestfacility}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>

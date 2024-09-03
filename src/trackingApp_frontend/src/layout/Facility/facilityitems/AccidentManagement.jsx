@@ -8,7 +8,11 @@ import AccidentTimeline from "../accidentManagement/accidentTimeline";
 import UpdateAccidentStatus from "../accidentManagement/updateAccidentStatus";
 import { ViewContext } from "../../../ActorContext";
 import { useContext } from "react";
-import admitpatientpic from "../../../assets/images/admitpatientpic.jpg";
+import accistatus from "../../../assets/images/accistatus.jpg";
+import timeline from "../../../assets/images/timeline.jpg";
+import active from "../../../assets/images/active.jpg";
+import report from "../../../assets/images/report.jpg";
+import accireportedbyfacility from "../../../assets/images/accireportedbyfacility.jpg";
 
 const InchargeAccidentManagement = () => {
   const location = useLocation();
@@ -37,7 +41,7 @@ const InchargeAccidentManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={report}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -51,7 +55,7 @@ const InchargeAccidentManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={accireportedbyfacility}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -65,7 +69,7 @@ const InchargeAccidentManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={active}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -79,7 +83,7 @@ const InchargeAccidentManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={timeline}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -93,7 +97,7 @@ const InchargeAccidentManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={accistatus}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>

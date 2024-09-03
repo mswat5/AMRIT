@@ -8,6 +8,10 @@ import UpdatePatientStatus from "../patientManagement/updateStatus";
 import { ViewContext } from "../../../ActorContext";
 import { useContext } from "react";
 import admitpatientpic from "../../../assets/images/admitpatientpic.jpg";
+import discharge from "../../../assets/images/discharge.jpg";
+import transfer from "../../../assets/images/transfer.jpg";
+import accistatus from "../../../assets/images/accistatus.jpg";
+import admit from "../../../assets/images/admit.jpg";
 
 const PatientManagement = () => {
   const location = useLocation();
@@ -36,7 +40,7 @@ const PatientManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={admit}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -50,7 +54,7 @@ const PatientManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={discharge}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -62,7 +66,7 @@ const PatientManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={transfer}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
@@ -90,7 +94,7 @@ const PatientManagement = () => {
             >
               <div className="overflow-hidden rounded-xl">
                 <img
-                  src={admitpatientpic} // Same image for all cards
+                  src={accistatus}
                   className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110"
                 />
               </div>
