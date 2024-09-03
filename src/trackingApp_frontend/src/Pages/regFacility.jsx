@@ -171,12 +171,12 @@ export default function Form() {
     <div>
       <button
         onClick={handleBackClick}
-        className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
+        className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl dark:text-white"
       >
         <ChevronLeft /> Back To Register
       </button>
 
-      <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8">
+      <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8 dark:text-white">
         Register Facility
       </h1>
       <section className="flex flex-col justify-between p-16">
@@ -193,7 +193,9 @@ export default function Form() {
                     <span className="text-sm font-medium text-red-600 transition-colors ">
                       {step.id}
                     </span>
-                    <span className="text-sm font-medium">{step.name}</span>
+                    <span className="text-sm font-medium dark:text-white">
+                      {step.name}
+                    </span>
                   </div>
                 ) : currentStep === index ? (
                   <div
@@ -203,7 +205,9 @@ export default function Form() {
                     <span className="text-sm font-medium text-red-600">
                       {step.id}
                     </span>
-                    <span className="text-sm font-medium">{step.name}</span>
+                    <span className="text-sm font-medium dark:text-white">
+                      {step.name}
+                    </span>
                   </div>
                 ) : (
                   <div className="group flex w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
@@ -226,17 +230,17 @@ export default function Form() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                 Facility Details
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
+              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-white">
                 Provide details about the facility.
               </p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="facilityName"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Facility Name
                   </label>
@@ -245,7 +249,7 @@ export default function Form() {
                       type="text"
                       id="facilityName"
                       {...register("facilityName")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white"
                     />
                     {errors.facilityName?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -258,7 +262,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="facilityLocation"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Facility Location
                   </label>
@@ -267,7 +271,7 @@ export default function Form() {
                       type="text"
                       id="facilityLocation"
                       {...register("facilityLocation")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white"
                     />
                     {errors.facilityLocation?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -280,7 +284,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="facilityCapacity"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Facility Capacity
                   </label>
@@ -289,7 +293,7 @@ export default function Form() {
                       type="text"
                       id="facilityCapacity"
                       {...register("facilityCapacity")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white "
                     />
                     {errors.facilityCapacity?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -302,7 +306,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="certificationId"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Certification ID
                   </label>
@@ -311,7 +315,7 @@ export default function Form() {
                       type="text"
                       id="certificationId"
                       {...register("certificationId")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white "
                     />
                     {errors.certificationId?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -321,7 +325,7 @@ export default function Form() {
                   </div>
                 </div>
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Services
                   </label>
                   {fields.map((field, index) => (
@@ -329,7 +333,7 @@ export default function Form() {
                       <input
                         type="text"
                         {...register(`services.${index}`)}
-                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white "
                         placeholder={`Services #${index + 1}`}
                       />
                       <button
@@ -370,17 +374,17 @@ export default function Form() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                 Contact Information
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
+              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-white">
                 Provide contact details for the facility.
               </p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="contactName"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Contact Name
                   </label>
@@ -389,7 +393,7 @@ export default function Form() {
                       type="text"
                       id="contactName"
                       {...register("contactName")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white "
                     />
                     {errors.contactName?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -402,7 +406,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="contactEmail"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Contact Email
                   </label>
@@ -411,7 +415,7 @@ export default function Form() {
                       type="text"
                       id="contactEmail"
                       {...register("contactEmail")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white "
                     />
                     {errors.contactEmail?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -424,7 +428,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="contactPhone"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Contact Phone
                   </label>
@@ -433,7 +437,7 @@ export default function Form() {
                       type="text"
                       id="contactPhone"
                       {...register("contactPhone")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white "
                       placeholder="+1234567890"
                     />
                     {errors.contactPhone?.message && (
@@ -453,7 +457,7 @@ export default function Form() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                 Complete Registration
               </h2>
               <p className="mt-1 text-sm leading-6 text-gray-600">
@@ -461,7 +465,7 @@ export default function Form() {
               </p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Facility Name
                   </label>
                   <div className="mt-2">
@@ -475,7 +479,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Facility Location
                   </label>
                   <div className="mt-2">
@@ -489,7 +493,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Capacity
                   </label>
                   <div className="mt-2">
@@ -503,7 +507,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Services
                   </label>
                   <div className="mt-2">
@@ -517,7 +521,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Certification ID
                   </label>
                   <div className="mt-2">
@@ -531,7 +535,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Contact Name
                   </label>
                   <div className="mt-2">
@@ -545,7 +549,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Contact Email
                   </label>
                   <div className="mt-2">
@@ -559,7 +563,7 @@ export default function Form() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
+                  <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Contact Phone
                   </label>
                   <div className="mt-2">

@@ -48,10 +48,7 @@ export default function Form() {
     navigate("/register");
   };
   const processForm = (data) => {
-    // Convert form data to JSON format
     const jsonData = JSON.stringify(data, null, 2);
-
-    // Log the JSON data to the console
     console.log(jsonData);
     reset();
   };
@@ -81,15 +78,14 @@ export default function Form() {
     <div>
       <button
         onClick={handleBackClick}
-        className=" p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl"
+        className="p-2 pl-4 text-black rounded-md mb-4 flex gap-x-4 font-semibold text-xl dark:text-white"
       >
         <ChevronLeft /> Back To Register
       </button>
-      <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8">
+      <h1 className="text-2xl text-center font-semibold leading-8 text-gray-900 m-4 mt-8 dark:text-white">
         Register Ambulance
       </h1>
       <section className="flex flex-col justify-between p-16">
-        {/* steps */}
         <nav aria-label="Progress">
           <ol
             role="list"
@@ -102,24 +98,24 @@ export default function Form() {
                     <span className="text-sm font-medium text-red-600 transition-colors ">
                       {step.id}
                     </span>
-                    <span className="text-sm font-medium">{step.name}</span>
+                    <span className="text-sm font-medium dark:text-white">{step.name}</span>
                   </div>
                 ) : currentStep === index ? (
                   <div
                     className="flex w-full flex-col border-l-4 border-red-600 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
                     aria-current="step"
                   >
-                    <span className="text-sm font-medium text-red-600">
+                    <span className="text-sm font-medium text-red-600 dark:text-white">
                       {step.id}
                     </span>
-                    <span className="text-sm font-medium">{step.name}</span>
+                    <span className="text-sm font-medium dark:text-white">{step.name}</span>
                   </div>
                 ) : (
                   <div className="group flex w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                    <span className="text-sm font-medium text-gray-500 transition-colors">
+                    <span className="text-sm font-medium text-gray-500 transition-colors dark:text-gray-400">
                       {step.id}
                     </span>
-                    <span className="text-sm font-medium">{step.name}</span>
+                    <span className="text-sm font-medium dark:text-white">{step.name}</span>
                   </div>
                 )}
               </li>
@@ -127,7 +123,6 @@ export default function Form() {
           </ol>
         </nav>
 
-        {/* Form */}
         <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
@@ -135,17 +130,17 @@ export default function Form() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900 ">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                 Ambulance Details
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
+              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
                 Provide details about the ambulance.
               </p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="ambulanceName"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Ambulance Name
                   </label>
@@ -154,7 +149,7 @@ export default function Form() {
                       type="text"
                       id="ambulanceName"
                       {...register("ambulanceName")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white dark:ring-gray-600"
                     />
                     {errors.ambulanceName?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -167,7 +162,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="location"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Location
                   </label>
@@ -176,7 +171,7 @@ export default function Form() {
                       type="text"
                       id="location"
                       {...register("location")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white dark:ring-gray-600"
                     />
                     {errors.location?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -195,10 +190,10 @@ export default function Form() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                 Contact Information
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
+              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
                 Provide contact details for the ambulance.
               </p>
 
@@ -206,7 +201,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="contactInfo"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Contact Info
                   </label>
@@ -215,7 +210,7 @@ export default function Form() {
                       type="text"
                       id="contactInfo"
                       {...register("contactInfo")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white dark:ring-gray-600"
                     />
                     {errors.contactInfo?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -228,7 +223,7 @@ export default function Form() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="certificationId"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                   >
                     Certification ID
                   </label>
@@ -237,7 +232,7 @@ export default function Form() {
                       type="text"
                       id="certificationId"
                       {...register("certificationId")}
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white dark:ring-gray-600"
                     />
                     {errors.certificationId?.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -256,59 +251,58 @@ export default function Form() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
+              <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                 Complete
               </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
+              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
                 Review and submit the details.
               </p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
-                  <p className="block text-sm font-medium leading-6 text-gray-900">
+                  <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Ambulance Name:
                     <div className="mt-2">
-                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white">
                         {watch("ambulanceName")}
                       </p>
                     </div>
                   </p>
                 </div>
                 <div className="sm:col-span-3">
-                  <p className="block text-sm font-medium leading-6 text-gray-900">
+                  <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Location:
                     <div className="mt-2">
-                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
-                        {" "}
+                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white">
                         {watch("location")}
                       </p>
                     </div>
                   </p>
                 </div>
                 <div className="sm:col-span-3">
-                  <p className="block text-sm font-medium leading-6 text-gray-900">
+                  <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Status:{" "}
                     <div className="mt-2">
-                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white">
                         {watch("status")}
                       </p>
                     </div>
                   </p>
                 </div>
                 <div className="sm:col-span-3">
-                  <p className="block text-sm font-medium leading-6 text-gray-900">
+                  <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Contact Info:{" "}
                     <div className="mt-2">
-                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white">
                         {watch("contactInfo")}
                       </p>
                     </div>
                   </p>
                 </div>
                 <div className="sm:col-span-3">
-                  <p className="block text-sm font-medium leading-6 text-gray-900">
+                  <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                     Certification ID:{" "}
                     <div className="mt-2">
-                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+                      <p className="block w-full rounded-md p-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white">
                         {watch("certificationId")}
                       </p>
                     </div>
@@ -319,13 +313,12 @@ export default function Form() {
           )}
         </form>
 
-        {/* Navigation */}
         <div className="mt-12 flex justify-between">
           {currentStep > 0 && (
             <button
               type="button"
               onClick={prev}
-              className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+              className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-white dark:border-gray-600"
             >
               Back
             </button>
